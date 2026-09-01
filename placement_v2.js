@@ -18,65 +18,36 @@
  *    作成し利用・頒布することを固く禁じます。
  * ================================================================
  *
- * placement.js — AreCal 配置モード拡張 v0.9.38
+ * placement.js — AreCal 配置モード拡張 v0.9.39
  *
  * [最新の変更]
+ * v0.0068:
+ *   - 【究極軽量化・iPadフリーズ対策】
+ *     AreCal本体(v0.0472)の「パン操作中の再描画スキップ」に完全対応。
+ *     Arecalay側もパン中（`panning === true`）は重い `renderPmLayer` をスキップし、
+ *     CSSの `transform` だけで滑らかに追従するように最適化。パンが終了した瞬間に
+ *     一度だけ再描画することで、重機を大量配置しても画面移動がヌルヌルになる。
+ *     また、AreCal側のiOS限定`_CPAD`ゼロ化にも動的に追従し、座標ズレを起こさない。
  * v0.0067:
  *   - 【外部監査による致命的ボトルネックの完全排除（超軽量化）】
- *     実機での大幅なラグを解消するため、機能はそのままに内部構造を抜本的に最適化。
- *     ① 重機(SVG)描画のパース結果キャッシュ化
- *        毎フレーム行っていた「SVG文字列の正規表現解析」を廃止。アセット参照時に
- *        一度だけ解析し、頂点座標配列としてメモリ(`_parsed`)に保持する設計に改修。
- *     ② 無条件の永久再描画ループの停止
- *        何も操作していなくても毎フレーム全画面を描き直していた `startPmLoop` をスマート化。
- *        変更フラグ(`_pmDirty`)による制御を導入し、パン・ズーム・ホバー等の変化があった時と
- *        選択時の点滅タイミングのみ再描画するように変更。無駄なバッテリー・CPU消費を絶った。
+ *     ① 重機(SVG)描画のパース結果キャッシュ化 (`_parsed`に保持し正規表現を回避)
+ *     ② 無条件の永久再描画ループの停止 (`_pmDirty`フラグによる制御)
  * v0.0066:
- *   - マスターより「全機能の書き出し(テスト用)＋軽量化できる箇所があれば対応(機能削除は禁止)」との
- *     依頼(AreCal本体v0.0466と対になる対応)。
- *     コード全体を精査した結果の対応・所見は以下の通り：
- *     ①(実施)startPmLoopはArecalayモード中、requestAnimationFrameで「毎フレーム無条件に」
- *     syncPmCv()を呼び続けており、その中で毎回document.getElementById('pdf-cv')/('draw-cv')を
- *     実行していた。この2要素はページ内に1個だけ存在し動的に作り直されることも無い静的な
- *     canvasのため、初回取得後はモジュール変数(_pmPdfElCache/_pmDrawCvCache)にキャッシュして
- *     使い回す形にした。挙動は完全に同一で、フレーム毎のDOM参照コストのみ削減。
+ *   - syncPmCvのDOM参照(pdf-cv/draw-cv)をキャッシュ化し、フレーム毎の取得コストを削減。
  * v0.0065:
- *   - 実機NG再対応。AreCal本体v0.0458と対になる改修：
- *     ①四隅+中心スナップの目印の色をAreCal本体側(#00e5ff)と統一(以前は#4caf50で食い違って
- *     いた)。また、吸着中の点をオブジェクト参照で判定していたため強調表示が常にOFFになって
- *     いたバグを、配列インデックス判定に変更して修正(AreCal本体側と同じ原因・同じ対応)。
- *     ②PDF出力範囲選択中の中クリック(ホイール押し)+ドラッグパンをArecalayにも追加
- *     (AreCal本体側は既にv0.0456③で対応済みだったが、Arecalay独自の範囲選択には未移植だった)。
+ *   - AreCal本体v0.0458と対になる改修。四隅+中心スナップの目印の色統一・バグ修正、
+ *     中クリック(ホイール押し)+ドラッグパンの追加。
  * v0.0064:
- *   - AreCal本体v0.0457と対になる改修。マスターより新規指摘2件＋実機NG再対応1件：
- *     ①「PDFをグレースケール表示」トグルをArecalay左UI(「元に戻す/やり直す」の下、
- *     「種別表示」の上)にも新設。AreCal本体の#gray-toggleと同じ変数(pdfGrayscale)・
- *     pdfCv要素を共有し、どちらの画面でON/OFFしてももう一方の見た目にも反映されるよう
- *     相互同期。pmDoExportPDF(Arecalay独自のPDF出力)にも同フィルタを適用。
- *     ②PDF出力範囲選択(pmStartRangeSelect)に、AreCal本体と同じ元PDF四隅+中心スナップを追加。
- *     ③AreCal本体v0.0456④「ホバー強調エッジ点滅色」の実機NG再対応。
+ *   - 「PDFをグレースケール表示」トグルを追加。PDF出力時にも適用。
  * v0.0063:
- *   - ③マスターより要望。配置オブジェクトリスト(#pm-placed-list)のドラッグ&ドロップ時、
- *     挿入線(上端/下端)を表示する方式に変更。
+ *   - ドラッグ&ドロップ時の挿入線表示と簡易FLIPアニメーションの追加。
  * v0.0062:
- *   - ①マスターの好みで白黒の割り当てを入れ替え。「縁」＝黒地に白文字、「逆(ラベルは同じ縁)」＝
- *     白地に黒文字のボタンに変更(v0.0061の逆)。
- * v0.0061:
- *   - ①マスターより再訂正：「枠」という言い換えではなく、左パネルの小さいトグルボタン自体の
- *     見た目で状態を示してほしいとのこと。「縁」＝白地に黒文字、「逆」＝黒地に白文字。
- * v0.0060:
- *   - ①マスターより訂正：直すのは描画ロジックではなく左パネルの小さいトグルボタンの表記のみ。
- * v0.0059:
- *   - マスターより「前回0430ベースの誤ったブランチで作業してしまった」との指摘を受け、
- *     このv0.0058ベースへ改めて4項目を適用(番号は指示書どおり)
- * v0.0058:
- *   - 定型文スタンプ(STAMP_GROUPS)の収録語をマスター指定の新リストへ全面差し替え(ボタン変更.txt)。
- *   - 【外部AI監査対応】配置モードのスケール依存バグを解消。
+ *   - MojiWaku(文字枠)ボタンの白黒割り当てを「縁＝黒地白文字」「逆＝白地黒文字」に変更。
  */
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0067'; 
+  const ARECALAY_VER = '0.0068'; 
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -136,7 +107,6 @@
   let _pmPdfElCache = null, _pmDrawCvCache = null;
   let pmRightPanel = null, pmLeftPanel = null;
 
-  // v0.0067 変更検知用変数
   let _pmDirty = true;
   function markPmDirty() { _pmDirty = true; }
 
@@ -259,7 +229,7 @@
     return text.substring(open, close + 1);
   }
 
-  // v0.0067: SVGパースのキャッシュ化ヘルパー群
+  // SVGパースのキャッシュ化ヘルパー群
   function _ensureParsedSvg(asset) {
     if (asset._parsed) return;
     asset._parsed = {
@@ -436,9 +406,9 @@
     pixelScale = pr.width > 0 ? pdfEl.width / pr.width : 1;
   }
 
-  // v0.0067: 無条件の永久再描画ループの停止
   let _pmLastZoom = 0, _pmLastOx = 0, _pmLastOy = 0;
   let _pmLastRefCssText = '';
+  let _pmWasPanning = false;
 
   function startPmLoop() {
     (function loop() {
@@ -446,11 +416,20 @@
       if (!placementMode) return;
       
       const st = getState();
+      // v0.0068: AreCal本体側の panning 変数を見て、パン操作中かどうかを判定
+      const isPanningNow = (typeof panning !== 'undefined' && panning);
+
       if (st.zoom !== _pmLastZoom || st.ox !== _pmLastOx || st.oy !== _pmLastOy) {
         _pmLastZoom = st.zoom; _pmLastOx = st.ox; _pmLastOy = st.oy;
         _pmDirty = true;
       }
       
+      // パン(画面移動)が終了した瞬間に確実に再描画する
+      if (_pmWasPanning && !isPanningNow) {
+        _pmDirty = true;
+      }
+      _pmWasPanning = isPanningNow;
+
       const refEl = _pmDrawCvCache || _pmPdfElCache;
       if (refEl) {
         const css = refEl.style.cssText;
@@ -468,10 +447,14 @@
         _pmDirty = true;
       }
 
-      if (_pmDirty) {
+      // パン操作中はCSSのtransformで画面が動くため、重いCanvas再描画はスキップする
+      if (_pmDirty && !isPanningNow) {
         syncPmCv();
         renderPmLayer();
         _pmDirty = false;
+      } else if (isPanningNow) {
+        // パン中もサイズやtransformの追従は必要なのでsyncPmCvだけは呼ぶ
+        syncPmCv();
       }
     })();
   }
@@ -2577,6 +2560,7 @@
     pmCtx.restore();
   }
 
+
   function drawArrowRaw(x1,y1,x2,y2,color,lw,dashed,hwLw,trimStart,skipShaft) {
     const angle  = Math.atan2(y2-y1,x2-x1);
     const hw     = Math.max(21, hwLw*3.3); 
@@ -3000,9 +2984,11 @@
     function onMove(e) {
       if (magPanel.contains(e.target)) return;
       if (panning) { 
-        const r = cvWrapEl.getBoundingClientRect();
-        ox = (e.clientX - r.left) - psx; oy = (e.clientY - r.top) - psy;
-        if (typeof applyTrans === 'function') applyTrans();
+        if (typeof applyTrans === 'function') {
+          const r = cvWrapEl.getBoundingClientRect();
+          ox = (e.clientX - r.left) - psx; oy = (e.clientY - r.top) - psy;
+          applyTrans();
+        }
       }
       if (!inCanvasView(e)) return; 
       lastMouseCX = e.clientX; lastMouseCY = e.clientY;
@@ -3017,6 +3003,7 @@
       if (magPanel.contains(e.target)) return; 
       if (e.button === 1) { 
         panning = false; cvWrapEl.style.cursor = '';
+        if (typeof redraw === 'function') redraw();
         return;
       }
       if (e.button !== 0 || !dragging) return;
@@ -3281,6 +3268,7 @@
         const [item] = arr.splice(srcIdx, 1);
         arr.splice(dstIdx, 0, item);
         updatePlacedList();
+        markPmDirty();
       });
     });
     list.querySelectorAll('li[data-uuid]').forEach(li => {
@@ -3310,6 +3298,7 @@
           else { selectedUuids.clear(); selectedUuids.add(uuid); }
         }
         updatePlacedList();
+        markPmDirty();
       });
     });
     list.querySelectorAll('.pm-vis-btn').forEach(btn => {
@@ -3328,6 +3317,7 @@
           a.visibility = cycle[(cycle.indexOf(cur) + 1) % cycle.length];
         }
         updatePlacedList();
+        markPmDirty();
       };
     });
     list.querySelectorAll('.pm-color-dot').forEach(dot => {
@@ -3343,6 +3333,7 @@
           a.color = COLORS[(COLORS.indexOf(a.color)+1) % COLORS.length];
         }
         updatePlacedList();
+        markPmDirty();
       };
     });
     list.querySelectorAll('.pm-mach-sz').forEach(btn => {
@@ -3354,6 +3345,7 @@
         const idx = MACH_SIZES.indexOf(a.sizeMultiplier || 1);
         a.sizeMultiplier = MACH_SIZES[(idx + 1) % MACH_SIZES.length];
         updatePlacedList();
+        markPmDirty();
       };
     });
     list.querySelectorAll('.pm-step-dn').forEach(btn => {
@@ -3361,20 +3353,20 @@
         const a=steps[currentStep].find(x=>x.uuid===btn.dataset.uuid);
         if(a){
           const min=0;
-          a.sizeStep=Math.max(min,(a.sizeStep??1)-1);updatePlacedList();
+          a.sizeStep=Math.max(min,(a.sizeStep??1)-1);updatePlacedList();markPmDirty();
         }
       };
     });
     list.querySelectorAll('.pm-step-up').forEach(btn => {
       btn.onclick=ev=>{ev.stopPropagation();
         const a=steps[currentStep].find(x=>x.uuid===btn.dataset.uuid);
-        if(a){const max=(a.type==='line'||a.type==='circle')?7:5; a.sizeStep=Math.min(max,(a.sizeStep??1)+1);updatePlacedList();}
+        if(a){const max=(a.type==='line'||a.type==='circle')?7:5; a.sizeStep=Math.min(max,(a.sizeStep??1)+1);updatePlacedList();markPmDirty();}
       };
     });
     list.querySelectorAll('.pm-mojiwaku-btn').forEach(btn => {
       btn.onclick=ev=>{ev.stopPropagation();
         const a=steps[currentStep].find(x=>x.uuid===btn.dataset.uuid);
-        if(a){pushPmUndo();a.mojiWaku=((a.mojiWaku||0)+1)%3;updatePlacedList();}
+        if(a){pushPmUndo();a.mojiWaku=((a.mojiWaku||0)+1)%3;updatePlacedList();markPmDirty();}
       };
     });
     list.querySelectorAll('.pm-del-btn').forEach(btn => {
@@ -3383,10 +3375,11 @@
         selectedUuids.delete(btn.dataset.uuid);
         steps[currentStep]=steps[currentStep].filter(x=>x.uuid!==btn.dataset.uuid);
         updatePlacedList();
+        markPmDirty();
       };
     });
 
-    markPmDirty(); // リストが更新されたら再描画
+    markPmDirty(); 
   }
 
   function switchStep(n) {
