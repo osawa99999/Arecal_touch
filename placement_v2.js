@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0067'; // v0.0067(js): startPmLoopのアイドル時完全停止対応(HTML側は今回無変更)
+  const ARECALAY_VER = '0.0068'; // A004(AreCal_Touch): 図形(機器)ボタンの再タップキャンセル対応
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -734,7 +734,17 @@
     pmRightPanel.querySelector('#pm-text-btn').onclick      = () => setAnnotMode('text');
     pmRightPanel.querySelector('#pm-line-btn').onclick      = () => setAnnotMode('line');
     pmRightPanel.querySelector('#pm-circle-btn').onclick    = () => setAnnotMode('circle');
-    pmRightPanel.querySelector('#pm-machinery-btn').onclick      = openMachineryPicker;
+    // A003(AreCal_Touchマスター実機報告): 矢印/線/円/テキストはsetAnnotMode()のトグルで
+    // 再タップ=キャンセルになっているのに、図形(機器)ボタンだけopenMachineryPickerを毎回
+    // 無条件に呼んでいたため、開いている状態で再タップすると毎回ダイアログが再生成されて
+    // しまっていた(キャンセルにならない)。既に開いている時はcloseMachineryPickerを呼ぶよう修正。
+    pmRightPanel.querySelector('#pm-machinery-btn').onclick      = () => {
+      if (document.getElementById('pm-machinery-picker')) {
+        closeMachineryPicker();
+      } else {
+        openMachineryPicker();
+      }
+    };
     pmRightPanel.querySelector('#pm-dist-btn').onclick      = () => {
       // v0.0409: 15) AreCal本体の距離測定機能をArecalayからも呼び出す
       cancelAnnotMode();
