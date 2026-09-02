@@ -30,7 +30,7 @@
      user-scalable=no / maximum-scale の指定を意図的に無視する仕様に変更済みのため、この
      meta指定だけでは不十分な可能性が高い。念のため指定はしつつ、実効性のある対策は下記
      script内のgesturestart/gesturechange/gestureend側(WebKit独自イベント)で行う。 -->
-<title>Arecal_Touch A002</title>
+<title>Arecal_Touch A004</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 <!-- v0.0465: 面積出力Excelへの色付け・関数対応のため、xlsx.full.min.js(SheetJS Community、
      書き込み時のセル装飾は非対応)から xlsx-js-style(SheetJS 0.18.5本体+セルスタイル拡張の
@@ -134,7 +134,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
   align-items:center;font-size:.78em;cursor:pointer;
   transition:background .12s;gap:4px;
 }
-#sh-list li:hover{background:#333;}
 #sh-list li.selected{background:#1a3a5c;border-left-color:#64b5f6;}
 #sh-list li.disabled{opacity:.45;}
 /* v0.0453: ①③ドラッグ&ドロップの視覚フィードバック */
@@ -151,7 +150,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
 }
 .delbtn{background:transparent!important;border:1px solid #555!important;
         padding:2px 5px!important;font-size:.72em!important;flex-shrink:0;}
-.delbtn:hover{background:#c0392b!important;border-color:#c0392b!important;}
 
 /* カラーポップアップ */
 #clr-popup{
@@ -164,7 +162,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
   padding:5px 14px;border-radius:4px;cursor:pointer;border:1px solid #666;
   font-size:.78em;text-align:left;transition:filter .1s;
 }
-#clr-popup button:hover{filter:brightness(1.3);}
 
 /* 合計エリア（左下固定） */
 #tot-wrap{
@@ -183,7 +180,6 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
   border-radius:4px;cursor:pointer;color:rgba(255,255,255,.75);
 }
-#sub-btn:hover{background:rgba(255,255,255,.13);}
 #sub-btn.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.75);}
 #do-sub:disabled{opacity:.4;cursor:default;}
 #sh-list li.sub-base{outline:3px solid var(--blue);outline-offset:-2px;background:#1a2a3a !important;}
@@ -199,22 +195,18 @@ body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
 #gray-toggle{width:100%;padding:5px;background:rgba(150,150,150,.18);
            border:1px solid #888;border-radius:4px;cursor:pointer;
            color:#ccc;font-size:.74em;transition:background .2s;}
-#gray-toggle:hover{background:rgba(150,150,150,.4);color:#fff;}
 #gray-toggle.on{background:rgba(33,150,243,.35);border-color:var(--blue);color:#fff;}
 /* v0.0459: 測点移動ダイアログ(テンキー方式、Voldiaと統一) */
 .sv-dir-btn{background:rgba(0,150,200,.12);border:1px solid #00ccff;border-radius:6px;
   cursor:pointer;font-size:.82em;transition:background .15s;}
-.sv-dir-btn:hover{background:rgba(0,150,200,.28);}
 .sv-dir-btn.on{background:rgba(0,200,255,.4);color:#fff;}
 .sv-num-btn{background:rgba(0,80,110,.28);border:1px solid #1c5a72;border-radius:6px;
   color:#7fdcff;font-size:1.05em;padding:10px 0;cursor:pointer;transition:background .15s;}
-.sv-num-btn:hover{background:rgba(0,110,150,.42);}
 #sv-ok:disabled{opacity:.4;cursor:not-allowed;}
 #sel-union-btn{
   background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
   border-radius:4px;cursor:pointer;color:rgba(255,255,255,.75);transition:background .2s;
 }
-#sel-union-btn:hover{background:rgba(255,255,255,.13);}
 #sel-union-btn.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.75);}
 #do-sel-union{
   width:100%;padding:5px;margin-top:4px;display:none;
@@ -317,7 +309,6 @@ input[type=text]{flex:1;padding:5px 8px;background:#333;color:var(--text);
 button{background:var(--btn);color:#b0c8e8;border:1px solid #555; /* v0.0332: 統一文字色 */
        padding:5px 10px;border-radius:4px;cursor:pointer;font-size:.78em;
        transition:background .15s,border-color .15s;white-space:nowrap;}
-button:hover{background:var(--blue);border-color:var(--blue);}
 button.on{background:var(--blue);border-color:var(--blue);}
 /* A002: マスター実機報告 — 再タップキャンセル時、button{transition:background .15s}のフェードが
    「キャンセル後も色が一瞬残っている」ように見えていた。ツール状態を表す2ボタンは
@@ -352,9 +343,6 @@ select#sc-select{
 /* スナップ */
 .snap-toggle{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
 .snap-toggle button{font-size:.7em;padding:3px 6px;}
-/* v0.0424: ON時(var(--blue)の濃い塗り)とマウスオーバー時の色を区別しやすくする */
-.snap-toggle button:hover{background:#3d5468;border-color:#5a94b8;}
-.snap-toggle button.on:hover{background:var(--blue);border-color:var(--blue);}
 
 /* モーダル */
 .modal{display:none;position:fixed;z-index:10000;inset:0;background:rgba(0,0,0,.78);}
@@ -411,18 +399,15 @@ select#sc-select{
   background:#2a2a2a;border:1px solid #555;color:var(--text);cursor:pointer;
   transition:background .1s;
 }
-.rot-step-btn:hover{background:var(--blue);border-color:var(--blue);}
 #rot-ok{
   padding:6px 20px;background:var(--blue);border:none;border-radius:5px;
   color:#fff;font-size:.85em;cursor:pointer;font-weight:600;
   transition:filter .15s;
 }
-#rot-ok:hover{filter:brightness(1.2);}
 #rot-reset{
   padding:5px 10px;background:#333;border:1px solid #666;border-radius:4px;
   color:#CACACA;font-size:.78em;cursor:pointer;
 }
-#rot-reset:hover{background:#444;}
 /* v0.0435: 回転モード中は左右パネルを暗転させ操作不可にする */
 #sb-left.rot-locked,
 #sb.rot-locked{
@@ -522,7 +507,6 @@ select#sc-select{
   padding:6px 4px;background:rgba(80,120,200,.18);color:#dde6ff;
   font-size:.78em;cursor:pointer;
 }
-.io-top-btn:hover{background:rgba(80,120,200,.35);}
 .io-top-btn.active{background:rgba(80,120,200,.4);color:#fff;font-weight:700;}
 .io-sub-btn{
   display:block;width:100%;text-align:left;margin-bottom:3px;
@@ -530,7 +514,6 @@ select#sc-select{
   border:1px solid #445;border-radius:4px;
   color:#ccd;font-size:.78em;cursor:pointer;
 }
-.io-sub-btn:hover{background:rgba(255,255,255,.12);}
 
 /* 免責ダイアログ */
 #disclaimer-modal{
@@ -573,7 +556,6 @@ select#sc-select{
   background:var(--blue);border:none;color:#fff;font-size:.95em;
   cursor:pointer;font-weight:700;letter-spacing:.05em;
 }
-#disclaimer-modal button:hover{filter:brightness(1.2);}
 
 
 #sc-cal-dialog{
@@ -612,6 +594,46 @@ select#sc-select{
 #pdf-range-box{position:absolute;border:2px solid #00ff88;background:rgba(0,255,136,.08);pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.35);}
 .survey-tip{position:fixed;background:#000;color:#fff;font-size:.72em;
   padding:2px 7px;border-radius:4px;pointer-events:none;z-index:9999;white-space:nowrap;display:none;}
+
+/* A002: iOS Safariのsticky :hover対策。タッチ端末はタップ後もhover状態が残留し、
+   ツールボタンの色が消えない不具合の実害があったため、hover対応デバイス限定で有効化 */
+@media (hover:hover) and (pointer:fine){
+
+#sh-list li:hover{background:#333;}
+
+.delbtn:hover{background:#c0392b!important;border-color:#c0392b!important;}
+
+#clr-popup button:hover{filter:brightness(1.3);}
+
+#sub-btn:hover{background:rgba(255,255,255,.13);}
+
+#gray-toggle:hover{background:rgba(150,150,150,.4);color:#fff;}
+
+.sv-dir-btn:hover{background:rgba(0,150,200,.28);}
+
+.sv-num-btn:hover{background:rgba(0,110,150,.42);}
+
+#sel-union-btn:hover{background:rgba(255,255,255,.13);}
+
+button:hover{background:var(--blue);border-color:var(--blue);}
+
+/* v0.0424: ON時(var(--blue)の濃い塗り)とマウスオーバー時の色を区別しやすくする */
+.snap-toggle button:hover{background:#3d5468;border-color:#5a94b8;}
+
+.snap-toggle button.on:hover{background:var(--blue);border-color:var(--blue);}
+
+.rot-step-btn:hover{background:var(--blue);border-color:var(--blue);}
+
+#rot-ok:hover{filter:brightness(1.2);}
+
+#rot-reset:hover{background:#444;}
+
+.io-top-btn:hover{background:rgba(80,120,200,.35);}
+
+.io-sub-btn:hover{background:rgba(255,255,255,.12);}
+
+#disclaimer-modal button:hover{filter:brightness(1.2);}
+}
 </style>
 </head>
 <body>
@@ -637,7 +659,7 @@ select#sc-select{
     <div id="logo-area">
       <div class="logo-row">
       <img id="logo-helmet" src="data:image/png;base64,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" alt="OSAKI Tech Lab" style="display:block;flex-shrink:0;height:34px;width:auto;border-radius:3px;">
-      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal_Touch</b> A002</div>
+      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal_Touch</b> A004</div>
       <img src="https://hits.sh/osaki-kensetsu.github.io/arecal.svg?style=flat-square&color=0088cc&labelColor=1a1a2e" alt="visits" style="height:13px;opacity:.6;" onerror="this.style.display='none'">
       </div><!-- .logo-row -->
     </div>
@@ -997,6 +1019,44 @@ select#sc-select{
 
 <script>
 // ================================================================
+//  Arecal_Touch A004
+//  --- 今セッション変更履歴 ---
+//  A004     マスターの優先順位指定(キャンセル関連を最優先)に対応。
+//           ①距離測定モード中、常設キャンセルボタンが効かない件を調査。touchCancelBtnはcvWrapの
+//           子要素だが、cvWrap自体に(キャンバス操作用の)複数のpointerdown/clickリスナーが
+//           登録されており、ボタンをタップした際のイベントがDOMバブリングでcvWrapまで届き、
+//           特に距離測定モードでは「キャンバス上のクリック」として計測点が誤って追加されて
+//           いた可能性が高いと判断。ボタン自身のpointerdown/pointerup段階でstopPropagation()し、
+//           cvWrap側に一切届かないよう変更(clickでのstopPropagationだけでは、より先に発生する
+//           pointerdownの伝播を止められていなかった)。※実機未検証の仮説に基づく修正。
+//           ②Arecalayの図形(機器)ボタンが再タップでキャンセルにならない件はplacement_v2.js側
+//           (別ファイル)で対応。矢印/線/円/テキストは既にsetAnnotMode()のトグルで再タップ
+//           キャンセルに対応していたが、図形ボタンだけopenMachineryPicker()を無条件に呼んで
+//           いたため、開いている時に再タップするとダイアログが再生成されてしまっていた。
+//           既に開いている時はcloseMachineryPickerを呼ぶよう分岐追加(ARECALAY_VER 0.0067→0.0068)。
+//  Arecal_Touch A003
+//  --- 今セッション変更履歴 ---
+//  A003     A002の実機報告2件の再修正＋新規1件。
+//           ①ボタン色が消えない件、真因を特定：CSSのtransitionではなくiOS Safari既知の
+//           「sticky :hover」(タップ後もhover状態が次のタップまで残留し続ける仕様)が原因だった。
+//           button.on{background:var(--blue)}と汎用button:hover{background:var(--blue)}が
+//           同色だったため、キャンセル後も「hoverとして」色が残って見えていた
+//           (「画面移動などをすると消える」＝別要素に触れて初めてhoverが解除される、という
+//           報告内容とも一致)。A002でのtransition:none対応(rect/poly限定)は的外れだったため
+//           撤回はせず残すが、本質的な対処として全:hoverルール(17箇所)を
+//           @media (hover:hover) and (pointer:fine) 内に移動。タッチのみの端末はそもそも
+//           hoverスタイルを受け取らなくなるため、sticky hover自体が発生しなくなる。
+//           ②多角形(poly)の再タップキャンセルが機能しない不具合を修正。原因：poly-btnの
+//           再タップハンドラがcancelCurrentOperation()を呼んでいたが、これは本来Escapeキー用の
+//           「頂点を1つ戻す」処理(cur.pts.length>0の間はtool='poly'のまま)であり、矩形のような
+//           完全キャンセルにはならなかった。矩形と同じくcancelDraw()を直接呼ぶよう変更。
+//           ・注意：Arecalay側の図形ボタン(再タップで毎回オブジェクトダイアログが出る問題)は
+//           今回未対応。placement_v2.js側の実装調査が別途必要(次回以降)。
+//           追1：常設キャンセルボタンを、最初から表示ではなく「何かキャンセル可能な操作中
+//           (作図/距離計測/測点設置/縮尺キャリブ/結合選択/差引選択)」の時だけ表示するよう変更。
+//           個々の状態変更箇所を全部フックする方式は見落としリスクがある(v0.0472の教訓)ため、
+//           あえて250ms間隔の軽量ポーリングで表示・非表示を追従させる方式を採用。
+//           ・注意：Arecalay側の配置モード状態は今回の判定に含めていない(要調査)。
 //  Arecal_Touch A002
 //  --- 今セッション変更履歴 ---
 //  A002     ②近接タップでのスナップ吸着強化。getSnap(lx,ly,tolMult)に第3引数tolMultを追加
@@ -2755,7 +2815,11 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('poly-btn').addEventListener('click',()=>{
     if(drawing&&tool==='poly'){
       // v0.0474: 上と同じ方針転換(元はv0.0411で再押し無視だった)
-      cancelCurrentOperation();
+      // A002: マスター実機報告 — cancelCurrentOperation()は元々Escapeキー用の「頂点を1つ戻す」
+      // 挙動(cur.pts.length>0の間はtool='poly'のまま抜けない)だったため、再タップしても
+      // ボタンの再タップ＝完全キャンセルという意図した挙動になっていなかった。矩形ボタンと
+      // 同様にcancelDraw()を直接呼び、頂点数によらず必ず完全キャンセルするよう修正。
+      cancelDraw();
       return;
     }
     startTool('poly');toast('🔵 多角形 — クリックで点追加。始点クリック / Enter で確定');
@@ -3174,14 +3238,34 @@ document.addEventListener('DOMContentLoaded',()=>{
     const touchCancelBtn=document.createElement('button');
     touchCancelBtn.id='touch-cancel-btn';
     touchCancelBtn.textContent='✕ キャンセル';
-    touchCancelBtn.style.cssText='position:absolute;bottom:64px;right:8px;z-index:500;'
+    touchCancelBtn.style.cssText='position:absolute;bottom:64px;right:8px;z-index:500;display:none;'
       +'background:rgba(220,53,69,.92);color:#fff;border:none;border-radius:6px;'
       +'padding:10px 16px;font-size:14px;font-weight:bold;box-shadow:0 2px 6px rgba(0,0,0,.3);';
     touchCancelBtn.addEventListener('click',e=>{
       e.preventDefault();e.stopPropagation();
       document.dispatchEvent(new KeyboardEvent('keydown',{key:'Escape',code:'Escape',bubbles:true,cancelable:true}));
     });
+    // A004: マスター実機報告 — 距離測定モード中、キャンセルボタンが効かないとの報告。
+    // 原因調査：このボタンはcvWrapの子要素だが、cvWrap自体にも複数のpointerdown/clickリスナー
+    // (onMouseDown等、キャンバス操作用)が登録されている。ボタンをタップした時のpointerdown/click
+    // イベントはDOMバブリングでcvWrapまで届いてしまい、特に距離測定モードでは「キャンバス上の
+    // クリック」として誤って計測点が追加される処理が先に走っていた可能性が高い(clickでの
+    // stopPropagationだけでは、より先に発生するpointerdownの伝播を止められていなかった)。
+    // pointerdown/pointerupの段階から止めることで、cvWrap側に一切イベントが届かないようにする。
+    // ・注意：実機未検証の仮説に基づく修正。直らなければ別原因を要調査。
+    touchCancelBtn.addEventListener('pointerdown',e=>{e.stopPropagation();});
+    touchCancelBtn.addEventListener('pointerup',e=>{e.stopPropagation();});
     cvWrap.appendChild(touchCancelBtn);
+    // A002: マスター実機報告 — 最初から常時表示だったため、必要な時(何かキャンセルできる操作中)
+    // だけ出すよう変更。各状態の開始/終了箇所(startTool/cancelDraw/setDistMode/setSurveyMode/
+    // setScCalMode/setSelUnionMode/setSubMode等、呼び出し箇所が多数かつ分散)を1つずつフックすると
+    // v0.0472スナップキャッシュ化の時のように「1箇所見落とし」バグを生みやすいため、あえて
+    // 軽量な定期チェック(250ms間隔、単純なbool判定のみで負荷は無視できる)で表示状態を追従させる。
+    setInterval(()=>{
+      const active = drawing||distMode||surveyMode||scCalMode||selUnionMode||subMode;
+      const disp = active ? 'block' : 'none';
+      if(touchCancelBtn.style.display!==disp) touchCancelBtn.style.display=disp;
+    }, 250);
   }
 
   // 右クリック
@@ -7243,7 +7327,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
         status.style.color      = '#2196f3';
         status.textContent      = '📐 面積計算モード';
         if (helmetIcon) helmetIcon.style.color = '#2196f3';
-        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>Arecal_Touch</b> A002'; }
+        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>Arecal_Touch</b> A004'; }
       }
     }
 
