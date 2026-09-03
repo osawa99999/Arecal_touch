@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0068'; // A004(AreCal_Touch): 図形(機器)ボタンの再タップキャンセル対応
+  const ARECALAY_VER = '0.0070'; // A008(AreCal_Touch): union-btn hoverのsticky対策+_pmHasCancelable公開
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -459,9 +459,15 @@
           background: rgba(76, 175, 80, 0.18) !important;
           color: #a5d6a7 !important;
         }
-        #union-btn:hover {
-          background: rgba(76, 175, 80, 0.4) !important;
-          color: #fff !important;
+        /* A008: マスター指摘 — AreCal本体側でA003にて全:hoverルールをsticky hover対策として
+           @media(hover:hover)で囲ったが、この#union-btn:hoverはArecalayテーマ適用時に
+           !important付きで後から上書きするため、メディアクエリの外にあると対策が効かなく
+           なってしまう(Arecalayモード中だけ症状がぶり返す)。同じ対策をここにも適用する。 */
+        @media (hover:hover) and (pointer:fine){
+          #union-btn:hover {
+            background: rgba(76, 175, 80, 0.4) !important;
+            color: #fff !important;
+          }
         }
         .sc-badge {
           background: rgba(76, 175, 80, 0.2) !important;
@@ -502,6 +508,11 @@
     window._pmToggle            = togglePlacementMode;
     window._pmLoadMachineryFile = loadMachineryFile;
     window._pmMachineryCount    = () => Object.keys(machineryData).length;
+    // A008: マスター指摘 — AreCal本体の常設キャンセルボタン(追1対応、A003)はAreCal側の状態
+    // (drawing/distMode等)しか見ておらず、Arecalay側だけがキャンセル可能な状態(注釈モード中・
+    // 機器ピッカー表示中・入出力メニュー展開中)ではボタンが表示されないままだった。
+    // AreCal側のポーリング判定にこれを組み込めるよう公開する。
+    window._pmHasCancelable     = () => !!(annotMode || pmIoMenuOpen || document.getElementById('pm-machinery-picker'));
     tryAutoLoadMachinery();
   }
 
@@ -1264,7 +1275,7 @@
             <option value="all">全カテゴリー</option>
             <option value="heavy_vehicle">🔵 重機・車両</option>
             <option value="temp_material">🟡 仮設・資材</option>
-            <option value="scaffold">⚪ 足場材</option>
+            <option value="scaffold">⚪️ 足場材</option>
             <option value="operation">🔴 作業</option>
             <option value="other">🟢 その他</option>
           </select>
@@ -1356,7 +1367,7 @@
   const PM_VISTYPE_DEFS = [
     {key:'heavy_vehicle', label:'🔵 重機・車両', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='heavy_vehicle'},
     {key:'temp_material', label:'🟡 仮設・資材', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='temp_material'},
-    {key:'scaffold',      label:'⚪ 足場材',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='scaffold'},
+    {key:'scaffold',      label:'⚪️ 足場材',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='scaffold'},
     {key:'operation',     label:'🔴 作業',       match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='operation'},
     {key:'other',         label:'🟢 その他',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='other'},
     {key:'arrow',         label:'↗ 矢印',        match: a => a.type==='arrow'},
@@ -3954,9 +3965,15 @@
     inp.click();
   }
 
+  // A008: マスター実機報告「足場材の色ドット(⚪)がオブジェクト名の横だけ黒っぽく見える。
+  // ドロップダウンでは正しい色」に対応。⚪(U+26AA WHITE CIRCLE)は🔴🔵🟡🟢等と違い、Unicode上
+  // 「絵文字既定ではなくテキスト既定」の古い記号のため、フォント・プラットフォームによっては
+  // カラー絵文字ではなく現在のテキスト色(黒に近いグレー)で描画されることがある。native要素
+  // (<option>)では正しく出ていたのに、独自にCSS color指定した<span>側だけ黒っぽく見えていたのは
+  // これが原因と判断。VS16(U+FE0F、絵文字提示を強制するセレクタ)を付与して確実にカラー表示にする。
   const _MCAT_LABEL = {
     heavy_vehicle:'🔵重機・車両', temp_material:'🟡仮設・資材',
-    scaffold:'⚪足場材', operation:'🔴作業', other:'🟢その他'
+    scaffold:'⚪️足場材', operation:'🔴作業', other:'🟢その他'
   };
 
   function buildPmSaveData() {
