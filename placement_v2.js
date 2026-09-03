@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0070'; // A008(AreCal_Touch): union-btn hoverのsticky対策+_pmHasCancelable公開
+  const ARECALAY_VER = '0.0071'; // A009(AreCal_Touch): 操作ガイドのタッチ/PC分岐、PDF出力範囲選択開始時のfitScreen追加
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -710,12 +710,20 @@
           color:#4caf50;border-radius:4px;cursor:pointer;">📋 他のSTEPにコピー</button>
       </div>
 
+      <!-- A009: 6番対応。AreCal本体側(op-guide-pc/op-guide-touch)と同じ考え方で、PC向け(キーボード
+           前提)文言とタッチ向け文言を分けて用意し、JS側(タッチ検出)で出し分ける。 -->
       <div id="pm-layout-info" class="card" style="font-size:.7em;line-height:1.9;color:#CACACA;">
         <b style="color:#CACACA;">操作ガイド（レイアウトモード）</b><br>
         クリック：図形を選択<br>
         ドラッグ：グリップを掴んで移動・変形<br>
         矢印キー：選択中を微調整移動（Shiftで大きく）<br>
         Del/Backspace：選択中の図形を削除<br>
+        <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">AreCal で描いた図形は<br>このモードでは操作不可</span>
+      </div>
+      <div id="pm-layout-info-touch" class="card" style="font-size:.7em;line-height:1.9;color:#CACACA;display:none;">
+        <b style="color:#CACACA;">操作ガイド（レイアウトモード・タッチ）</b><br>
+        タップ：図形を選択<br>
+        ドラッグ：グリップを掴んで移動・変形<br>
         <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">AreCal で描いた図形は<br>このモードでは操作不可</span>
       </div>
 
@@ -807,6 +815,15 @@
     };
     pmRightPanel.querySelector('#pm-clear-btn').onclick     = pmClearAll;
     pmRightPanel.querySelector('#pm-copy-btn').onclick      = showCopyDialog;
+
+    // A009: 6番対応。AreCal本体側(op-guide-pc/op-guide-touch)と同じ考え方でタッチ環境を検出し、
+    // 操作ガイドをタッチ向け文言に切り替える。
+    if (('ontouchstart' in window) || navigator.maxTouchPoints > 0) {
+      const infoPc    = pmRightPanel.querySelector('#pm-layout-info');
+      const infoTouch = pmRightPanel.querySelector('#pm-layout-info-touch');
+      if (infoPc)    infoPc.style.display = 'none';
+      if (infoTouch) infoTouch.style.display = 'block';
+    }
 
     pmRightPanel.querySelector('#pm-arrow-step-dn').onclick = () => {
       defArrowStep = Math.max(0,defArrowStep-1); // v0.0055: 呼称0を追加
@@ -3128,6 +3145,10 @@
   }
 
   function pmStartRangeSelect(selectedSteps) {
+    // A009: 10番対応。「Arecalで行われている全画面表示が行われない」件。AreCal本体側の
+    // startPdfRangeSelect()はfitScreen(true)を呼んでから範囲選択を開始しているが、Arecalay側の
+    // 本関数には対応する呼び出しが無かったため、同じ挙動に統一する。
+    if (typeof fitScreen === 'function') fitScreen(true);
     const ov = document.createElement('div');
     ov.id = 'pm-range-ov';
     ov.style.cssText = `position:fixed;inset:0;z-index:9992;cursor:crosshair;
