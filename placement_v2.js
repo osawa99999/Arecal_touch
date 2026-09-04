@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0071'; // A009(AreCal_Touch): 操作ガイドのタッチ/PC分岐、PDF出力範囲選択開始時のfitScreen追加
+  const ARECALAY_VER = '0.0072'; // A010(AreCal_Touch): 全体表示ボタン追加(更追6)。Problem B対策(body一括touch-callout)はAreCal_Touch側で対応
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -727,6 +727,11 @@
         <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">AreCal で描いた図形は<br>このモードでは操作不可</span>
       </div>
 
+      <!-- A009: 更追6対応。AreCal本体側にはあるのにArecalay側に無かった全体表示ボタンを追加。 -->
+      <button id="pm-fit-btn" style="width:100%;margin-top:4px;padding:7px;
+        background:rgba(33,150,243,.15);border:1px solid #2196f3;
+        color:#7cc0ff;border-radius:4px;font-size:.8em;cursor:pointer;">🔍 全体表示</button>
+
       <button id="pm-clear-btn" style="width:100%;margin-top:4px;padding:7px;
         background:rgba(200,50,50,.15);border:1px solid #c03030;
         color:#ff6060;border-radius:4px;font-size:.8em;cursor:pointer;">🗑 全消去</button>
@@ -815,6 +820,9 @@
     };
     pmRightPanel.querySelector('#pm-clear-btn').onclick     = pmClearAll;
     pmRightPanel.querySelector('#pm-copy-btn').onclick      = showCopyDialog;
+    // A009: 更追6対応。AreCal本体側のfitScreen()をそのまま呼ぶ。
+    const pmFitBtn = pmRightPanel.querySelector('#pm-fit-btn');
+    if (pmFitBtn) pmFitBtn.onclick = () => { if (typeof fitScreen === 'function') fitScreen(); };
 
     // A009: 6番対応。AreCal本体側(op-guide-pc/op-guide-touch)と同じ考え方でタッチ環境を検出し、
     // 操作ガイドをタッチ向け文言に切り替える。
