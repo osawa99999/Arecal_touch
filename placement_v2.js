@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0073'; // A014(AreCal_Touch): 更追2対応。矢印/線/円/テキスト/図形のヒント・トーストと左UIの複数選択表記をタブレット向けに修正
+  const ARECALAY_VER = '0.0074'; // A015(AreCal_Touch): 更追4対応。左UIに⇅移動(スワップ入れ替え)機能を新規実装。⇄→⇅アイコン統一
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -382,6 +382,9 @@
   let pmCpad        = 0; // v0.0411: 17) syncPmCvで確定する実際の描画オフセット量(draw-cv追従時のみ_CPAD、それ以外0)
   let _pmLastMouseCX = null, _pmLastMouseCY = null; // v0.0413: 3) 距離測定ゴムラインをpmCv側に描画するための現在マウス位置
   let selectedUuids = new Set();
+  // A014: 更追4対応。Arecal同様の「選択→移動ボタン→対象選択」スワップ方式の入れ替え機能。
+  let _pmReorderActive  = false;
+  let _pmReorderPickUuid = null;
   let defArrowStep  = 1;
   let defLineStep   = 1;
   let defTextStep   = 1;
@@ -512,7 +515,10 @@
     // (drawing/distMode等)しか見ておらず、Arecalay側だけがキャンセル可能な状態(注釈モード中・
     // 機器ピッカー表示中・入出力メニュー展開中)ではボタンが表示されないままだった。
     // AreCal側のポーリング判定にこれを組み込めるよう公開する。
-    window._pmHasCancelable     = () => !!(annotMode || pmIoMenuOpen || document.getElementById('pm-machinery-picker'));
+    window._pmHasCancelable     = () => !!(annotMode || pmIoMenuOpen || document.getElementById('pm-machinery-picker') || _pmReorderActive);
+    // A014: 更追4対応。AreCal側から、Arecalayの入れ替えモードを強制終了できるよう公開
+    // (モード切替(AreCal⇄Arecalay)時に暗転オーバーレイが残留するのを防ぐため)。
+    window._pmEndReorderMode    = _pmEndReorderMode;
     tryAutoLoadMachinery();
   }
 
@@ -886,7 +892,12 @@
           </button>`).join('')}
       </div>
       <div style="padding:4px 8px 5px;font-size:.73em;color:#CACACA;border-bottom:1px solid #2a2a2a;
-                  flex-shrink:0;">上：前面 / 下：背面</div>
+                  flex-shrink:0;">表示順序を変える場合、オブジェクトを選択し<br>「移動」ボタンを押した後、入れ替えたい<br>オブジェクト名を選択してください（上：前面 / 下：背面）</div>
+      <!-- A014: 更追4対応。AreCal側のreorder-cancel-btnと同じ役割の、Arecalay専用の
+           入れ替えキャンセルボタン。表示/非表示は_pmStartReorderPick/_pmEndReorderModeで制御。 -->
+      <button id="pm-reorder-cancel-btn" style="display:none;width:calc(100% - 12px);margin:0 6px 4px;padding:6px;
+        background:rgba(220,53,69,.92);color:#fff;border:none;border-radius:4px;
+        font-size:.78em;font-weight:bold;flex-shrink:0;">✕ 入れ替えをキャンセル</button>
       <ul id="pm-placed-list" style="list-style:none;padding:6px;margin:0;
         flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:.76em;"></ul>
       <div style="display:flex;gap:4px;padding:5px 6px;flex-shrink:0;border-top:1px solid #2a2a2a;">
@@ -911,6 +922,8 @@
     });
     pmLeftPanel.querySelector('#pm-undo-btn').onclick = pmUndo; // v0.0408: 右パネルから左パネル最下部へ移動
     pmLeftPanel.querySelector('#pm-redo-btn').onclick = pmRedo;
+    // A014: 更追4対応。入れ替えモードのキャンセルボタン
+    pmLeftPanel.querySelector('#pm-reorder-cancel-btn').onclick = () => _pmEndReorderMode();
     pmLeftPanel.querySelector('#pm-vistype-btn').onclick = openVisTypePanel; // v0.0409
     // v0.0457: AreCal本体の「PDFをグレースケール表示」トグル(#gray-toggle)と同じ pdfGrayscale
     // 変数・pdfCv要素を共有するボタンをArecalay側にも新設。どちらの画面でON/OFFしても
@@ -3577,9 +3590,44 @@
                        '#A6FFFF','#4DFF80','#CCFF99','#FFFF99','#FFE6A6'];
   const MACH_SIZES  = [1, 2, 3, 5, 10];
 
+  // A014: 更追4対応。AreCal側のswapShapeAt()と同じ考え方で、2オブジェクトの位置(z順)を
+  // そのまま入れ替える。selectedUuidsはuuidベースの選択なので、配列の要素を入れ替えるだけで
+  // 選択状態の付け替え(remap)は不要。
+  function pmSwapAnnAt(uuidA, uuidB) {
+    if (uuidA === uuidB) return;
+    const arr = steps[currentStep];
+    const ia = arr.findIndex(a => a.uuid === uuidA);
+    const ib = arr.findIndex(a => a.uuid === uuidB);
+    if (ia < 0 || ib < 0) return;
+    pushPmUndo();
+    [arr[ia], arr[ib]] = [arr[ib], arr[ia]];
+    updatePlacedList();
+  }
+  function _pmStartReorderPick(uuid) {
+    _pmReorderPickUuid = uuid;
+    _pmReorderActive = true;
+    const ov = document.getElementById('reorder-dim-overlay');
+    if (ov) ov.style.display = 'block';
+    const cb = document.getElementById('pm-reorder-cancel-btn');
+    if (cb) cb.style.display = 'block';
+    _toast('⇅ 入れ替え先のオブジェクトを一覧からタップしてください', 3000);
+    updatePlacedList();
+  }
+  function _pmEndReorderMode() {
+    _pmReorderPickUuid = null;
+    _pmReorderActive = false;
+    const ov = document.getElementById('reorder-dim-overlay');
+    if (ov) ov.style.display = 'none';
+    const cb = document.getElementById('pm-reorder-cancel-btn');
+    if (cb) cb.style.display = 'none';
+    updatePlacedList();
+  }
+
   function updatePlacedList() {
     const list=document.getElementById('pm-placed-list');
     if (!list) return;
+    // A014: 更追4対応。入れ替えモード中は他ボタンを無効化するクラスを付与
+    list.classList.toggle('pm-reorder-mode', _pmReorderActive);
     // v0.0453: ③簡易FLIPアニメーション用に、再構築前の各liの位置をuuidで記録
     const _pmOldListRects = new Map();
     list.querySelectorAll('li[data-uuid]').forEach(li => {
@@ -3646,6 +3694,10 @@
               style="font-size:.68em;color:#4caf50;cursor:pointer;flex-shrink:0;
                      padding:1px 4px;border:1px solid #444;border-radius:3px;"
               title="サイズ変更">${szLabel}</span>
+            ${(!_pmReorderActive && selectedUuids.size===1 && isSel) ? `
+            <button class="pm-move-btn" data-uuid="${ann.uuid}"
+              style="padding:2px 6px;font-size:.7em;border-radius:3px;flex-shrink:0;"
+              title="この図形の位置を別の図形と入れ替える">⇅ 移動</button>` : ''}
             <button class="pm-del-btn" data-uuid="${ann.uuid}"
               style="background:rgba(200,80,80,.15);border:1px solid #c04040;border-radius:3px;
                      color:#f88;cursor:pointer;padding:1px 5px;font-size:.72em;flex-shrink:0;">✕</button>
@@ -3706,6 +3758,10 @@
                 background:${mwBg};border:1px solid ${mwBorder};color:${mwCol};cursor:pointer;"
               title="${mwTitle}">${mwIcon}</button>`;
           })() : ''}
+          ${(!_pmReorderActive && selectedUuids.size===1 && isSel) ? `
+          <button class="pm-move-btn" data-uuid="${ann.uuid}"
+            style="padding:2px 6px;font-size:.7em;border-radius:3px;flex-shrink:0;"
+            title="この図形の位置を別の図形と入れ替える">⇅ 移動</button>` : ''}
           <button class="pm-del-btn" data-uuid="${ann.uuid}"
             style="background:rgba(200,80,80,.15);border:1px solid #c04040;border-radius:3px;
                    color:#f88;cursor:pointer;padding:1px 5px;font-size:.72em;flex-shrink:0;">✕</button>
@@ -3777,9 +3833,16 @@
 
     list.querySelectorAll('li[data-uuid]').forEach(li => {
       li.addEventListener('click', ev => {
-        if (['pm-del-btn','pm-color-dot','pm-color-none','pm-step-dn','pm-step-up','pm-mach-sz','pm-mojiwaku-btn']
+        if (['pm-del-btn','pm-color-dot','pm-color-none','pm-step-dn','pm-step-up','pm-mach-sz','pm-mojiwaku-btn','pm-move-btn']
             .some(c=>ev.target.classList.contains(c))) return;
         const uuid = li.dataset.uuid;
+        // A014: 更追4対応。入れ替えモード中は、他の全ての選択ロジックより先に
+        // 「Bを選んで入れ替える」処理を行う。同じ項目(A自身)をタップした場合は何もせず終了。
+        if (_pmReorderActive) {
+          if (uuid !== _pmReorderPickUuid) pmSwapAnnAt(_pmReorderPickUuid, uuid);
+          _pmEndReorderMode();
+          return;
+        }
         if (ev.shiftKey) {
           selectedUuids.has(uuid) ? selectedUuids.delete(uuid) : selectedUuids.add(uuid);
         } else {
@@ -3788,6 +3851,12 @@
         }
         updatePlacedList();
       });
+    });
+    list.querySelectorAll('.pm-move-btn').forEach(btn => {
+      btn.onclick = ev => {
+        ev.stopPropagation();
+        _pmStartReorderPick(btn.dataset.uuid);
+      };
     });
     list.querySelectorAll('.pm-vis-btn').forEach(btn => {
       btn.onclick = ev => {
@@ -3871,6 +3940,7 @@
     cancelAnnotMode(); 
     currentStep = n;
     selectedUuids.clear();
+    if (_pmReorderActive) _pmEndReorderMode();
     updatePlacedList();
     updateTabUI();
     _toast(`STEP ${n+1} に切り替えました`, 1500);
