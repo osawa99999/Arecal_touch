@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0072'; // A010(AreCal_Touch): 全体表示ボタン追加(更追6)。Problem B対策(body一括touch-callout)はAreCal_Touch側で対応
+  const ARECALAY_VER = '0.0073'; // A014(AreCal_Touch): 更追2対応。矢印/線/円/テキスト/図形のヒント・トーストと左UIの複数選択表記をタブレット向けに修正
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -886,7 +886,7 @@
           </button>`).join('')}
       </div>
       <div style="padding:4px 8px 5px;font-size:.73em;color:#CACACA;border-bottom:1px solid #2a2a2a;
-                  flex-shrink:0;">クリックで選択<br>Shift+クリックで複数選択<br>上：前面 / 下：背面</div>
+                  flex-shrink:0;">上：前面 / 下：背面</div>
       <ul id="pm-placed-list" style="list-style:none;padding:6px;margin:0;
         flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:.76em;"></ul>
       <div style="display:flex;gap:4px;padding:5px 6px;flex-shrink:0;border-top:1px solid #2a2a2a;">
@@ -1222,12 +1222,22 @@
     if (lc) lc.style.display = annotMode==='line'      ? 'block' : 'none';
     if (tc) tc.style.display = annotMode==='text'      ? 'block' : 'none';
     
+    // A014: 更追2対応。矢印/線/円/テキスト/図形の開始時ヒントがPC文言(クリック/Shift/右クリック・ESC)
+    // 固定でタッチ端末向けに出し分けられていなかった件を修正。
     _setStatus(annotMode ? (
-      annotMode === 'arrow'  ? '↗ 矢印：始点クリック  |  Shift:水平/垂直固定  |  右クリック/ESC：キャンセル' :
-      annotMode === 'line'   ? '📏 線：始点クリック  |  Shift:水平/垂直固定  |  右クリック/ESC：キャンセル' :
-      annotMode === 'circle' ? '⭕ 円：中心をクリック  |  右クリック/ESC：キャンセル' :
-      annotMode === 'text'   ? '💬 テキスト：配置位置をクリック  |  右クリック/ESC：キャンセル' :
-      '🏗 クリックで配置  |  右クリック/ESC：キャンセル'
+      _IS_TOUCH_DEVICE ? (
+        annotMode === 'arrow'  ? '↗ 矢印：始点をタップ  |  「✕ キャンセル」ボタンで終了' :
+        annotMode === 'line'   ? '📏 線：始点をタップ  |  「✕ キャンセル」ボタンで終了' :
+        annotMode === 'circle' ? '⭕ 円：中心をタップ  |  「✕ キャンセル」ボタンで終了' :
+        annotMode === 'text'   ? '💬 テキスト：配置位置をタップ  |  「✕ キャンセル」ボタンで終了' :
+        '🏗 タップで配置  |  「✕ キャンセル」ボタンで終了'
+      ) : (
+        annotMode === 'arrow'  ? '↗ 矢印：始点クリック  |  Shift:水平/垂直固定  |  右クリック/ESC：キャンセル' :
+        annotMode === 'line'   ? '📏 線：始点クリック  |  Shift:水平/垂直固定  |  右クリック/ESC：キャンセル' :
+        annotMode === 'circle' ? '⭕ 円：中心をクリック  |  右クリック/ESC：キャンセル' :
+        annotMode === 'text'   ? '💬 テキスト：配置位置をクリック  |  右クリック/ESC：キャンセル' :
+        '🏗 クリックで配置  |  右クリック/ESC：キャンセル'
+      )
     ) : '');
     
     pmCv.style.cursor = annotMode ? 'crosshair' : 'default';
@@ -1549,7 +1559,7 @@
         if (annotMode !== 'machinery') setAnnotMode('machinery');
         selectedAssetId = id;
         closeMachineryPicker();
-        _toast(`🏗 「${a.name}」→ クリックで配置`, 2000);
+        _toast(_IS_TOUCH_DEVICE ? `🏗 「${a.name}」→ タップで配置` : `🏗 「${a.name}」→ クリックで配置`, 2000);
       };
     });
   }
@@ -1624,7 +1634,9 @@
     if (annotMode==='arrow') {
       if (!arrowStart) {
         arrowStart={lx,ly};
-        _setStatus('↗ 矢印：終点クリック  |  Shift:水平/垂直固定  |  右クリック：キャンセル');
+        _setStatus(_IS_TOUCH_DEVICE
+          ? '↗ 矢印：終点をタップ  |  「✕ キャンセル」ボタンで終了'
+          : '↗ 矢印：終点クリック  |  Shift:水平/垂直固定  |  右クリック：キャンセル');
       } else {
         let endLx = lx, endLy = ly;
         if (e.shiftKey) {
@@ -1637,13 +1649,18 @@
           x1:arrowStart.lx,y1:arrowStart.ly,x2:endLx,y2:endLy,
           color:COLORS[0],sizeStep:defArrowStep,arrowDir:'fwd'});
         arrowStart=null; previewPos=null;
-        _setStatus('↗ 矢印：始点クリック  |  ESC：キャンセル');
+        _setStatus(_IS_TOUCH_DEVICE
+          ? '↗ 矢印：始点をタップ  |  「✕ キャンセル」ボタンで終了'
+          : '↗ 矢印：始点クリック  |  ESC：キャンセル');
         updatePlacedList();
         // 矢印を描くたびに毎回出すとウザいので、前回表示から5分以上経った時だけヒントを出す
         const _nowMs = Date.now();
         if (_nowMs - _lastArrowDirToastAt > ARROW_DIR_TOAST_COOLDOWN_MS) {
           _lastArrowDirToastAt = _nowMs;
-          _toast('矢印の向きを変えたい場合は、矢印をダブルクリックしてください', 3600);
+          // A014: 更追2対応。タッチ端末では「ダブルクリック」ではなく実際の操作である「ダブルタップ」で案内
+          _toast(_IS_TOUCH_DEVICE
+            ? '矢印の向きを変えたい場合は、矢印をダブルタップしてください'
+            : '矢印の向きを変えたい場合は、矢印をダブルクリックしてください', 3600);
         }
       }
       return;
@@ -1651,7 +1668,9 @@
     if (annotMode==='line') {
       if (!lineStart) {
         lineStart={lx,ly};
-        _setStatus('📏 線：終点クリック  |  Shift:水平/垂直固定  |  右クリック：キャンセル');
+        _setStatus(_IS_TOUCH_DEVICE
+          ? '📏 線：終点をタップ  |  「✕ キャンセル」ボタンで終了'
+          : '📏 線：終点クリック  |  Shift:水平/垂直固定  |  右クリック：キャンセル');
       } else {
         let endLx = lx, endLy = ly;
         if (e.shiftKey) {
@@ -1664,13 +1683,18 @@
           x1:lineStart.lx,y1:lineStart.ly,x2:endLx,y2:endLy,
           color:COLORS[6],sizeStep:defLineStep});
         lineStart=null; previewPos=null;
-        _setStatus('📏 線：始点クリック  |  ESC：キャンセル');
+        _setStatus(_IS_TOUCH_DEVICE
+          ? '📏 線：始点をタップ  |  「✕ キャンセル」ボタンで終了'
+          : '📏 線：始点クリック  |  ESC：キャンセル');
         updatePlacedList();
         // 矢印と同様、線を描くたびに毎回出すとウザいので前回表示から5分以上経った時だけヒントを出す
         const _nowMsL = Date.now();
         if (_nowMsL - _lastLineStyleToastAt > ARROW_DIR_TOAST_COOLDOWN_MS) {
           _lastLineStyleToastAt = _nowMsL;
-          _toast('線種を変えるときは線をダブルクリックしてください', 3600);
+          // A014: 更追2対応。タッチ端末では「ダブルクリック」ではなく実際の操作である「ダブルタップ」で案内
+          _toast(_IS_TOUCH_DEVICE
+            ? '線種を変えるときは線をダブルタップしてください'
+            : '線種を変えるときは線をダブルクリックしてください', 3600);
         }
       }
       return;
@@ -1693,7 +1717,9 @@
       color: COLORS[6], sizeStep: defLineStep, lineStyle: 'solid'
     });
     updatePlacedList();
-    _setStatus('⭕ 円：中心をクリック  |  右クリック/ESC：キャンセル');
+    _setStatus(_IS_TOUCH_DEVICE
+      ? '⭕ 円：中心をタップ  |  「✕ キャンセル」ボタンで終了'
+      : '⭕ 円：中心をクリック  |  右クリック/ESC：キャンセル');
   }
 
   function handleEditClick(e, hit) {
