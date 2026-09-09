@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0074'; // A015(AreCal_Touch): 更追4対応。左UIに⇅移動(スワップ入れ替え)機能を新規実装。⇄→⇅アイコン統一
+  const ARECALAY_VER = '0.0075'; // A017(AreCal_Touch): デッドコード整理。未使用の_mToPxを削除(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -2514,13 +2514,7 @@
     return (11340 / sDenom) * (ann.sizeMultiplier || 1);
   }
 
-  // v0.0409: 円ツール(B4)用 実距離(m)⇔canvas px 変換。AreCal本体の縮尺換算式と同一
-  // (mpp = (25.4/72)*scaleDenom/1000/RS) を流用し、同じ座標系で一致するようにする
-  function _mToPx(meters) {
-    const sDenom = typeof scaleDenom !== 'undefined' ? scaleDenom : 100;
-    const rs     = typeof RS !== 'undefined' ? RS : 4;
-    return meters * 1000 * rs / ((25.4/72) * sDenom);
-  }
+  // A017: デッドコード整理。未使用だった_mToPx(呼び出し元無し。逆変換の_pxToMは現役のため維持)を削除
   function _pxToM(px) {
     const sDenom = typeof scaleDenom !== 'undefined' ? scaleDenom : 100;
     const rs     = typeof RS !== 'undefined' ? RS : 4;
