@@ -336,7 +336,8 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0075'; // A017(AreCal_Touch): デッドコード整理。未使用の_mToPxを削除(挙動変更無し)
+  const ARECALAY_VER = '0.0077'; // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
+  // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
   const PM_UNDO_MAX = 30;
@@ -768,7 +769,18 @@
     // 再タップ=キャンセルになっているのに、図形(機器)ボタンだけopenMachineryPickerを毎回
     // 無条件に呼んでいたため、開いている状態で再タップすると毎回ダイアログが再生成されて
     // しまっていた(キャンセルにならない)。既に開いている時はcloseMachineryPickerを呼ぶよう修正。
+    // A031: マスター報告「Arecalayの図形/入出力ボタンで距離測定がキャンセルされない」対応。
+    // 矢印/線/円/テキストはsetAnnotMode()内で距離測定を強制OFFにしていたが、図形(機器)と入出力の
+    // 2ボタンだけ対象外だったため、距離測定ONのままダイアログ/メニューが開いて競合していた。
+    function _pmCancelDistIfOn() {
+      if (typeof window._isDistModeOn === 'function' && window._isDistModeOn()
+          && typeof window.setDistMode === 'function') {
+        window.setDistMode(false);
+        pmCv.style.cursor = 'default';
+      }
+    }
     pmRightPanel.querySelector('#pm-machinery-btn').onclick      = () => {
+      _pmCancelDistIfOn();
       if (document.getElementById('pm-machinery-picker')) {
         closeMachineryPicker();
       } else {
@@ -789,6 +801,7 @@
 
     // v0.0412: 4) AreCal本体と同様、入出力メニューを開いている間は他の配置ツールを操作不可にする
     pmRightPanel.querySelector('#pm-io-btn').onclick = () => {
+      _pmCancelDistIfOn(); // A031
       pmIoMenuOpen = !pmIoMenuOpen;
       pmRightPanel.querySelector('#pm-io-menu').style.display = pmIoMenuOpen ? 'block' : 'none';
       if (pmIoMenuOpen) {
@@ -2433,9 +2446,11 @@
     pmCtx.restore(); // v0.0411: 17) 冒頭のsave()+translate(pmCpad,pmCpad)と対応
   }
 
-  // AIS仕様のTwo-Passレンダリング用に、塗り(Fill)と輪郭線(Stroke)を分離
-  function _drawFills(ctx, svgStr, defaultFill, scale) {
-    if (!svgStr) return;
+  // A019(AreCal_Touch連携整理): _drawFills/_drawStrokesで一字一句同一だった
+  // 「SVG文字列からpolygonタグを正規表現で拾い、points属性を座標配列にパースする」処理を
+  // 共通関数化(挙動変更無し)。各呼び出し元はctx.save〜pathの構築後、塗り/線それぞれの
+  // スタイル適用だけをコールバックで行う
+  function _forEachSvgPolygon(ctx, svgStr, cb) {
     const polyRe = /<polygon\s+([^>]+)\/?>/g;
     let m;
     while ((m = polyRe.exec(svgStr)) !== null) {
@@ -2452,6 +2467,15 @@
       ctx.moveTo(pts[0].x, pts[0].y);
       for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
       ctx.closePath();
+      cb(attrs, pts);
+      ctx.restore();
+    }
+  }
+
+  // AIS仕様のTwo-Passレンダリング用に、塗り(Fill)と輪郭線(Stroke)を分離
+  function _drawFills(ctx, svgStr, defaultFill, scale) {
+    if (!svgStr) return;
+    _forEachSvgPolygon(ctx, svgStr, (attrs) => {
       let currentFill = defaultFill;
       if (!currentFill) {
         const fillMatch = attrs.match(/fill=['"]([^'"]+)['"]/);
@@ -2459,8 +2483,7 @@
       }
       ctx.fillStyle = currentFill;
       ctx.fill();
-      ctx.restore();
-    }
+    });
   }
 
   function _drawStrokes(ctx, svgStr, scale) {
@@ -2468,31 +2491,16 @@
     // 画面編集中は従来通りの太さ(=レベル3相当)のまま変更せず、
     // PDF出力中(_pmExporting)のみ線の太さ設定(pmLineWeightLevel)を反映する
     const lwRatio = _pmExporting ? (PM_LINE_WEIGHT_RATIO[pmLineWeightLevel] || 1) : 1;
-    const polyRe = /<polygon\s+([^>]+)\/?>/g;
-    let m;
-    while ((m = polyRe.exec(svgStr)) !== null) {
-      const attrs = m[1];
-      const ptsMatch = attrs.match(/points=['"]([^'"]+)['"]/);
-      if (!ptsMatch) continue;
-      const pts = ptsMatch[1].trim().split(/\s+/).filter(Boolean).map(p => {
-        const xy = p.split(',');
-        return { x: parseFloat(xy[0]), y: parseFloat(xy[1]) };
-      }).filter(pt => !isNaN(pt.x) && !isNaN(pt.y));
-      if (!pts.length) continue;
-      ctx.save();
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, pts[0].y);
-      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
-      ctx.closePath();
+    _forEachSvgPolygon(ctx, svgStr, () => {
       ctx.strokeStyle = '#333333';
       ctx.lineWidth = (0.5 / scale) * lwRatio;
       ctx.stroke();
-      ctx.restore();
-    }
+    });
     ctx.save();
     ctx.strokeStyle = '#111111';
     ctx.lineWidth = (0.8 / scale) * lwRatio;
     const lineRe = /<line\s+[^>]*?x1=['"]([^'"]+)['"]\s+y1=['"]([^'"]+)['"]\s+x2=['"]([^'"]+)['"]\s+y2=['"]([^'"]+)['"][^>]*?\/?>/g;
+    let m; // A019: polygon解析部分を_forEachSvgPolygonへ抽出したため、line/circle用にここで再宣言
     ctx.beginPath();
     while ((m = lineRe.exec(svgStr)) !== null) {
       ctx.moveTo(parseFloat(m[1]), parseFloat(m[2]));
