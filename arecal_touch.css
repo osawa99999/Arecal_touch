@@ -1,0 +1,580 @@
+:root{
+  --bg:#1a1a1a;--text:#e0e0e0;--panel:#242424;--btn:#333;
+  --blue:#2196f3;--cv:#111;--bdr:#3a3a3a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Segoe UI',sans-serif;background:var(--bg);color:var(--text);
+     user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overflow:hidden;height:100vh;height:100dvh;}
+/* A009: Problem B対応。従来はuser-select:noneのみで、WebKit固有の-webkit-touch-callout:noneは
+   #cv-wrapにしか設定していなかったため、それ以外の画面(起動時の「了解しました」同意画面など)で
+   長押しするとOS標準のテキスト選択メニュー/ルーペが出てしまい、以後タップしてもコンテキスト
+   メニューが再度出て操作不能になる不具合があった。body全体に指定して防止する。
+   入力欄(input/textarea)は従来通りの選択・編集を維持する。 */
+input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default;}
+/* A005: マスター実機報告(Android+外付けペンディスプレイ環境でキャンセルボタンが画面下端で
+   見切れる) — 原因は100vh。ブラウザのアドレスバー等のツールバーが表示中でも「非表示時の
+   最大サイズ」で計算されるため、実際に見える領域より高さが大きくなり、下端に配置した要素が
+   画面外にはみ出していたと判断。100dvh(実際に見えている範囲を動的に反映)を追加フォールバック
+   として指定。未対応の古いブラウザは従来通り100vhのまま動作する。 */
+.app{display:flex;height:100vh;height:100dvh;}
+
+/* ===== 左パネル（図形リスト） ===== */
+#sb-left{width:240px;background:var(--panel);border-right:1px solid var(--bdr);
+  display:flex;flex-direction:column;z-index:100;overflow:hidden;}
+
+/* A011: 挙動B対応。オブジェクト入れ替えモード中の暗転オーバーレイ。#sb-leftのz-index(100)より
+   低い値にすることで、左UIだけは暗転の上に浮いて操作可能なまま、キャンバス・右パネル・
+   上部ツールバー等は暗転の下に隠れて操作できなくなる。 */
+#reorder-dim-overlay{
+  position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.6);
+  display:none;
+}
+/* 入れ替えモード中は、オブジェクト一覧の行内のチェックボックス・色・削除ボタンを無効化し、
+   「対象を選ぶ」タップだけを受け付ける状態にする */
+#sh-list.reorder-mode .sh-check,
+#sh-list.reorder-mode .sh-clrbtn,
+#sh-list.reorder-mode .delbtn{pointer-events:none;opacity:.3;}
+#sh-list.reorder-mode li{cursor:pointer;}
+/* A014: 更追4対応。Arecalay側の入れ替えモードもAreCal同様、対象選択以外のボタンを無効化する */
+#pm-placed-list.pm-reorder-mode .pm-vis-btn,
+#pm-placed-list.pm-reorder-mode .pm-color-dot,
+#pm-placed-list.pm-reorder-mode .pm-color-none,
+#pm-placed-list.pm-reorder-mode .pm-step-dn,
+#pm-placed-list.pm-reorder-mode .pm-step-up,
+#pm-placed-list.pm-reorder-mode .pm-mach-sz,
+#pm-placed-list.pm-reorder-mode .pm-mojiwaku-btn,
+#pm-placed-list.pm-reorder-mode .pm-del-btn{pointer-events:none;opacity:.3;}
+#pm-placed-list.pm-reorder-mode li{cursor:pointer;}
+
+/* ロゴエリア */
+#logo-area{
+  background:#111;border-bottom:1px solid var(--bdr);
+  padding:5px 8px;display:flex;align-items:center;flex-shrink:0;
+}
+#logo-area .logo-row{display:flex;align-items:center;gap:8px;width:100%;}
+#logo-area .app-ver{font-size:.7em;color:#8ab4e0;line-height:1.25;text-align:left;font-weight:600;transition:color .25s;}
+#logo-area .app-ver b{color:inherit;display:block;font-size:1.5em;letter-spacing:.04em;font-weight:800;filter:brightness(1.35);}
+
+/* 図形リスト本体 */
+#list-area{flex:1;overflow-y:auto;padding:6px;}
+#sh-list{list-style:none;display:flex;flex-direction:column;gap:3px;}
+#sh-list li{
+  background:#2a2a2a;border-left:3px solid var(--blue);border-radius:4px;
+  padding:5px 8px;display:flex;justify-content:space-between;
+  align-items:center;font-size:.78em;cursor:pointer;
+  transition:background .12s;gap:4px;
+}
+#sh-list li.selected{background:#1a3a5c;border-left-color:#64b5f6;}
+#sh-list li.disabled{opacity:.45;}
+/* v0.0453: ①③ドラッグ&ドロップの視覚フィードバック */
+#sh-list li.dragging{opacity:.35;}
+#sh-list li.drag-over-top{box-shadow:inset 0 3px 0 0 #4caf50;}
+#sh-list li.drag-over-bottom{box-shadow:inset 0 -3px 0 0 #4caf50;}
+.sh-info{line-height:1.4;flex:1;min-width:0;}
+.sh-name{font-weight:600;color:#ccc;}
+.sh-area{color:#90caf9;font-size:.9em;}
+.sh-check{width:14px;height:14px;cursor:pointer;flex-shrink:0;accent-color:var(--blue);}
+.sh-clrbtn{
+  width:14px;height:14px;border-radius:3px;cursor:pointer;
+  border:1px solid #666;flex-shrink:0;padding:0;
+}
+.delbtn{background:transparent!important;border:1px solid #555!important;
+        padding:2px 5px!important;font-size:.72em!important;flex-shrink:0;}
+
+/* カラーポップアップ */
+#clr-popup{
+  position:fixed;z-index:20000;background:#1e1e1e;border:1px solid #555;
+  border-radius:6px;padding:8px;display:none;flex-direction:column;gap:5px;
+  box-shadow:0 4px 16px rgba(0,0,0,.6);
+}
+#clr-popup.show{display:flex;}
+#clr-popup button{
+  padding:5px 14px;border-radius:4px;cursor:pointer;border:1px solid #666;
+  font-size:.78em;text-align:left;transition:filter .1s;
+}
+
+/* 合計エリア（左下固定） */
+#tot-wrap{
+  background:rgba(33,150,243,.1);border-top:1px solid var(--blue);
+  padding:8px 10px;flex-shrink:0;
+}
+/* Undo/Redo共通 */
+.hist-btn{
+  width:100%;padding:5px;border-radius:4px;cursor:pointer;
+  font-size:.74em;transition:background .2s;border:1px solid;
+}
+.hist-btn:disabled{opacity:.35;cursor:default;}
+/* Subtract */
+#rect-btn,#poly-btn,#sel-union-btn,#sub-btn,#dist-btn,#survey-btn,#io-btn{color:#e8e8e8 !important;}
+#sub-btn{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+  border-radius:4px;cursor:pointer;color:rgba(255,255,255,.75);
+}
+#sub-btn.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.75);}
+#do-sub:disabled{opacity:.4;cursor:default;}
+#sh-list li.sub-base{outline:3px solid var(--blue);outline-offset:-2px;background:#1a2a3a !important;}
+#sh-list li.sub-target{outline:2px dashed #6ab0ff;outline-offset:-2px;background:#1a2030 !important;}
+/* 色フィルター */
+/* v0.0339 Fix5: 色別表示丸ボタン */
+.cf-circle-btn{width:26px;height:26px;border-radius:50%;border:3px solid rgba(255,255,255,.7);cursor:pointer;padding:0;transition:all .2s;}
+.cf-circle-btn:not(.on){filter:grayscale(1) brightness(0.35);border-color:rgba(255,255,255,.2);}
+.cf-circle-btn.on{box-shadow:0 0 6px rgba(255,255,255,.5);}
+.cf-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0;}
+#tot-sum{font-weight:700;font-size:.82em;color:#fff;margin-bottom:3px;}
+#tot-union{font-size:.76em;color:#90caf9;margin-bottom:5px;display:none;}
+#gray-toggle{width:100%;padding:5px;background:rgba(150,150,150,.18);
+           border:1px solid #888;border-radius:4px;cursor:pointer;
+           color:#ccc;font-size:.74em;transition:background .2s;}
+#gray-toggle.on{background:rgba(33,150,243,.35);border-color:var(--blue);color:#fff;}
+/* v0.0459: 測点移動ダイアログ(テンキー方式、Voldiaと統一) */
+.sv-dir-btn{background:rgba(0,150,200,.12);border:1px solid #00ccff;border-radius:6px;
+  cursor:pointer;font-size:.82em;transition:background .15s;}
+.sv-dir-btn.on{background:rgba(0,200,255,.4);color:#fff;}
+.sv-num-btn{background:rgba(0,80,110,.28);border:1px solid #1c5a72;border-radius:6px;
+  color:#7fdcff;font-size:1.05em;padding:10px 0;cursor:pointer;transition:background .15s;}
+#sv-ok:disabled{opacity:.4;cursor:not-allowed;}
+#sel-union-btn{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);
+  border-radius:4px;cursor:pointer;color:rgba(255,255,255,.75);transition:background .2s;
+}
+#sel-union-btn.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.75);}
+#do-sel-union{
+  width:100%;padding:5px;margin-top:4px;display:none;
+  background:rgba(33,150,243,.2);border:1px solid var(--blue);
+  border-radius:4px;cursor:pointer;color:#c8e6ff;
+}
+#do-sel-union:disabled{opacity:.4;cursor:default;}
+#sh-list li.sel-target{outline:2px solid #90caf9;outline-offset:-2px;background:#1a2a3a !important;}
+
+/* ===== キャンバスエリア ===== */
+#cv-wrap{flex:1;position:relative;background:var(--cv);overflow:hidden;touch-action:none;-webkit-touch-callout:none;user-select:none;} /* v0.0340 Fix2: スクロールをアプリ管理に統一 / v0.0438: タブレット対応、OS標準ジェスチャー無効化(左右パネル#sb-left/#sbは対象外) */
+/* v0.0439修正: canvas要素自体に touch-action:none を直接かけると、iOS Safari(WebKit)で
+   「操作(pointer event)は効くのに描画が再ペイントされず画面が真っ白/透明になる」既知の不具合が
+   実機(iPad Pro)で発生したため削除。ジェスチャー無効化は親#cv-wrapの指定だけで(仕様上)子canvasにも
+   効くので、これで両立できる。 */
+/* A009: チェック④対応の前提調査。iPad Pro第4世代で長押し時にOS標準のテキスト選択ルーペが
+   出る件、#cv-wrapに-webkit-touch-callout:noneを設定済みだが、WebKitはcanvas要素に対して
+   この継承が効かないことがある既知の癖があるため、canvas要素自身にも明示的に指定する。
+   (touch-actionは上記v0.0439の理由により付与しない) */
+#pdf-cv,#draw-cv{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}
+/* A009: 拡大鏡(ルーペ) — タッチでの精密ポイント指定用オーバーレイ */
+#magnifier{
+  position:fixed;z-index:9999;display:none;pointer-events:none;
+  width:var(--mag-size,200px);height:var(--mag-size,200px);
+  border-radius:50%;overflow:hidden;
+  border:3px solid #fff;box-shadow:0 4px 18px rgba(0,0,0,.55);
+  background:#e8e8e8;
+}
+#magnifier canvas{display:block;width:100%;height:100%;}
+
+/* X3: D&D全画面 */
+#drop-overlay{
+  position:fixed;inset:0;z-index:5000;display:none;
+  background:rgba(33,150,243,.18);
+  border:4px dashed var(--blue);pointer-events:none;
+}
+#drop-overlay.active{display:flex;align-items:center;justify-content:center;}
+#drop-overlay span{font-size:2em;color:var(--blue);}
+/* PDF未読込時はサイドバーUI無効化 */
+body:not(.pdf-ready) #sb-left > *:not(#logo-area),
+body:not(.pdf-ready) #sb,
+body:not(.pdf-ready) #cv-wrap canvas,
+body:not(.pdf-ready) #float-bar{
+  pointer-events:none;opacity:0.35;user-select:none;
+}
+body:not(.pdf-ready) #sb-left > *:not(#logo-area),
+body:not(.pdf-ready) #sb{filter:grayscale(80%);}
+#drop-hint{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  border:2px dashed var(--blue);border-radius:10px;
+  padding:28px 36px;text-align:center;
+  background:rgba(33,150,243,.07);z-index:10;cursor:pointer;
+  width:min(600px,90vw);display:none; /* v0.0406: dat-gate解決までは非表示（既定はJSでdat-gateを先に出す） */
+}
+#drop-hint p{font-size:1.15em;margin-bottom:6px;}
+#drop-hint small{color:#CACACA;}
+#drop-hint .warn-box{
+  margin-top:16px;padding:12px 16px;
+  background:rgba(255,180,0,.1);
+  border:1px solid rgba(255,180,0,.4);
+  border-radius:6px;font-size:.88em;
+  color:#c8a000;line-height:2;text-align:center; /* v0.0442: ⑦センタリング */
+  pointer-events:none;
+}
+/* v0.0406: 起動時Dat先読みゲート（Arecalayテーマカラー=緑系で#drop-hintと視覚的に区別） */
+#dat-gate{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  border:2px dashed #4caf50;border-radius:10px;
+  padding:28px 36px;text-align:center;
+  background:rgba(76,175,80,.08);z-index:11;cursor:pointer;
+  width:min(600px,90vw);display:none;
+}
+#dat-gate p{font-size:1.15em;margin-bottom:6px;color:#a5d6a7;}
+#dat-gate small{color:#CACACA;}
+#dat-gate .warn-box{
+  margin-top:16px;padding:12px 16px;
+  background:rgba(255,180,0,.1);
+  border:1px solid rgba(255,180,0,.4);
+  border-radius:6px;font-size:.88em;
+  color:#c8a000;line-height:2;text-align:left;
+  pointer-events:none;
+}
+
+/* PDF＋描画Canvas */
+#pdf-cv{position:absolute;top:0;left:0;z-index:1;transform-origin:0 0;
+        image-rendering:pixelated;pointer-events:none;}
+#draw-cv{position:absolute;top:0;left:0;z-index:10;transform-origin:0 0;will-change:transform;} /* v0.0440: iOS Safariで頻繁にclearRect+再描画するcanvasが
+        コンポジットされず表示更新されない不具合対策。will-changeでGPUレイヤーを常時確保し再描画を確実に反映させる
+        (transformはJS側(applyTrans)がstyle.transformで都度上書きするため、CSS側でtransformの値自体は指定しない) */
+#cv-wrap.drawing-mode{cursor:crosshair;} /* v0.0331 */
+
+/* スナップドット */
+.sdot{position:fixed;pointer-events:none;z-index:9000;transform:translate(-50%,-50%);display:none;}
+#sd-endpoint {width:10px;height:10px;border-radius:50%;background:rgba(255,50,50,.95);}
+#sd-midpoint {width:9px;height:9px;border-radius:50%;background:transparent;border:2px solid rgba(255,150,0,.95);}
+#sd-online   {width:9px;height:9px;transform:translate(-50%,-50%) rotate(45deg)!important;background:rgba(0,220,120,.9);}
+#sd-intersect{width:13px;height:13px;background:transparent;border:2px solid rgba(255,220,0,.95);border-radius:2px;}
+#sd-first    {width:15px;height:15px;border-radius:50%;background:rgba(255,220,0,.95);border:2px solid #fff;box-shadow:0 0 8px rgba(255,220,0,.8);}
+#sd-vector   {width:12px;height:12px;border-radius:50%;background:transparent;border:2px solid rgba(0,229,255,.95);box-shadow:0 0 6px rgba(0,229,255,.8);}
+#loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+         background:rgba(0,0,0,.75);color:var(--blue);padding:12px 22px;
+         border-radius:8px;font-size:1em;display:none;z-index:30;}
+
+/* ===== 右サイドバー（コントロール） ===== */
+#sb{width:252px;background:var(--panel);border-left:1px solid var(--bdr);
+    padding:10px 10px 160px;overflow-y:auto;display:flex;flex-direction:column;
+    gap:7px;z-index:100;height:100%;box-sizing:border-box;}
+.card{background:#2a2a2a;border:1px solid var(--bdr);border-radius:6px;padding:9px 11px;}
+.card h4{font-size:.82em;color:#CACACA;margin-bottom:7px;letter-spacing:.03em;}
+label{font-size:.78em;color:#CACACA;}
+.row{display:flex;align-items:center;gap:6px;margin-top:5px;}
+input[type=text]{flex:1;padding:5px 8px;background:#333;color:var(--text);
+                 border:1px solid var(--bdr);border-radius:4px;font-size:.83em;}
+button{background:var(--btn);color:#b0c8e8;border:1px solid #555; /* v0.0332: 統一文字色 */
+       padding:5px 10px;border-radius:4px;cursor:pointer;font-size:.78em;
+       transition:background .15s,border-color .15s;white-space:nowrap;}
+button.on{background:var(--blue);border-color:var(--blue);}
+/* A002: マスター実機報告 — 再タップキャンセル時、button{transition:background .15s}のフェードが
+   「キャンセル後も色が一瞬残っている」ように見えていた。ツール状態を表す2ボタンは
+   即時反映を優先し、この2つだけtransitionを無効化する(他のボタンの通常のホバー演出は維持)。 */
+#rect-btn,#poly-btn{transition:none;}
+.bgrp{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px;}
+
+/* スケール表示 */
+.sc-disp{
+  display:flex;align-items:center;gap:8px;margin-top:5px;
+}
+.sc-badge{
+  background:rgba(33,150,243,.2);border:1px solid var(--blue);
+  border-radius:4px;padding:4px 10px;font-size:.85em;font-weight:700;
+  color:#90caf9;white-space:nowrap;
+}
+#sc-change{font-size:.72em;padding:3px 8px;}
+
+/* スケールプルダウン */
+#sc-dropdown-wrap{margin-top:6px;display:none;}
+select#sc-select{
+  width:100%;background:#333;color:var(--text);border:1px solid var(--bdr);
+  border-radius:4px;padding:5px 7px;font-size:.82em;cursor:pointer;
+}
+#sc-custom-row2{display:none;margin-top:5px;}
+#sc-custom-row2 .row{margin-top:3px;display:flex;gap:4px;align-items:center;}
+#sc-custom-row2 input{flex:1;min-width:0;} /* A3: overflow fix */
+
+.srow{display:flex;justify-content:space-between;font-size:.74em;color:#CACACA;margin-top:5px;}
+.srow b{color:var(--blue);}
+
+/* スナップ */
+.snap-toggle{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.snap-toggle button{font-size:.7em;padding:3px 6px;}
+
+/* モーダル */
+.modal{display:none;position:fixed;z-index:10000;inset:0;background:rgba(0,0,0,.78);}
+.modal-c{background:var(--panel);margin:10% auto;padding:22px;
+         border:1px solid var(--blue);width:340px;border-radius:8px;text-align:center;}
+/* v0.0442: ⑦回転確認モーダルは既定の340pxだと文言の改行位置が悪いため、この画面のみ余裕をもって拡幅 */
+#rot-modal .modal-c{width:440px;max-width:90vw;}
+.modal-c h3{margin-bottom:12px;}
+.modal-c p{color:#CACACA;font-size:.85em;margin-bottom:10px;}
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:6px;}
+.sbtn{padding:4px 2px;font-size:.74em;border-radius:3px;}
+.sbtn.on{background:var(--blue);border-color:var(--blue);}
+#pg-btns{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;max-height:180px;overflow-y:auto;} /* v0.0337 Fix6 */
+
+/* 回転UI */
+#rot-overlay{
+  position:fixed;inset:0;z-index:9500;display:none;pointer-events:none;
+}
+#rot-overlay.active{display:block;}
+/* クロスヘア */
+#rot-cross-h{
+  position:absolute;top:50%;left:0;right:0;height:1px;
+  background:rgba(255,60,60,.7);transform:translateY(-50%);
+  box-shadow:0 0 4px rgba(255,60,60,.5);
+}
+#rot-cross-v{
+  position:absolute;left:50%;top:0;bottom:0;width:1px;
+  background:rgba(255,60,60,.7);transform:translateX(-50%);
+  box-shadow:0 0 4px rgba(255,60,60,.5);
+}
+/* 回転コントロールパネル */
+#rot-ctrl{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  z-index:9600;pointer-events:all;
+  background:rgba(20,20,20,.92);border:1px solid var(--blue);
+  border-radius:10px;padding:14px 20px;display:none;
+  align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;
+  box-shadow:0 4px 20px rgba(0,0,0,.7);backdrop-filter:blur(4px);
+}
+#rot-ctrl.active{display:flex;}
+#rot-ctrl label{font-size:.78em;color:#CACACA;}
+#rot-ang-display{
+  font-size:1.6em;font-weight:700;color:#60c0ff;
+  min-width:100px;text-align:center;letter-spacing:.03em;
+  background:#111;border:2px solid var(--blue);border-radius:6px;padding:4px 14px;
+  text-shadow:0 0 8px rgba(96,192,255,.5);
+}
+#rot-ang-input{
+  width:72px;background:#222;color:var(--text);border:1px solid #555;
+  border-radius:4px;padding:4px 6px;font-size:.85em;text-align:center;
+}
+.rot-step-btn{
+  padding:5px 10px;font-size:.8em;border-radius:4px;
+  background:#2a2a2a;border:1px solid #555;color:var(--text);cursor:pointer;
+  transition:background .1s;
+}
+#rot-ok{
+  padding:6px 20px;background:var(--blue);border:none;border-radius:5px;
+  color:#fff;font-size:.85em;cursor:pointer;font-weight:600;
+  transition:filter .15s;
+}
+#rot-reset{
+  padding:5px 10px;background:#333;border:1px solid #666;border-radius:4px;
+  color:#CACACA;font-size:.78em;cursor:pointer;
+}
+/* v0.0435: 回転モード中は左右パネルを暗転させ操作不可にする */
+#sb-left.rot-locked,
+#sb.rot-locked{
+  opacity:.3;pointer-events:none;filter:grayscale(60%);
+  transition:opacity .2s,filter .2s;
+}
+
+/* トースト */
+#toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+       background:#1a1a2e;color:#e0e8ff;font-size:.82em;font-weight:600;
+       padding:7px 18px;border-radius:16px;pointer-events:none;
+       border:1.5px solid #4488cc;
+       box-shadow:0 3px 14px rgba(0,0,0,.55);
+       z-index:99999;opacity:0;transition:opacity .25s;white-space:normal;text-align:center;max-width:80vw;}
+#toast.show{opacity:1;}
+#toast.large{bottom:50%;transform:translate(-50%,50%);background:#7a0000;color:#fff;
+       border:2px solid #ff4040;font-size:1.05em;padding:16px 26px;border-radius:10px;}
+
+/* スクロールバー（左パネル） */
+#list-area::-webkit-scrollbar{width:4px;}
+#list-area::-webkit-scrollbar-track{background:transparent;}
+#list-area::-webkit-scrollbar-thumb{background:#444;border-radius:2px;}
+#sb::-webkit-scrollbar{width:4px;}
+#sb::-webkit-scrollbar-track{background:transparent;}
+#sb::-webkit-scrollbar-thumb{background:#444;border-radius:2px;}
+
+/* B-5: フローティングバー */
+#float-bar{
+  position:absolute;top:44px;left:50%;transform:translateX(-50%);
+  z-index:50;display:flex;gap:6px;pointer-events:all;
+}
+#float-bar button{
+  padding:6px 14px;border-radius:6px;border:2px solid #333;
+  cursor:pointer;font-size:.82em;
+  background:#fff;color:#222;font-weight:700;
+  box-shadow:0 2px 8px rgba(0,0,0,.35);
+}
+/* v0.0445: ①絵文字(🗑/📌)によって行の実測高さが微妙に異なり、部分削除を実行ボタンと高さが
+   揃わない問題があった。line-height任せの中央寄せをやめ、flexboxで高さ・中央位置を強制固定 */
+#do-sub,#sub-keep-toggle{
+  width:190px;height:38px;box-sizing:border-box;
+  display:flex;align-items:center;justify-content:center;line-height:1;
+}
+/* v0.0464: 追6対応。「部分削除を実行」がメインボタンのはずなのに文字が小さいとの指摘。
+   高さ(38px)は変えず、文字サイズだけ拡大する。 */
+#do-sub{font-size:1.05em;}
+/* 画面上部ステータスバー（全ツール共通） */
+#status-bar{
+  position:absolute;top:0;left:0;right:0;
+  background:#1a2a4a;border-bottom:2px solid #4488cc;
+  color:#c8e0ff;font-size:.82em;font-weight:600;
+  text-align:center;padding:5px 10px;
+  z-index:45;pointer-events:none;
+  display:none;
+}
+/* v0.0382 Fix1: コピーボタンはpointer-eventsを有効に */
+#status-bar button{pointer-events:auto;}
+/* C-2: 距離計測バー */
+#dist-warn-bar{
+  display:none !important; /* v0.0316: setStatusに統合済み */
+}
+#dist-result{
+  position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+  background:#fff;border:2px solid #0070c0;border-radius:6px;
+  color:#0070c0;font-size:.88em;font-weight:700;
+  padding:5px 14px;z-index:50;
+  pointer-events:none;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(0,0,0,.25);
+}
+/* B-8: 端数調整ボタン */
+.sr-btn{
+  padding:2px 8px;border-radius:3px;border:1px solid #555;
+  background:rgba(255,255,255,.06);color:#CACACA;font-size:.72em;cursor:pointer;
+}
+.sr-btn.on{background:rgba(0,200,255,.2);border-color:#0af;color:#0af;}
+/* B-15: 左UI横並び */
+#sh-list li{
+  display:flex;align-items:center;gap:4px;padding:4px 6px;
+  border-left:3px solid #555;border-bottom:1px solid rgba(255,255,255,.05);
+  cursor:default;
+}
+#sh-list li.sel-target{border-left-color:#80ff80;}
+#sh-list li.sub-base{border-left-color:#ff6060;}
+#sh-list li.sub-target{border-left-color:#ff9900;}
+#sh-list li.highlight{background:rgba(0,180,255,.18);border-left-color:#00aaff !important;box-shadow:inset 2px 0 0 #00aaff;}
+.sh-check{flex-shrink:0;}
+.sh-clrbtn{width:14px;height:14px;border-radius:3px;border:none;cursor:pointer;flex-shrink:0;}
+.sh-name{font-size:.75em;color:#ccc;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer;}
+.sh-name.sel-hl{color:#80ffff;}
+.sh-name.warning{color:#ff9900;}
+.sh-area{font-size:.72em;color:#CACACA;white-space:nowrap;margin-left:auto;flex-shrink:0;}
+.delbtn{font-size:.65em;padding:1px 5px;flex-shrink:0;}
+#no-items{color:#CACACA;font-size:.8em;text-align:center;padding:16px 0;}
+
+/* 入出力メニュー */
+.io-top-btn{
+  padding:6px 4px;background:rgba(80,120,200,.18);color:#dde6ff;
+  font-size:.78em;cursor:pointer;
+}
+.io-top-btn.active{background:rgba(80,120,200,.4);color:#fff;font-weight:700;}
+.io-sub-btn{
+  display:block;width:100%;text-align:left;margin-bottom:3px;
+  padding:5px 8px;background:rgba(255,255,255,.05);
+  border:1px solid #445;border-radius:4px;
+  color:#ccd;font-size:.78em;cursor:pointer;
+}
+
+/* 免責ダイアログ */
+#disclaimer-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  padding-top:9vh;gap:14px;
+  /* v0.0461: マスターより要望。全体を上に詰めて下に余白を作り、そこにブックマーク案内を表示する */
+}
+#disclaimer-bookmark-tip{
+  position:absolute;left:0;right:0;bottom:11vh; /* v0.0465: 低解像度画面で下部トーストと
+     重なるとの指摘のため6vh→11vhに引き上げ */
+  text-align:center;color:#8fa8d8;font-size:.8em;line-height:1.7;
+  padding:0 24px;pointer-events:none;
+}
+#disclaimer-bookmark-tip b{color:#bcd2ff;}
+#disclaimer-bookmark-tip kbd{
+  display:inline-block;background:#2a3550;border:1px solid #4a5f8a;border-radius:4px;
+  padding:1px 7px;color:#dce8ff;font-family:inherit;font-size:.95em;box-shadow:0 1px 0 rgba(0,0,0,.3);
+}
+/* v0.0448: 起動画面(免責ダイアログ)の枠の外側に、ロゴ・アプリ名・フリガナを追加 */
+.disc-header{display:flex;align-items:flex-end;gap:10px;}
+.disc-logo{display:block;height:42px;width:auto;border-radius:4px;}
+.disc-name-stack{display:flex;flex-direction:column;align-items:center;line-height:1;}
+.disc-furigana{font-size:.72em;color:#88aaff;letter-spacing:.2em;margin-bottom:4px;
+  position:relative;top:4px;} /* v0.0451: AreCalの文字幅中央に合わせ、さらに少し下げる */
+.disc-appname{font-size:1.7em;font-weight:800;color:#fff;letter-spacing:.03em;
+  text-shadow:0 0 12px rgba(33,150,243,.5);}
+#disclaimer-modal .disc-box{
+  background:#1a1a2e;border:1px solid #446;border-radius:12px;
+  padding:28px 32px;max-width:540px;width:90%;box-shadow:0 8px 40px rgba(0,0,0,.7);
+}
+#disclaimer-modal h3{
+  color:#88aaff;margin:0 0 16px;font-size:1em;text-align:center;letter-spacing:.05em;
+}
+#disclaimer-modal p{
+  color:#ccc;font-size:.82em;line-height:1.85;margin:0 0 20px;white-space:pre-line;
+}
+#disclaimer-modal button{
+  display:block;width:100%;padding:10px;border-radius:6px;
+  background:var(--blue);border:none;color:#fff;font-size:.95em;
+  cursor:pointer;font-weight:700;letter-spacing:.05em;
+}
+
+
+#sc-cal-dialog{
+  position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8000;
+  display:none;align-items:center;justify-content:center;
+}
+#sc-cal-dialog .cal-box{
+  background:#1a1a2e;border:1px solid #446;border-radius:10px;
+  padding:22px 26px;width:300px;box-shadow:0 6px 30px rgba(0,0,0,.6);
+}
+#sc-cal-dialog h4{color:#adf;margin:0 0 12px;font-size:.95em;}
+#sc-cal-dialog input{width:100%;box-sizing:border-box;margin:8px 0;}
+#sc-cal-dialog .cal-btns{display:flex;gap:8px;margin-top:12px;}
+#sc-cal-dialog .cal-btns button{flex:1;padding:7px;}
+
+/* B7: PDF濃度スライダー */
+#pdf-opacity-wrap{margin-top:8px;font-size:.75em;color:#CACACA;}
+#pdf-opacity-slider{width:100%;accent-color:var(--blue);cursor:pointer;}
+
+/* v0.0312: スナップ強調 */
+.sdot{transition:none;}
+#sd-endpoint {width:12px;height:12px;box-shadow:0 0 6px rgba(255,50,50,.8);}
+#sd-midpoint {width:11px;height:11px;box-shadow:0 0 6px rgba(255,150,0,.8);}
+#sd-intersect{width:14px;height:14px;box-shadow:0 0 6px rgba(255,220,0,.8);}
+
+/* v0.0324: 測点 */
+/* v0.0332: 全ツールボタン .on 統一 */
+#sel-union-btn.on,#sub-btn.on,#dist-btn.on,#survey-btn.on{
+  background:var(--blue) !important;border-color:#64b5f6 !important;color:#fff !important;}
+/* v0.0347: rect/polyは!importantなし → inline styleで現在色を反映 */
+#rect-btn.on,#poly-btn.on{
+  border-color:#64b5f6;color:#fff;}
+/* v0.0328: PDF出力範囲モード */
+#pdf-range-overlay{position:fixed;inset:0;z-index:8000;cursor:crosshair;background:rgba(0,0,0,.35);display:none;}
+#pdf-range-overlay.active{display:block;}
+#pdf-range-box{position:absolute;border:2px solid #00ff88;background:rgba(0,255,136,.08);pointer-events:none;box-shadow:0 0 0 9999px rgba(0,0,0,.35);}
+.survey-tip{position:fixed;background:#000;color:#fff;font-size:.72em;
+  padding:2px 7px;border-radius:4px;pointer-events:none;z-index:9999;white-space:nowrap;display:none;}
+
+/* A002: iOS Safariのsticky :hover対策。タッチ端末はタップ後もhover状態が残留し、
+   ツールボタンの色が消えない不具合の実害があったため、hover対応デバイス限定で有効化 */
+@media (hover:hover) and (pointer:fine){
+
+#sh-list li:hover{background:#333;}
+
+.delbtn:hover{background:#c0392b!important;border-color:#c0392b!important;}
+
+#clr-popup button:hover{filter:brightness(1.3);}
+
+#sub-btn:hover{background:rgba(255,255,255,.13);}
+
+#gray-toggle:hover{background:rgba(150,150,150,.4);color:#fff;}
+
+.sv-dir-btn:hover{background:rgba(0,150,200,.28);}
+
+.sv-num-btn:hover{background:rgba(0,110,150,.42);}
+
+#sel-union-btn:hover{background:rgba(255,255,255,.13);}
+
+button:hover{background:var(--blue);border-color:var(--blue);}
+
+/* v0.0424: ON時(var(--blue)の濃い塗り)とマウスオーバー時の色を区別しやすくする */
+.snap-toggle button:hover{background:#3d5468;border-color:#5a94b8;}
+
+.snap-toggle button.on:hover{background:var(--blue);border-color:var(--blue);}
+
+.rot-step-btn:hover{background:var(--blue);border-color:var(--blue);}
+
+#rot-ok:hover{filter:brightness(1.2);}
+
+#rot-reset:hover{background:#444;}
+
+.io-top-btn:hover{background:rgba(80,120,200,.35);}
+
+.io-sub-btn:hover{background:rgba(255,255,255,.12);}
+
+#disclaimer-modal button:hover{filter:brightness(1.2);}
+}

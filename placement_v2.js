@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0077'; // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
+  const ARECALAY_VER = '0.0078'; // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
@@ -808,6 +808,15 @@
         cancelAnnotMode();
         closeMachineryPicker();
         _lockPmToolButtons(true);
+        // A032: AreCal本体と同様、上部コメントを表示し、コメント・入出力メニュー・タッチ用キャンセル
+        // ボタン以外を暗転して操作不可を強調する
+        _setStatus(_IS_TOUCH_DEVICE
+          ? '📂 読込か書出を選択してください（「✕ キャンセル」ボタンで中止）'
+          : '📂 読込か書出を選択してください（右クリックでキャンセル）');
+        if (typeof window._ioDimShow === 'function') {
+          window._ioDimShow([['#status-bar'], ['#pm-io-btn', '#pm-io-menu'], ['#touch-cancel-btn']],
+            () => closePmIoMenu());
+        }
       } else {
         closePmIoMenu();
       }
@@ -1423,6 +1432,11 @@
     if (writeSub) writeSub.style.display = 'none';
     if (writeBtn) writeBtn.classList.remove('active');
     _lockPmToolButtons(false); // v0.0412: 4) ロック解除
+    // A032: 暗転解除。上部コメントは入出力メニュー用の文言が残っている場合のみ消す
+    // (PDF出力の範囲指定など、直後に別のコメントが出た場合は消さない)
+    if (typeof window._ioDimHide === 'function') window._ioDimHide();
+    const _sb = document.getElementById('status-bar');
+    if (_sb && _sb.textContent.indexOf('読込か書出を選択') >= 0) _setStatus('');
   }
   // v0.0409: 種別表示（B3） — カテゴリ／注釈タイプ単位で表示状態(ON/半透明/OFF)を一括変更
   const PM_VISTYPE_DEFS = [
