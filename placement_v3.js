@@ -336,7 +336,8 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0078'; // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
+  const ARECALAY_VER = '0.0079'; // A037: window._pmResetAll追加(新PDF開始時の全消去)
+  // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
   const COLORS      = ['#ff4081','#e8a020','#188C1C','#1B3EAB','#aaaaaa','#ff8c00','#111111'];
@@ -520,6 +521,8 @@
     // A014: 更追4対応。AreCal側から、Arecalayの入れ替えモードを強制終了できるよう公開
     // (モード切替(AreCal⇄Arecalay)時に暗転オーバーレイが残留するのを防ぐため)。
     window._pmEndReorderMode    = _pmEndReorderMode;
+    // A037: 新PDF開始時の全消去(AreCal側のloadPDF(file,true)から呼ばれる)
+    window._pmResetAll          = pmResetAllForNewPdf;
     tryAutoLoadMachinery();
   }
 
@@ -4050,6 +4053,20 @@
     const r=document.getElementById('pm-redo-btn');
     if(u) u.disabled=pmUndoStack.length===0;
     if(r) r.disabled=pmRedoStack.length===0;
+  }
+  // A037: 新しいPDFで作図を始める際の全消去(AreCal本体の_resetForNewPdfから呼ばれる)。
+  // 確認ダイアログはAreCal側で出し済みのため、ここでは確認なしで配置データ・Undo履歴を全て初期化する。
+  // Arecalayモード表示中なら面積計算(AreCal)モードへ戻す(新PDF読込後の縮尺・角度ダイアログ操作のため)。
+  function pmResetAllForNewPdf() {
+    try { _pmEndReorderMode(); } catch(e) {}
+    cancelAnnotMode();
+    steps = [[],[],[],[],[]];
+    currentStep = 0;
+    annCounter = 0;
+    pmUndoStack = []; pmRedoStack = [];
+    selectedUuids.clear();
+    updatePlacedList(); updateTabUI(); syncUndoRedoBtns();
+    if (placementMode && typeof window._pmToggle === 'function') window._pmToggle();
   }
   function pmClearAll() {
     if(!steps[currentStep].length){_toast('配置データがありません');return;}
