@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0081'; // A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0082'; // A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -564,7 +564,12 @@
     return text.substring(open, close + 1);
   }
 
-  async function tryAutoLoadMachinery() {
+  // A041: 失敗理由をconsole.warnに残す(旧: catch(_)で握りつぶしており、「見つかりません」の原因が追えなかった)。
+  // 通信エラー・HTTP 5xx/408/429のみ1.5秒後に1回だけ再試行する(一時的な通信不調対策)。404や、読めたが
+  // MACHINERY_DATAが無い場合は再試行しても無意味なので即「見つからない」扱い(file://運用では毎回fetch失敗するため、
+  // その場合は再試行分1.5秒だけゲートの「読込中」表示が長くなる)。
+  async function tryAutoLoadMachinery(isRetry) {
+    let failReason = null, retryable = false;
     try {
       const resp = await fetch('./CalayMachineryData.dat', {cache:'no-cache'});
       if (resp.ok) {
@@ -572,9 +577,22 @@
         const text = await _decodeMachineryBytes(buf);
         const objText = _extractMachineryObjectText(text);
         if (objText) machineryData = _migrateMachineryCategories(JSON.parse(objText));
+        else failReason = 'ファイルは読めたがMACHINERY_DATAが見つからない';
+      } else {
+        failReason = 'HTTP ' + resp.status;
+        retryable = (resp.status >= 500 || resp.status === 408 || resp.status === 429);
       }
-    } catch(_) {
+    } catch(err) {
       // file:// 運用など、fetchが失敗する環境では手動読込(#dat-gate)に委ねる
+      failReason = String((err && err.message) || err);
+      retryable = true;
+    }
+    if (failReason && Object.keys(machineryData).length === 0) {
+      console.warn('[A041] CalayMachineryData.dat の自動読込に失敗: ' + failReason + (isRetry ? '（再試行後）' : ''));
+      if (retryable && !isRetry) {
+        await new Promise(r => setTimeout(r, 1500));
+        return tryAutoLoadMachinery(true);
+      }
     }
     _pmAnnounceMachineryStatus();
   }
