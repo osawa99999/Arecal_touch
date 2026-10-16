@@ -30,7 +30,7 @@
      user-scalable=no / maximum-scale の指定を意図的に無視する仕様に変更済みのため、この
      meta指定だけでは不十分な可能性が高い。念のため指定はしつつ、実効性のある対策は下記
      script内のgesturestart/gesturechange/gestureend側(WebKit独自イベント)で行う。 -->
-<title>Arecal_Touch A039</title>
+<title>Arecal_Touch A040</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 <!-- v0.0465: 面積出力Excelへの色付け・関数対応のため、xlsx.full.min.js(SheetJS Community、
      書き込み時のセル装飾は非対応)から xlsx-js-style(SheetJS 0.18.5本体+セルスタイル拡張の
@@ -93,6 +93,28 @@
 <script src="clipper_6.4.2.2.js"></script>
 <!-- A034: CSSを別ファイル化 -->
 <link rel="stylesheet" href="arecal_touch.css">
+<style id="su-style">
+/* A040: 起動ダイアログ(外部CSSには手を入れず、このブロックだけで完結させる) */
+#su-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:8600;align-items:center;justify-content:center;padding:12px;box-sizing:border-box;}
+#su-dlg{background:#232323;border:2px solid #2196f3;border-radius:14px;padding:20px 24px 18px;width:min(470px,100%);max-height:100%;overflow:auto;box-sizing:border-box;color:#eee;font-size:1rem;box-shadow:0 8px 40px rgba(0,0,0,.6);}
+#su-dlg .su-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0;min-height:40px;}
+#su-dlg .su-lab{display:flex;align-items:center;flex-wrap:wrap;gap:4px 8px;font-weight:700;font-size:1.05em;color:#fff;}
+#su-dlg .su-paper{font-weight:400;font-size:.72em;color:#6ea8ff;}
+#su-dlg select,#su-dlg input[type=number]{background:#2f2f2f;color:#e4e4e4;border:2px solid #555;border-radius:8px;padding:7px 10px;font-size:.95em;min-width:132px;}
+#su-dlg select:disabled{opacity:.6;}
+#su-dlg input[type=checkbox]{width:26px;height:26px;accent-color:#2196f3;cursor:pointer;flex:none;}
+#su-dlg .su-ic{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid #6ea8ff;background:transparent;color:#6ea8ff;font-size:.8em;font-weight:700;line-height:1;padding:0;cursor:pointer;}
+#su-dlg .su-custom{display:none;align-items:center;justify-content:flex-end;gap:8px;margin:-6px 0 12px;color:#ddd;}
+#su-dlg .su-custom input{min-width:0;width:92px;text-align:center;}
+#su-dlg .su-err{min-height:1.2em;margin:0 0 6px;color:#ff7b7b;font-size:.85em;text-align:right;}
+#su-dlg .su-readwrap{text-align:center;margin:10px 0 12px;}
+#su-read{background:#fff;color:#111;border:2px solid #888;border-radius:10px;padding:8px 22px;font-size:.95em;font-weight:600;text-decoration:underline;cursor:pointer;}
+#su-dlg .su-agree{font-size:.88em;font-weight:700;line-height:1.7;margin:6px 0 14px;color:#f2f2f2;}
+#su-dlg .su-foot{text-align:right;}
+#su-start{background:#2196f3;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:1rem;font-weight:700;cursor:pointer;}
+#su-start:active{filter:brightness(.9);}
+#su-tip{display:none;position:fixed;z-index:8700;max-width:min(340px,92vw);background:rgba(20,20,35,.97);border:1px solid #4488cc;border-radius:8px;padding:9px 13px;font-size:.82em;line-height:1.7;color:#d6e6ff;white-space:pre-line;box-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none;}
+</style>
 </head>
 <body>
 <!-- v0.0460: マスターより要望。JavaScript無効時の案内表示(<noscript>)。
@@ -117,7 +139,7 @@
     <div id="logo-area">
       <div class="logo-row">
       <img id="logo-helmet" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAANgAAACgCAYAAABuUaJBAAAq/ElEQVR42u19eZhkRZXv72RWdTXddEPTgM0iCAIiiLLLLiACCrYIzTiIyOqG+j0RRcU3ijMyLqCi+HiAjAsDguyIOsgAsgiCyDLssm/SzdoLTW9Vmb/5455DnYqKe/NmVtaWFef78svt3oi4EWePE+cACRIkSJAgQYIECRIkSJAgQYIECRIkSJAgQYIECRIkSJAgQRMgaQrGHpCsNLk2BAARqafZSwQ2EQhE3NxKg7mmiNT0vqp9HkK/Fd9eUb/hu4gwrV4isLFKVIbMtWYRVQmjKiJ9+n1jAOsAmBZZJ+r35QAW6G+9AF4QkX+4sdRbIZihPEeCRGDDpc4N4P4kpwKYoa9V9X0NAPZ7j35+HsAtIvJnvW82gBMBbA2gu8mhLAbwIIAzReQX2t4u2tYMvWYJgIUAFun1L+vn1wAsEJHXQmIbikRNkAhsyFLLqWPvA3CAIvR6itQrlWzqKgA3AjjV/VZ36lve2knOWv4UwIYAPlCy/2VKeC8BeADA9QAuE5GXE5ElAhtV4iK5KYAfA9g751IjlDxi8XYS9fpqK0NyfVTcb7WCdS9ypjwP4Csicl4iskRgI64Wikid5PsBXABgFUVkOskiTcxvzRFbO6DZ9hgQKQF06W9fFJEfJSJLBDaiNheAjQDcA2AKgD6HkO2Gvgb/D1e/JnmrAHYWkVsTkTUPlTQFzTMldWicpMTVG0FyU/VqSiD+1exeVVeDV7NEE46npq96BDdMsn0rkHQJkgQbFuklIkKSMwE8CWDlyDzW28C46KTXLwDM1e8zAEx2160E4CPo9zi2ez39ODYRkadMPU7YUJ47JmhO4tcAvAfZHlUtYudUkHnjngMwD8Ar6HeHzwWwHYDDlRBDL2Bou/UCOLZILVPX/qSAIOrBdxvn+QDuR7Z1MFMZxOr6WhPAmyNj6lMC3gvAOfp8icASDIsE6yZZIXk6yTrJXvZDn/72K5IzCto4go2hl+QCkn8luTLJLu27K/jcQ/IukktIrijR7tEF45pM8l9d/ww+n6/P3p0wIUmwtqmE6Hdl10WkV3/fGfF9KAHwMxGZT7IL/V5FqASpIdtkvkOl2SsAXlVp96J+n6+/LQCw0PrMc4CQ3B3AdG13hkqbmao+zlDp1ANgFoDHdVw2FpNyIiLLSF4E4OuBVDZ1dwdVDevq6DEbrZ4iPhI0S1gVDRkKf1+T5MEkl6m0qit3t/f5JFcjKYqEeUQ75hiJvnpIPq3PUnNSrK7fjyW5fuT+at7zJidHggGEBfRHpZOcBmB7ALsA2BXANmq/hGA2zvUi8t5GjoBAMsacCm9sGjeSDjmBxXlrW88bl9s4vxjAHORvPSwFcC+Am5BFfNxiIVbKlJicIAliHLzqvm+ndtazETumlmMzkeRJen/XOJyDLn3/fMQO83ZmCE+T/DHJdwUSLTHvBG9wXfu8E8nLIwTV65wYLCC6PcM2x9s8kNwqUH9DqOtc9AbMppfkeSQ3j81tggkstUiuTfLnARL1FiBZiHBmf606Vu2skg4dqB32TIG0jj2/l3ZLSX6H5MrjVZonaJOtpZ8/SnJuwJ2bAbv+urDtcSzFLi5QCcvMBUk+QHKPia4yViYgcVU1UHcyyTOQbb7OUqNeMHjjmCgOcTInxM0dMKdGBH8Onm2Qs0TnJPy/6uZrMwDXkfyaiNQ0AiZ5GjucuMyQX5/kbcEGcZ6tEVMHO8r+ikiwdxc8bz0itfLmxebmAj2EmuyyCUBcO5L8R4GnLFR1XiB5tkZgvB4gmb2/Op7tr4gdNsWpzbXgWZeRPIbkWfrcRR5Gb5/dQXK9ZJd1JnF16/sHNawoDyFqDpGeJXk8yTUdYYaGv7Vx43i3vyJS7MrIPNnnvfWadUiepA6eImlmRPYMyS0SkXUmcR3hiKNWILXqJE8jubrzNnaR/HZBnN6/dwrSOEl/fMHznhFsb2xA8tcNpFmf87bumIis84grtAtiHPYx83wZAjiOfl0EeaytfTvFvmhgh9nz3mXhYJ5ISB7qpFnRRvVCjaFMRNYBnPiIiPoXc2T83kmtLovP0+8zHOKE9tciL+06YN7smaeRfCnnmZeQXMvUYh+7SfLtJO8pIDIj0uUk90lE1tnEZYt9WsjBA26+W4H9dWunEJd77oq+/1eBHTY7Ml8279OdDVdEZK8ldXH8EteHSkqu4z0nzmnrawX2yA86DUFKPvepsecOCO5Md089h8gWktyuU1TsTicukzg7qwoSs7m85DrCq4Tt4uQdNI+7FEju2/Ikt2dWJL9fQGTW1lzNZpyIbByoNRvq3hULiKtG8jDvCCmwRaaSfDHHFnmd5Czff4fMpThV75WCZ18r79nN+6qfv1Lgxjci+3ujs3QJRhEhNN5tJZJ357iKvVp4aBFxlfCmWTt3dJr9FWFYRd7T9xdJnYDIvlxgk9lv15vntlPmtFM4heXrOwfAlshi4fyi+4y5R4rI+SS7GxzHtwXeRd9rQXsAcJv134F8y3Dj5uCZgf64zF2DuRo4gdlh0ZrO9SkATkZ2iDOc9y5dsz0AnK5rmVTFMWaQf74Eh/xCI8kVkWBXFNhfczrVA+aef88CO+zmMupxIMl+VLBOlrjnk8mzOLaQYGtdnJiOH3r7yhBX0dmoukOGDTrN/orMwWqa4SpvD3CNMmpycP7ughwiMzV+GcltktNj7NhdD+TYXfb98iJvYQHhxk73GqHdp94y6eA5NjvsxgI7bO+yhOCiP7pJ3pSzZtbuw+pgGtf22HjmvGZ3fRfZ2aPQ7jKb6+8APq7IUjbFmLe/JLC/zP64RZO7dDKHNfy4pcAO27HIDovYZFDbdw6Ap3X+6kGffQDeluyx0VcN35Ozx2KqxhIXvV1tof0LCjZaP97pdoKbh30L7LCmT3K7drcvodoflFTF0VENJ+veSWy/yxbnE80SgbM9ukk+nmN/9ZF8W6faX5G5WF3tLebkgpxRxg7LcU59Ksces/3KF7X/StofG1mu+m85C2Oc9ZJWJIyzO94RCbPy9kG1WaQa50R2W4EdtlsrUsYR2fkNbOhfJSk2Qka3SrC3aShUX4QAjOut0QrXc4t+TIF6eN5EWXA3H6cWzMfXWmRm5vSYTvKpIIwtJLK9xuOcjzeRa7W5foj+iiJeglCf6XMi8pJe32qW2Z0L/ru5rGHfCTSm7zdFntk+7xY4PsoupuXFXwTgSG0vLLdrv51OsiejsZTUdCQM7oYu+SGoQ1VVA/NytL+j0+2viMo8qyAnyUuaZrwlldlJyZ/krK1Jyq8kVXH4HBsVRfx7IxmfDPFfI7leqwGjQcDwigCJjNCecielZaLMv77fXmCH7doq8jvH1bQcVdG+LyS51ngKCB4vHLiqqt7HAWyB/j0uONWkAuBkEXnGXd/qfOyArAxQzalBprbcISK9ml9xopTtsbm+PZgLrxbu0Kra7PbHXgPwf5xa6NXEOrIyTd801TKJnvZKr8kkn4hwN/P0PaKhTS1HVzhV5awCg/7zraqgHaCezymIy7xyqOqb6+f3kX5s3ZeT3Cwda2m/F+sTDWyvg9qwwFYn654c+4skt59odoBTnd+scYIx1XkuySlDUZ0jXuJwm8SY3AXJFmuf9BKVXo9HpJcR1y1DdToESLR0uJCoA9bi7hzpQpLvbqMUOz2iRdRdtZvNw7JTyQZrzfYigMMAbOhsLQT6/tdb1f8jbb0bwOQc++uvIrJkgtlf4VrcFrHDLFZzpzasg+WwPxnAQvTnu/e2WBeAr4+HNRizBKYSoqYeu+MxsN6xLWoFwA0icoNWlay1gcB2iSCQfb61DQg03iG2BygBgbWM+OqcqojIPACnYXCwtRHcgSTfiv6a0QlatL3mNDjWsHs79PGSIUG7tqOvcW6HFW1hPKObwUNSoZ06OpPky5EjQ6Y2/iTZYkNf0FsKPFc3DNX2Cvoq2kx9cSibqR1kh1X0LFzMCVQnuVWbGJ4x2G/l2GJ1LT4x0yeJTSpieUOXJHdStSPv3NX326Sy2f3bA5gS2F+2z3O3iLymqignKN+z/cU7grmBm7Nd27QmdSWaMwEsjthiNQAzkOVYIcbombExq7vqpH0uZyErAP4HwNUkZYi2l0eGrTA4Fs6+3zpOHEMjATfl8UZkgQDtWH+zxeYC+HXEFqtof58hOUntdUkEVkJdE5EaybcA+LBOYjVCEKcNw4niBc5T5ZFGcrxnEw1sXv7q5oXuPwHwWnvRgaLOjvDEekX73BDA/mNZio1V58a/RnRv0/n/QXLlduneboNzHY1nNDuv5pJsvmks6/ojaIOJHkZ9LKdizbbtsIsj9vFVObZ4neSf2tnnRFjAKSSfixjSRmzf8sTY5oXcx51kJsk7nfewktboDWa0Ock/OSfQXJfQtdLG/qra314NsjU3nRpiIkuvQ3KiBeqaZ2O94UB4R2RTNF/Els59n4JLHSN0nzfX7MczhosJuSKI9xcw3dMTgZVH8BsjR1JsIn8znBOZk2c9qR45kiyUNsPMeD+X47K3M2mrJGbYmLi2yCk59MZm73DHoLnzSZW0WKUIbVhzFzotYqYrvB6rFXBku02HTlQPY6mV+4LSpdICwVRUzYi9ho2YHLEW9S1tRPYBbbeRgN54tXpf8Krk2N8SW2MXBHxWAX4MOei7o3V6PdE6r0DP/mwzHKoZhPCE3o4FiiFRieu72EFlaNvcphHYdg2cHe8cS0Q2VkRpFdk+x/4A3oRsQ9EIgzrOhQB+o7/VGnFPEanbBjTJqcgyxW4G4K0A1tJLXwHwIoDHkWUAflxE+tyC1puN2oj0PRPAJgA2B7AegDWR7RctAPAkgPsB3KuJX1pGPt07/BCA2QCWAVgZwHIAn9UT2NLMs9hzaMaoHdyavADg0/rfoDbdWLYG8A39Wdx7TdfzaQDHAaCI9JH8HICPKR50AXgewBzXT03HdIeWjdouwBNr93BkweG2T5bA2V/XFjg3flHGkA5KmO5L8jxXwKEIetVL9WNFjqYN96Dvg0n+ToNVG8HzJH9D8mhNYdaUGuxc53dH2t6rFZvVSYxrg/ZezMsJ6dZxHbfNkgdWW8yCg78T/D837MeZEZ8sCMh+bqKe2WtEXJu4FNixZJ87NUJ4twDbuYIF4enn3sgrFqn/S1fBsdoEQm5M8oaI+tKb8wqdOTs2Q9iu32103Cu03aX6XBe24uFz7V6u7Vh7j8QIzNm5PS45juWutHm37/t5m1E/f8OlO+8j+WiEwLyzY0GBs+OA5OwYTBQnFRivdzfi6q6dw9yx9r4gIqMI/GnZupMse5YgbGMSO6i7mI5w6yX7NoJ7d5MEZs99WjB/1u/iVsrcOuS+Mqjd9XgM8d04LsrJuGzfP6XXdees//K8foJxnZuTN6VO8rLh3DZoBiqjTFx2qLILwCGRMZl+f25RrJnq/X1akOFcZElJTT+voj8wtKY6fviqub671FboU1vtapL7qA1QzSEuklwbwFUAVnd2RBX9sY3WT82No+Zsk2qzNrHaJn1qY84J5s+eYSqAfx7m9e7Scfw7gIPd8xv06vdviMhZJaqLloFfRJ7J5ntvkrPMbpvI0su40W4FSWZeV+TN2wS2NnZ0cXG1nNrMjaAvR+VYpIlYJOJetv4vzYmdrJWUnE3ntXDc/6AGh1L/p9ltiLISzI3hqBzJZfedEVPbWpBg4iI7HinwOH96LKiJY0VHPVTffc4N8wpdIyLPm3cqIgGpRu25eq/3LFl7VfWs3QPgLgCPAVgCYDUAbwHwTmS1nSdH7usDMA3Az9GfTsB72moktwRwIPrzRZj0tWe5E8A1AO4FsFS57NsAfBBZim6TNs2qNCbhj8DgYzZwnrR3AthBRG6NzeNQvL8qufYAcHYw99Bn6gZwqYgcqwQzpL5FhCRNYl6ELB9LPZDcUI3ozAnrSSyx92Xc+MOeU+Zw2aLI+/kk/4Xkhg3GsxHJb7uMUjGu+JGA6+bZj3bvkyQPbNDv+wKHzHYlvaVm962vNmc9x96zMf28RedJVIK5/jci+Uok45f1ezPJSXkStFkJFjx7rAJO3dm0G4+lPbERd24o4Xy4wOU6V+2LokleWw35WiRHxIM2yV6liby8CrJNRPUw1fF+f71DjrMDI7uuSLeB95a5yI1quKFN8lgNA9qlJIFZ3ycUxOf5z682U8erAYF161yuqnOcl9LhAZKrFiF5KwQWrP9fIv3bXHx9tNXE0aRsquPioxH1xsT6FSLyuqoEzBn7MWrI1zHwsORLAPYVkUcVISoiQhHpi7xotYNF5E4A+wKY79QwK3O6OYB99Po8ArCj81eJyJMke3Tj2fqq6atPN1Gr6qw4Q1W5h4I5yANzunw8spZhxic7Xn+wcwa0rKW594sAvD1Qb+0Q7PMA9hORBaqW1ocJdy8M1GU/xgPdmkwcAnM78zMB7O28aOG4LohMXpjS7bDA3rHPx4nIM+axarTASgS9ev0TGBwNYEzg6MjtCzAwXwQArGEIVyQxlNioSPiciLxitkaRdNH/d1Cirzv7EwDOB/BMZO6OLkm8jeygXgA/BfC+wGNoTG6REtdTbbb5EGHClyOLWOlyz2r5O7YkuWUDhtjR6uERBerho+66vMDPbSOlXUnyrlb3QYJI+vuC/PdhyVTbyzk06N82fA8Mx9zIrmpSfTsnZ+9rA90orwf/1cpmfSpQEe8h+dUctdQ2lPcuq5q1qiIGauLVBWrit0dTTRwtFdFi/P6pgDNdrHGBsSy6NuG7ByqAXXdWRFUq7aVCf+G+H7h2Tf1cFVkcnIeblYuKu7YbwKVaGXKG7ckUGdwqRVlS+q8K4ADHsU01vVdEngRwhX4XN0cVJ8WkRVzZFMB3MDDTF50H8XARucY8fSOEvxcV/HeAznkNEwGCHISLc4zyusUD5mzuGmf7TWT/aoV3LgzRwxkW/x5UMjVyjGJ5xMHwJMmPhRK8Vemv74cHXNvG9mWVwtM1EiXcj3uB5MqNnB0RCVa0l2jS7Ytesjf5PEORYGtF8lmWwqVOlGCmBn1AnRNhDkIB8CCAewpSsplds0lkT+hxZJHaaNWwVp1dRORlZNHuod2yfjCWCoCvqYNiktoldbe/9RYA/0nyjyS3do6VVhbcxnF48OxVlaKXqDNnkdonCGy0NQPJN1SoqbQ+RUR+qJKrdyQQyZxEmtrtuohDw3DrwFY1mvFIYKYGzSlAnkvyUrK5IxJTAaztnsMI7BGb+CGO0+5/NFATgSwcyntCISKvAngvsg3lLh1Tn/NA1tShcxvJU8qqjSHH1mfbBFmCTzpHjAC4WT2X3c7ZEVvno9rh7HBq4nkicoJKo5FWxcxGvyBCRKOuJo4ogTkEmYX+wtlhLFkdwMUFCGATuBqAVSISbF6budWSyG89EU5aEZG5IrKPSpdH0R/X6CVIN4AvAbiL5MfU7irLEGyuDtO2a8FznhdEnt+u2kDFEQMB7Ery7TbuIRBXBcBjInKYRWmMQtZj6/MaDK7GYox3MwCj4k0caQlWpB7a53sAPKiSqojDdiMe6rWozWOeFiHYFTnqiui4zwWwNYATAbzqCM0YQag2visvmDiwC21r4p8DBKoqcv1Okc2cQzX07xPV3Tx3AThyiDhgRLseyS9oXyNu47gtjlcAXO8cLmNCTRxpAitSD43rXDbELK1T2zVWfV83MsaXY4ulto8t+GIR+Q6yGMcznZfNq3VebTy+AZHZWu0JYCMM3vu6BsB8TSNdUdWpCuCSQHpZO4eQnKwxfa0inXlLf0TyYG1rNNzhpiZeEnhOR11NHDECa0I9vLKkfdAbTJZN6loBMbTkRdSxTkEWlBsS07wGXLVmYVki8qyIfAbZpvBV+swVh+w1VTlPJfndIiJTxnN4MD/W1umqbq7QzetefX9IiS9UVdcF8AFFzOoQCMzG8p8kd1QiG2lJZmriHxuoiVuNtJpYGQVi3rOB97CRemgT9wKyfBqhA2Jb5cxDKQZgquzWAGZhcGXNR8qoLiYdVKL9TURmI8uZ8Tf0n12qOIbxFZJzQiJzUftvQpa3xDthDIG+TvK37nWlppv+LYANIutNAEcrYjbj7Fju1szPew+AK0hu1EjdHWY18aYIgzZc++BoeRNHQoLZnsZlOSdRS++6Bzk8wggKktxjKLkT3d7MTyOREj5Nc8XZRw0luLu+SvLTbp/Knwl7UjMLSySo+DM5Z66aBdsfWmanDArOuZWN5LA1eEiDgKWMA2Uo+2BhO9rn0QXBx3/ryPoCDlFW1VCjIW0IFhwTsfcLyxBqASGIFkNf5MZmxPtYztEZKcto3HysR/Ip1/4bR3QCJDfCvL1g07ev4FV0jOWbsbkqILAn9Pf/KGCU15fN+dhGAisTwFAj+Y4YQxnvKqIRzB7IQo1i6uHDKN5cjqmJVwXtmx13kAZ5tmJ0W2jWD9WDGEbp/z5sl+SaLiK/0sg+02t7ROQZAL907VtA8U7OeK+qPbglshCt0AFUK2G4m0OlHln7Q9UzWWuCSXQD+BSAW9x2AfRzn67zz82zOBISw22VzANwY46aWHEqdkcRmBHEwREHhE3CH8rW+3L21d368nq25VH8mUbG95UMOhWSkzSi/rPq6Qw9f30Afmbjdu2eSPJMt6dVJhTKjO2nI46DVSKOhMMxuAidMZWyr0rEzb4xsg3ysvhgsZp9OkfPOsbmiewwkifrdSPlWTTb+XcRPLN5/GBJJ1pbYNgf3AWnTs1ZSPt8eZPePzuu/lMA/xEgXA3Atmp0f0xE5ju1J4b4VG67guQRyI5i1DA4fcFvROR+l1zT/p8P4CSSkwGcICIvOjWkktPfCr1mtkMADuYl0qvezH+KzF2fMphGyGJtz0IW5uWDlwXAMSJyNVna8WpJQOfpiYE/o/+4iDgiO5Hk0yJy9ggF/9ZVO/iDOmN63JjMGbS9OmIeM892pzg3PhA5im+fn262Or1LfjJZ7aJ6TsqBx0jOaRSAqgX2vhc5nmLHMBbp8Xxx+r7ZD990fT+vAbdrN+hvLZJnBPNgJ6JP0Wsma38HBM9kdtXVTa7FFpFns9Ru6wS2TJmkN3Zc55Bg/GGyof3ybOJ22WARW+y6giMsx7dqo485CeYkxoecaK4E9tdVIrK8GS7nXLPLSJ4A4FLlmpVAkr0VWejVwyRvR5Yi+1XnWl5X1aRdAcx0HE+clOgG8EUReTrnAKFxyOXI9uG+r9z7dgD3ITvduwRZDONqure2s9qjfvPX+v1rwJGPxOBT3wLgfEU+kxhFayAicp+eldvWqb+W2u2jAE5Bcymn+3TNLiC5GYD/i/4DmOKk5IUkdxORu4fxAGao+l6pW0J5auIPMN4T4jhvWY96y/Ik2N5lvIcNJOTZAadtJnUac7xz1tbPcjxtMW9ms2niwnHOI7mK48TrukQ89ZwcG824w7+Yk6DnXn/gs4m0bT5128UFyYeeJbluON5hlGAb65jrEYm9dLiKOI60k8Pa30l1/1B6VQDMVW9Uq4anBcoeq17F7sBjVnFcrQ/5iUe9d47INn671WD+dIOUYyGXNMdIrYn+zOY7UUQWat9Aln5sst7nnRx/EJH5TeS7eOOkArIUdl0YGLa1BYBdm410UI+r2aNHIIsl9Z5FHzlylTuLNiy457yJjwK4I/AA2/Ghyc7ZMa4JzDjP/hECMrf0NZrYptpKJLaLRKgB+DCyivRV5/WrOUTqynlVnSPAVK1uAJehP99h0WnjLndvPSC0ov7qjnDsTNXPFcFXKBIeFqyVvZ/fDGd3iPcMgD/peOvBuhzZIlLbkZ3XdQ1eDjyLpopuiaxCDtEfPziceH1ZgTfxoJHwJg4bgTlRPSmHW5iO/tvgwVteYCWC4wDsp7aPR+ZaIEFC6VJ3HrAagJNF5CAjuAbEv0jvnRx4HvsKXp7olwD4kp6pqrr+tkWWtalXx9er9z0D4E8thDm9QZyOm9ccc9jfzqlh4D5lLXjlEXBVRJ7S7ZgaBqYMF5WcHwDw/1wfef0MBfHf2PrBwNQGfg520LhYsTR048ZrGMTRbVWQFrutdXV9eJTafceQvMkdJ28Er2i5o228jVGiz8kkdyH5E5dTsQw8TvKHeoAy5sG7KOe+n7TiBQsiavLmxNIhmFe3dPmiwKb6VINn/77iyiS9/nvB//NascEiXuY7C0KnPhWOvd2E1tVOwlIJYoXnVkO2o39cZH/HPFh/EpGF7fIsOXugKiLLAZwD4ByS66uN8XZk57BmOcnxIrLN3ocB3CkiL9jzlBmT9rlM94L+rAizOYB3IEtpsAayYnhVlXQLkKU1uBfAPSKyLOzPBcsuUAlPDEyo87NW1BuLNtFchSejv7BexdnEU9waQdXJ1zGwAB8L+ujTZzmL5BoAtnd9iFNNN0NWbHGu3voEsgOiZvs+iSGciHD7pJchC9pmIMUI4BSSuwL4NYD/tlQHI+DpbJpTeK/QburRe76E9+yjeWmx2yXNWqjnXG3FALdsvS3c18URTu08EurQaKerdtrA5gVpxT3crx7W6W49BWPhIfTzfqqOhYSUV0v3NU08OuwL7gpyh+mrq+0uRl5QcL3abPHzgkLi0sY5aVScvKUi6N5cyHvlqHRSNhK/5DOKBh/Htk/qERx9jOShI8mMGnGI1Uj+OlJMrt4gxVepkrAJEgwBR80ePFZxblmBBKsF+3e/1NC3kSeyoPDCfcFxiaIHMOK6Tg3tClMd3QTDa74IyTV0o9sTUq0EoV1bVBlmWG0ukis5D82KBoP10uzSZg4qJkjQJmGwKclrIvW/84SCRZScO6KalhO7/1JAXLGBP6QnYbvapWMnSNCsU4fk1iS/q7UPQr9Anjmz34gQmdtHma77IbE4P//9GT12/x4fzZ4kV4LRkGQBoU1Wx9xvc3DXn1q4dUSEgtv4e3/OgEz8Pqy506dHvEqJuBKMNqGFQdt7uUKCeV7vTb3KOdzq4YlBMQRP7deSnObvSYSVYIw6QKpOaKyuamNeKdxPeBooC61u8L4Zg2MHLcrgVACL9QTzMrj8dMw/Mtvyjv0opGpOMIZtrGZv1ftXEpGXSf4YwOkYeJrdYLNWOmiVwIrCSHYSkauRhdeMxQlup4hPUrlNjDLSTum2hsBk7b6l+v7XCI7YGs9q5RlbJbAHI7/ZGagTSM5HVvzg1YAYlyjhhfknFuUQba0RoVqWpjYxhwTjU4JVGzDBqTmMdTr6K+FUkMXNhkRkxL64FabaLIFZcOkfkQVl+kQnPsPrD5tAcCoRxQJX+wC8VsB9hORCRIoxFNzzMvqPpgyF4/YBeKWNXLsTYFVkR3aGohEQWcDxtJL3dKM/9UIe8k9HPFvZVCcYfEKkamRcd46IiuMyKl2ArMpHmJbLn1GqJJUqwTiCMEW6Sa9eABuLyLPNZqJqhcAs1H8DAA8oB5EmbJtmOT6Hoc2xZG90GsgY7E9abMuOzpwhIp9t5RhLq3WCTYodhSwnYR2DM84mSDCewYjrKWTnyRbCVTQdVieHHQjU/BHT1eYyyVZrMxcZaQ6Z1NjxrwFwCP2aoOhGlprh/ZpcqNJSzpihem+U2HYG8G0Au6fFb2v/HCYGMtpMZDwwsYsBHCci/xhKBuB2HNyrujQB7wawC7Jj+d2u/ZnoT0NmnqLV3G8epmNgymMPVf2/EVSQeYhaeb6k5o4M1JpkOILMW7ysxPULMdAr7VMuzI/0vRxZeoaa+hWuEJE7zecwlPTabeEk5vhoV1RFZF9DnOieWpJIprcwF0TmHp6MYrfvcEOPjqGnTWPwueiXINtYHc2stsuQbb80u1WyAuUCGBYjZyumrJOiXTjdVgQqKq6Q8xsj9l3yziUYPt07HvXj1WZBlrypLQxIxskEjPSzJUfH2LVxhyZREgNPkKBzoOM5dasp4UagllWRel1roz1rKbzR7rYL+uGYySuYIEGCJMHGnSFrWWwBfB7ADJTzCto1SwH8RESWWlsjMNbZ6D8S8UetRdZy367dVXQOTEJeICJ/b1d1R9fPmwEcgMzl/YqIXDrcc5dgFAnM1C7NN98KrObbGoGxPuD6Psipja22a9mUNgqea85Q246otiB5kOvjwZGYu/EAXRPgGV9EtnfmI6UrTpr56H+TYPMx8tEcC9BfOmlFG9utIdt3sjNPy4dp/Cvc+OcnNj9xCGw1ZBu2zcDqoTrpCprXERTWLjLonfFPDDw7F95XdethGYy6XJqFhn0VmAH+UGHpGtjuentm+x5zlIgbv0nHqg6f7pr6uC88PtEJzNcLQ1Z7eCr6I0HqyKph7qPXzAPwGQyMbFgBPejpakGHNavekHymCoVI5+5r1iNpVSu9tLG+KsONoM52qkWkIUqMQ/T/vjz1daIQWUdLMEWS6yIL/D5HYItF5IoiG0MDmtcD8DFksZYzFPkfBvA7EfldgJj+vjX1vh2QlTJ6GVk6hWtF5PocJ8ACku8A8ElkZZeqyNI0XCIi1w4ngjqnxUo6R7sjK9q+KrJSQ38GcK4micmThn1akG8vALMBrKcM6UEAl4vI35IDpHMcHr6iR4++nx0UwZvkqp/4VF72fhjJBQUOkUt8DnN330e0kFwe/DfJKXrt7S793e8LChWc5J0YJZwcGwa52GfnOTksvR7J9+q85MFzJHfUe6yA3mz3/50kzy24/3QbY3KEdBaxWV7HswICG1RJ0f12YCSVss+ZZ799L0C4Q9x1yyL39envq0cILKyjVtdr7fs2jTyBLRKYzc+/6bWvB+NZ4XK2P0dyqutndsH4/TzYbz9qpzdzrELKD5+PnHWS62Dgie1uZAl/fgHg9+ivAV0D8HmSa4vICq2oeTb6ax/3AHgewDXIKkaaI2BBjreyz13zpLbf48bxWec0GC6PYA1Z8pkqgGeRVbbsBjBJx7cOgO1zVFV77iqAR5BVrpyH/tMBfQC+QHJbV80zEdgEArMPvqG2R01trg+LyL4icpSI7A/gcPQXWF8JwHv1/i8jKxtrmbdOA7CpiOwjInuqHTdPPZyhI6Gu9zyErPzqZgC2AvA39G8W70ayS0ukDgeRWcnbswCsLyLricgsAEejP5ksAWycc789w5cAbC4iO6gd993AE7vfMDOK5OQYg9JLlKuuAuAgJ7leBbAJyW85qVVRIjI3/Ju1mdn6fRKAS0XkOKcOiYjcro6WizB4C6GKrIbz+/Q0bVVE7if5JQA36DVrqKPlpTY/fl0J9h4AewG4EcAeJI8AsBGANR1jFgBrR9qo6XOfKiI/UDurIiKLAHxNN9GNMNdOXsQJKL2UOFZXJLbvbwLwvQKOLcjc01MVcWzP6yJF2q6gyPb9mmphqVOrDHm/qsQ1CUCfqqwPITtIuLJKy2lKYEPN7ziAv6gH8UIAxyMrDr5mgQo7K/JfN7Ki8t9QhkL1KHbrfX8pkHyJwCaaQAuQqo6BB0VFEcqIZJFKJNtvg/4nGLyHBmSni2PEsUyJsuaQvlfV1JXbIaWVGUjAWEByZQD/BWBnZ49Nymnq1RwG9azGcfrtBNuoXjyRECgRWD5RLVZ7Y4oizV0ADlTJUXPq3OuqGh4F4ByVfCvc3G6kHHyyRUeoI2QWgAsBzEG2N+aRvapE5cf1GrJcEzPbJKXqfh9KiaFG8lglruXKLCZp30+ow2J7pwovz5Hmm+vzvaBSuK6qcZ8GBU8YSE6Owd4NKiG8COAxJ722ALCuiDwsIo/q62ElxNMAvEVElqq37WkntY4lub6ILBORPiWuaciyFr0H8SiPmFTrUdVwqGD7fF1+j1B/ryDbWK4r81ikjGOGiGwJ4CRnb+Y5J/pUtT5VRCgiK/S5e0keCGBvtVuptmaSYBMQqsptLwHwLkW4lQBcR/IUdTZMUWQ5RO2zy9RBsoLk5QBOUETaCMDtWuv3CUW+jwPYVD2JZV3UlginVbvS8lb+fwA/iBBFl9qYNb2+in53/edI7qROn6pz7ETnTufrUJIzAVyhquR+yLyu1p+gP8qGicA6Tw2sO5VmkCdMuflpyMKc3qbINlW5eNhWL4Cp7gzaaQCOQeaGX64E+OXgvl7nREEJRCNazwRF95pVcN1U9Rzup8+7OoBfRcbXyK1eUSLaV19efexVZnG1iNxpqmlSETsLetAfXT4lpibq+2IAH1K1b5IjjD7n9DBHx4NO+s0FsL96+XocctUdkXSrJPRlccokBW2qdpaTRr5+AIOXqWwrIdsgnx88b69r62599tg46BhBl5NWNlcVnY8HARw1EcKkJhqBGUI8qeraE8gSTcbSx9WVu/4d2cbwr5VguhV5ulQ63aBS7kuqIvbqfX9Rh8AZ2t9y9G9YPwrgmwA+6BwFpo7VCgjIIiEmNfHMy9VbaVH9tYDY/atHRBaqBLtDnTzd+noO2cnof1FVVSIakP12F4Cvqgpsc1XTeTgDwO7KhNDpUfUTNtDSwnMaqSfe1aynnN+qatZSAI+KyNMl7utBtp/UrdJgrh3lcNHrazsb6wUReT1or0vtwS5t4z7bVyvxrOuVNAfmA1jgTgS8RcddA/B3EVmsdtW26tH8h4g8q9dOQ3+Z1fki8ojWLdhQGcKryNz3y/1zJ3M/gUV9V3P+k4L/iu4bs4Xh8yL1m4kZHI/PnSRYe5EoekiyxD0DCrSVUXFsYze4jwXXRFM2K+JL2X4bEUzs0nBvDP2RInRbGNZe3Um7ATaeqtjeriTamF49QYIECRIkSJAgQYIECRIkSJAgQYIECRIkSJAgQYIECRIk6Ej4X+OxwArCjPfPAAAAAElFTkSuQmCC" alt="OSAKI Tech Lab" style="display:block;flex-shrink:0;height:34px;width:auto;border-radius:3px;">
-      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A039</div>
+      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A040</div>
       <img src="https://hits.sh/osaki-kensetsu.github.io/arecal.svg?style=flat-square&color=0088cc&labelColor=1a1a2e" alt="visits" style="height:13px;opacity:.6;" onerror="this.style.display='none'">
       </div><!-- .logo-row -->
     </div>
@@ -182,6 +204,17 @@
         ⚠ PDFはCADデータと違い、正確ではありません。<br>
         CADデータをPDFに変換すると、cm単位で誤差が出ます。<br>
         スキャナで取得した図面はもっと大きな誤差が出ます。
+      </div>
+      <!-- A040: 起動画面(TOP)が免責モーダルからこの画面に変わったため、旧免責モーダル内にあった
+           Apple Pencil非対応バナー(A014)とブックマーク案内をここへ移設(idはそのまま。表示制御の既存JSが流用できる) -->
+      <div id="disc-pencil-warn" style="display:none;margin:12px 0 0;padding:8px 10px;
+        background:rgba(255,80,60,.15);border:1px solid #ff6a50;border-radius:6px;
+        color:#ffb0a0;font-size:.85em;text-align:center;line-height:1.6;">
+        ✏️ このアプリは Apple Pencil には対応していません。<br>指でのタッチ操作をご利用ください。
+      </div>
+      <div id="disclaimer-bookmark-tip" style="position:static;margin:14px 0 0;font-size:.78em;color:#9ab;line-height:1.7;text-align:center;">
+        🔖 ブックマークがまだの方は、<b><kbd>Ctrl</kbd> + <kbd>D</kbd></b> でサクッと保存しておくと、<br>
+        次に開くときの一手間がなくなります。
       </div>
       <input type="file" id="file-in" accept=".pdf,.arela" style="display:none">
     </div>
@@ -491,8 +524,20 @@
 
 <script>
 // ================================================================
-//  Arecal_Touch A039 (A038の作図エリア外ドロップ拒否を拡張)
+//  Arecal_Touch A040 (起動フローの大改造。A039は未確認のまま継続)
 //  --- 今セッション変更履歴 ---
+//  A040     起動フローを統合。従来「免責→PDF→ページ選択→元図の線を読む？→縮尺→角度調整する？」(4〜5ダイアログ)だったものを、
+//           ①起動直後=PDF/Arelaを入れる画面(旧免責モーダルは廃止) ②PDF読込後=1つの起動ダイアログ(ページ/元図の線/縮尺/角度調整)
+//           ③縮尺適用→(角度調整ONなら回転UI)→(元図の線ONなら抽出)→従来どおり、の順に変更。
+//           ・元図の抽出を回転の後に移したので、回転ありでも抽出は1回で済む(旧: 抽出→回転後に再抽出)。
+//           ・縮尺は「選択してください」を初期値にして必ず選ばせる(誤縮尺による面積誤差の防止)。任意入力は「1/○○」(初期100)。
+//           ・各項目の「?」(タッチは「?」タップ、マウスはホバー)で解説をフロート表示。
+//           ・免責文を改訂し、旧免責モーダルを「ご利用前にお読みください」リンクで開く別窓に変更。同意=「了解してはじめる」。
+//             Arelaを直接開く場合はこのダイアログを通らないため、読込前に別窓で同意確認を挟む。
+//           ・Apple Pencil非対応バナーとブックマーク案内を、起動画面(drop-hint)へ移設。
+//           ・renderPage(o)/bakeRotation(angle,skipVec)に引数追加(旧フローは無指定で従来どおり動作。旧ページ選択/縮尺/角度確認モーダルは残置)。
+//           ・旧フローでは元図の抽出をスキップすると_rotPageが未設定で回転が効かない恐れがあったが、新フローでは必ず設定する。
+//  A039     (実機確認待ち) A038の作図エリア外ドロップ拒否を拡張
 //  A039     A038の「作図エリア外にはオブジェクトを配置出来ません」を、①新規配置のクリック(重機/矢印/線/円/テキスト)、
 //           ②矢印・線・円(中心)・テキストのドラッグ移動にも拡張(placement_v5.js: handleCanvasClick/endDrag、ARECALAY_VER 0.0081)。
 //           移動は「移動前は内側だったのに外へ出た」場合のみ元へ戻す。AreCal本体はバージョン表記とplacementの読込先のみ変更。
@@ -1960,11 +2005,13 @@ document.addEventListener('DOMContentLoaded',()=>{
     // v0.0437: 回転モード中に出していたステータスバーの文言を元(アイドル表示)に戻す
     setStatus('');
     document.getElementById('loading').style.display='block';
-    await bakeRotation(rotAngle);
+    await bakeRotation(rotAngle,!!_startupPostRot); // A040
     document.getElementById('loading').style.display='none';
     const baked=rotAngle;rotAngle=0;
     fitScreen(true);
     toast(baked!==0?`✅ 回転 ${baked>=0?'+':''}${baked.toFixed(1)}° 適用`:'✅ 回転なし（そのまま適用）',2500);
+    // A040: 起動ダイアログ経由なら、回転の確定後に続けて元図の線の読込(段階C)へ進む
+    if(_startupPostRot){const _f=_startupPostRot;_startupPostRot=null;await _f();fitScreen(true);}
   });
 
   // A025: マスター指摘。「縮尺変更」「全体表示」「全消去」「評価・要望・バグ報告」など、
@@ -2901,9 +2948,9 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 
   // Fix9: 免責ダイアログ
-  document.getElementById('disclaimer-ok').addEventListener('click',()=>{
-    document.getElementById('disclaimer-modal').style.display='none';
-  });
+  // A040: 免責は「起動ダイアログのリンクで開く別窓」になった。ボタンの役割は_showDisclaimer()側で切替
+  // (読むだけ=「閉じる」/ Arela読込前の同意確認=「了解してはじめる」)
+  document.getElementById('disclaimer-ok').addEventListener('click',()=>_discClose());
   // A014: 更追2対応。iPad実機判定(iPadOS13以降はSafariがMacIntelと偽装するため、
   // maxTouchPoints>1との組み合わせで判定する定番の手法)。該当時のみ起動画面に
   // Apple Pencil非対応バナーを表示する。
@@ -3121,6 +3168,185 @@ function _resetForNewPdf(){
   catch(err){console.warn('[A037] Arecalay側の消去中にエラー:',err);}
   updSidebar();redraw();
 }
+// ================================================================
+//  A040: 起動ダイアログ
+//  従来: 免責 → PDF → ページ選択 → 元図の線を読み取る？ → 縮尺 → 角度調整する？ と4〜5回の別ダイアログ。
+//  新: 起動直後はPDFを入れる画面 → PDF読込後に「ページ/元図の線/縮尺/角度調整」を1つのダイアログで選択
+//      → 縮尺適用 → (角度調整ONなら回転UI) → (元図の線ONなら抽出) → 従来どおり。
+//  角度調整→元図抽出の順にしたため、回転を織り込んだ抽出が1回で済む(旧フローは抽出→回転後に再抽出の2回)。
+//  免責: 同意は「了解してはじめる」ボタン。Arelaを直接開く場合(このダイアログを通らない)は、読込前に別窓で同意確認する。
+// ================================================================
+let _consentGiven=false;       // このセッションで免責に同意済みか
+let _discConsentMode=false;    // 免責の別窓が「同意確認」モードか(false=読むだけ)
+let _discCb=null;
+let _startupPostRot=null;      // 角度調整のOK確定後に続けて実行する処理(元図の線の読込)
+let _suPdf=null,_suInited=false,_suPaperSeq=0,_suTipOwner=null;
+const _SU_TIPS={
+  vec:'マウスが線にピタッと吸着する機能を使えるようにします\n（CADから変換されたPDFにのみ有効）\n※読込に時間がかかったり、動作が重くなる場合があります\n※この設定は後から変更できません（有効化には再読込が必要）',
+  scale:'PDF図面の縮尺を選んでください。\n間違うと正確な面積が計測出来ません',
+  rot:'斜めにスキャンされた図面の角度を補正できます'
+};
+
+function _showDisclaimer(consentMode,cb){
+  _discConsentMode=!!consentMode;_discCb=cb||null;
+  const m=document.getElementById('disclaimer-modal');
+  const b=document.getElementById('disclaimer-ok');
+  if(b)b.textContent=consentMode?'了解してはじめる':'閉じる';
+  m.style.display=''; // 外部CSS(arecal_touch.css)の既定の表示方法に戻す
+}
+function _discClose(){
+  document.getElementById('disclaimer-modal').style.display='none';
+  if(_discConsentMode){
+    _consentGiven=true;_discConsentMode=false;
+    const f=_discCb;_discCb=null;
+    if(f)f();
+  }
+}
+function _requireConsent(cb){
+  if(_consentGiven){cb();return;}
+  _showDisclaimer(true,cb);
+}
+
+function _suEl(id){return document.getElementById(id);}
+function _suHideTip(){const t=_suEl('su-tip');if(t)t.style.display='none';_suTipOwner=null;}
+function _suShowTip(target){
+  const tip=_suEl('su-tip');
+  tip.textContent=_SU_TIPS[target.dataset.tip]||'';
+  tip.style.display='block';
+  const r=target.getBoundingClientRect();
+  const tw=tip.offsetWidth,th=tip.offsetHeight;
+  let x=r.left,y=r.bottom+8;
+  if(x+tw>window.innerWidth-8)x=window.innerWidth-8-tw;
+  if(x<8)x=8;
+  if(y+th>window.innerHeight-8)y=Math.max(8,r.top-th-8);
+  tip.style.left=x+'px';tip.style.top=y+'px';
+  _suTipOwner=target;
+}
+async function _suUpdatePaper(){
+  const seq=++_suPaperSeq;
+  const el=_suEl('su-paper');
+  if(!_suPdf){el.textContent='';return;}
+  try{
+    const p=await _suPdf.getPage(parseInt(_suEl('su-page').value)||1);
+    if(seq!==_suPaperSeq)return;
+    const vp=p.getViewport({scale:1});
+    el.textContent='用紙: '+detectPaperSize(vp.width,vp.height);
+  }catch(e){if(seq===_suPaperSeq)el.textContent='';}
+}
+function _suInit(){
+  if(_suInited)return;_suInited=true;
+  _suEl('su-page').addEventListener('change',_suUpdatePaper);
+  _suEl('su-scale').addEventListener('change',()=>{
+    const isCustom=_suEl('su-scale').value==='custom';
+    _suEl('su-custom-row').style.display=isCustom?'flex':'none';
+    _suEl('su-err').textContent='';
+    if(isCustom){const ci=_suEl('su-custom');ci.focus();ci.select();}
+  });
+  _suEl('su-custom').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();_suStart();}});
+  _suEl('su-read').addEventListener('click',()=>_showDisclaimer(false));
+  _suEl('su-start').addEventListener('click',_suStart);
+  // 解説: マウスはホバーで表示。タッチ端末は「?」ボタンのタップで表示/非表示(ホバーが無いため)。
+  document.querySelectorAll('#su-dlg [data-tip]').forEach(t=>{
+    t.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')_suShowTip(t);});
+    t.addEventListener('pointerleave',e=>{if(e.pointerType==='mouse')_suHideTip();});
+  });
+  document.querySelectorAll('#su-dlg .su-ic').forEach(b=>{
+    b.addEventListener('click',e=>{
+      e.stopPropagation();
+      if(e.pointerType==='mouse')return; // マウスはホバー表示済み(クリックで消えないように)
+      const tip=_suEl('su-tip');
+      if(_suTipOwner===b&&tip.style.display==='block')_suHideTip();else _suShowTip(b);
+    });
+  });
+  _suEl('su-overlay').addEventListener('click',e=>{if(!e.target.closest('.su-ic'))_suHideTip();});
+}
+function showStartupDialog(pdf){
+  _suPdf=pdf;_suInit();
+  const sel=_suEl('su-page');sel.innerHTML='';
+  for(let i=1;i<=pdf.numPages;i++){
+    const op=document.createElement('option');op.value=String(i);op.textContent='ページ '+i;sel.appendChild(op);
+  }
+  sel.value='1';
+  sel.disabled=pdf.numPages<=1; // 1ページだけの場合は「ページ 1」のみ表示(選択不要)
+  _suEl('su-vec').checked=true;
+  _suEl('su-rot').checked=false;
+  // 縮尺は「選択してください」を初期値にする(誤った縮尺のまま面積を測る事故を防ぐため、必ず1回は意識して選ばせる)
+  _suEl('su-scale').value='';
+  _suEl('su-custom-row').style.display='none';
+  _suEl('su-custom').value='100';
+  _suEl('su-err').textContent='';
+  _suHideTip();
+  _suUpdatePaper();
+  _suEl('su-overlay').style.display='flex';
+}
+function _suStart(){
+  const sv=_suEl('su-scale').value;
+  const err=_suEl('su-err');
+  let denom=null;
+  if(!sv){
+    err.textContent='⚠ スケール比を選択してください';
+    toast('⚠ スケール比を選択してください');
+    _suEl('su-scale').focus();
+    return;
+  }
+  if(sv==='custom'){
+    const dv=validateScaleDenom(_suEl('su-custom').value.trim());
+    if(dv===null){err.textContent='⚠ 1以上の数値で入力してください（小数第1位まで）';_suEl('su-custom').focus();return;}
+    denom=dv;
+  }else{
+    denom=parseFloat(sv.split('/')[1]);
+  }
+  err.textContent='';
+  const o={page:parseInt(_suEl('su-page').value)||1,vec:_suEl('su-vec').checked,rot:_suEl('su-rot').checked,denom};
+  _consentGiven=true; // 「了解してはじめる」=免責に同意
+  _suEl('su-overlay').style.display='none';
+  _suHideTip();
+  renderPage(o);
+}
+// ページの描画後(renderPageから呼ばれる)。段階A(ダイアログ)→ 縮尺適用 → 段階B(角度調整) → 段階C(元図の線) → 従来どおり
+async function _startupAfterRender(pg,o){
+  _rotPage=pg; // 回転の焼き込み対象。旧フローでは元図抽出時にしか設定されず、抽出しない場合に回転が効かない恐れがあったため、ここで必ず設定する
+  applyScale('1/'+o.denom);
+  fitScreen(true);
+  if(o.rot){
+    // 回転UIを開始(既存の「Yes — 調整する」と同じ処理)。OK確定後に_startupPostRot(元図の線の読込)が走る
+    _startupPostRot=()=>_startupVecStep(pg,o);
+    document.getElementById('rot-yes').click();
+  }else{
+    await _startupVecStep(pg,o);
+    fitScreen(true);
+  }
+}
+async function _startupVecStep(pg,o){
+  const statusEl=document.getElementById('vec-extract-status');
+  if(!o.vec){
+    vecExtractSkipped=true;
+    vecPts=[];vecSegs=[];vecGrid=null;
+    if(statusEl)statusEl.textContent='➖ 元図の読み取りをスキップしました（軽量モード）';
+    return;
+  }
+  vecExtractSkipped=false;
+  document.getElementById('loading').style.display='block';
+  try{
+    if(bakedRotAngle&&Math.abs(bakedRotAngle)>0.001){
+      // 回転を織り込んで1回だけ抽出(_origPdfW/Hは回転前の用紙サイズ、pdfW/Hは回転後の外接矩形)
+      await extractVecsRotated(pg,bakedRotAngle,_origPdfW,_origPdfH,pdfW,pdfH);
+      if(vecSegs.length){
+        snapOn.vector=true;
+        const vBtn=document.getElementById('sn-vector');
+        if(vBtn)vBtn.classList.add('on');
+      }
+      if(statusEl)statusEl.textContent=vecSegs.length
+        ? `元図${vecSegs.length}本抽出\n※元図スナップは元図の縮尺が正しくなければ精度が落ちます`
+        : '⚠ 抽出可能な線が見つかりませんでした';
+    }else{
+      await extractVecs(pg);
+    }
+  }finally{
+    document.getElementById('loading').style.display='none';
+  }
+}
+
 function loadPDF(file,resetFirst){
   document.getElementById('loading').style.display='block';
   const rd=new FileReader();
@@ -3140,7 +3366,7 @@ function loadPDF(file,resetFirst){
           const _sz=detectPaperSize(_vp1.width,_vp1.height);
           document.getElementById('paper-size-info').textContent='📐 用紙: '+_sz;
         });
-        showPgModal(pdf.numPages);
+        showStartupDialog(pdf); // A040: ページ選択/元図の線/縮尺/角度調整を1つの起動ダイアログに統合
       })
       .catch(err=>{alert('PDF読込エラー: '+err.message);
         document.getElementById('loading').style.display='none';});
@@ -3159,6 +3385,9 @@ function _base64ToArrayBuffer(b64){
 
 // v0.0407: Arela読込。縮尺・回転は保存済みスナップショットをそのまま貼るだけなので再現不要（設定画面はスキップ）。
 function loadArela(file){
+  // A040: 免責は起動ダイアログ(PDF読込時)で同意を取る仕様に変わった。Arelaを直接開く場合はそこを通らないため、
+  // 未同意ならここで同意確認(免責の別窓)を挟んでから読み込む。
+  if(!_consentGiven){_requireConsent(()=>loadArela(file));return;}
   document.getElementById('loading').style.display='block';
   const rd=new FileReader();
   rd.onload=()=>{
@@ -3267,11 +3496,12 @@ function showPgModal(n){
   m.style.display='block';
 }
 
-async function renderPage(){
+async function renderPage(o){ // A040: oが渡された場合は起動ダイアログ経由の新フロー。無指定は旧フロー(旧ページ選択モーダル用に残置)
   document.getElementById('loading').style.display='block';
   bakedRotAngle=0; // v0.0427: 新規ページ読込時は前回の回転角を引き継がない
   vecExtractSkipped=false; // v0.0428: 新規ページ読込時は前回のスキップ状態を引き継がない
   try{
+    if(o)pageNum=o.page;
     const pg=await pdfDoc.getPage(pageNum);
     let effRS=RS;
     let vp=pg.getViewport({scale:effRS});
@@ -3313,6 +3543,8 @@ async function renderPage(){
     await pg.render({canvasContext:pdfCtx,viewport:vp}).promise;
     pdfCtx.stroke = _origStroke; // proxy を解除
     document.getElementById('loading').style.display='none';
+    // A040: 起動ダイアログの選択(縮尺→角度調整→元図の線の順)で進める。旧フロー(元図の確認→縮尺→角度確認)は通らない
+    if(o){await _startupAfterRender(pg,o);return;}
     // v0.0428: 元図の読み取り(ベクター抽出)を行うかどうか、都度ユーザーに判断してもらう
     const wantExtract=await new Promise(resolve=>askVecExtractConsent(resolve));
     if(wantExtract){
@@ -3357,7 +3589,7 @@ function previewRot(angle){
 // (傾いた紙本来のW×H、外接矩形へは拡張しない値)を正式な参照先として別途保持し、
 // PDF出力範囲選択のデフォルト枠サイズなど「印刷サイズ」を必要とする箇所はこちらを使う。
 // pdfW/pdfHはあくまで「表示用canvasの実サイズ」であり、印刷サイズの計算には使わないこと。
-async function bakeRotation(angle){
+async function bakeRotation(angle,skipVec){ // A040: skipVec=true なら元図の再抽出はしない(起動ダイアログ経由では回転後に1回だけ抽出するため)
   if(!_rotPage||Math.abs(angle)<0.001){
     rotAngle=0;bakedRotAngle=0;applyTrans();
     return;
@@ -3391,7 +3623,7 @@ async function bakeRotation(angle){
   pdfCtx.restore();
 
   // v0.0427: 回転込みの再抽出はextractVecsRotated()に切り出し(Arela読込時にも同じ処理を使うため)
-  await extractVecsRotated(_rotPage,angle,W,H,newW,newH);
+  if(!skipVec)await extractVecsRotated(_rotPage,angle,W,H,newW,newH);
   bakedRotAngle=angle; // v0.0427: 現在pdfCv/vecSegsに焼き込まれている回転角として保持(Arela保存用)
 }
 
@@ -7060,8 +7292,9 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
 </div>
 <div id="pdf-range-overlay" class=""></div>
 <div id="survey-dialog" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8500;align-items:center;justify-content:center;"><div style="background:#1a1a2e;border:1px solid #00ccff;border-radius:10px;padding:22px 26px;width:290px;"><h4 style="color:#00eeff;margin:0 0 14px;font-size:.95em;text-align:center;">📍 測点を移動（基点から）</h4><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;"><button id="sv-up" class="sv-dir-btn" style="grid-column:2;grid-row:1;padding:10px 4px;">↑ 上（+Y）</button><button id="sv-left" class="sv-dir-btn" style="grid-column:1;grid-row:2;padding:10px 4px;">← 左（-X）</button><button id="sv-right" class="sv-dir-btn" style="grid-column:3;grid-row:2;padding:10px 4px;">→ 右（+X）</button><button id="sv-down" class="sv-dir-btn" style="grid-column:2;grid-row:3;padding:10px 4px;">↓ 下（-Y）</button></div><label style="font-size:.8em;color:#CACACA;">移動距離（m）</label><div id="sv-dist-disp" style="width:100%;box-sizing:border-box;margin:4px 0 12px;padding:9px 12px;background:#0d1b2a;border:1px solid #2a5a70;border-radius:6px;font-size:1.05em;min-height:1.3em;text-align:right;font-family:monospace;"><span id="sv-dist-txt" style="color:#5a6a76;">例: 5.000</span></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><button class="sv-num-btn" data-k="7">7</button><button class="sv-num-btn" data-k="8">8</button><button class="sv-num-btn" data-k="9">9</button><button class="sv-num-btn" data-k="4">4</button><button class="sv-num-btn" data-k="5">5</button><button class="sv-num-btn" data-k="6">6</button><button class="sv-num-btn" data-k="1">1</button><button class="sv-num-btn" data-k="2">2</button><button class="sv-num-btn" data-k="3">3</button><button class="sv-num-btn" data-k="0">0</button><button class="sv-num-btn" data-k=".">.</button><button id="sv-clear" class="sv-num-btn" style="background:rgba(180,45,25,.35);border-color:#c0402a;color:#ffb0a0;">C</button></div><div style="display:flex;gap:8px;"><button id="sv-cancel" style="flex:1;background:#333;">キャンセル</button><button id="sv-ok" disabled style="flex:1;background:rgba(0,150,200,.4);border-color:#00ccff;color:#00eeff;">設置</button></div></div></div><div class="survey-tip" id="survey-tip">右クリックで削除</div>
-<!-- 免責ダイアログ -->
-<div id="disclaimer-modal">
+<!-- A040: 免責ダイアログは「起動時に最初に出る画面」から「起動ダイアログのリンクで開く別窓」に変更。
+     初期は非表示(inline display:none)。表示は style.display="" (外部CSS既定の表示方法に戻す) で行う -->
+<div id="disclaimer-modal" style="display:none;z-index:99600;">
   <div class="disc-header">
     <img id="disc-logo-img" class="disc-logo" alt="OSAKI Tech Lab" src="data:image/png;base64,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">
     <div class="disc-name-stack">
@@ -7071,32 +7304,58 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
   </div>
   <div class="disc-box">
     <h3>⚠ ご利用前にお読みください</h3>
-    <!-- A014: 更追2対応。Apple Pencilは中途半端にほぼ使えてしまう(誤動作の元)ため、
-         サポート対象外であることをiPad実機の起動画面(TOP画面)で明示する。 -->
-    <div id="disc-pencil-warn" style="display:none;margin:0 0 12px;padding:8px 10px;
-      background:rgba(255,80,60,.15);border:1px solid #ff6a50;border-radius:6px;
-      color:#ffb0a0;font-size:.85em;text-align:center;line-height:1.6;">
-      ✏️ このアプリは Apple Pencil には対応していません。<br>指でのタッチ操作をご利用ください。
-    </div>
     <p>本ツールは簡易的な補助ツールとして提供されます。
-本ツールは当社社員による社内利用を前提としています。
-外部への提供、共有、持ち出しは禁止します。
+当社および関連プロジェクトの業務関係者の利用を想定していますが、
+不特定多数への公開や無断再配布、複製、改造などは固く禁止します。
 
-本ツールはPDF等の図面を元に計測を行うため、
-元図面の解像度・スケール・作成方法により、
+本ツールはPDF等の図面を元に計測を行うため、元図面の作成方法により、
 結果に誤差が生じる場合があります。
-また、PDF上の寸法自体も必ずしも高い精度を保証するものではありません。
+また、基本的にPDF自体、高い精度を保証するものではありません。
 
-計算結果は参考値であり、精度および正確性は保証されていません。
-最終的な判断および業務への利用は利用者の責任で行ってください。
-本ツールの使用によって生じたいかなる損害についても、
-制作者および所属組織は一切の責任を負いません。</p>
-    <button id="disclaimer-ok">了解しました</button>
+計算結果はあくまで参考値であり、正確性は一切保証されません。
+最終的な判断および業務への利用は、利用者の完全な自己責任となります。
+本ツールの使用によって生じたいかなる損害やトラブルについても、
+制作者および所属組織は一切の責任を負いません。
+
+「了解してはじめる」をクリックした時点で、上記すべての
+免責事項および、完全な自己責任での利用に同意したものとみなします。</p>
+    <button id="disclaimer-ok">閉じる</button>
   </div>
-  <div id="disclaimer-bookmark-tip">
-    🔖 ブックマークがまだの方は、<b><kbd>Ctrl</kbd> + <kbd>D</kbd></b> でサクッと保存しておくと、<br>
-    次に開くときの一手間がなくなります。
+</div>
+
+<!-- A040: 起動ダイアログ(ページ選択・元図の線・スケール比・角度調整を1画面に統合) -->
+<div id="su-overlay">
+  <div id="su-dlg" role="dialog" aria-modal="true">
+    <div class="su-row">
+      <div class="su-lab">ページを選択</div>
+      <select id="su-page"></select>
+    </div>
+    <div class="su-row">
+      <div class="su-lab"><span data-tip="vec">元図の線を読込む</span><button type="button" class="su-ic" data-tip="vec" aria-label="説明">?</button></div>
+      <input type="checkbox" id="su-vec" checked>
+    </div>
+    <div class="su-row">
+      <div class="su-lab"><span data-tip="scale">スケール比を設定</span><span class="su-paper" id="su-paper"></span><button type="button" class="su-ic" data-tip="scale" aria-label="説明">?</button></div>
+      <select id="su-scale">
+        <option value="">選択してください</option>
+        <option value="1/30">1/30</option><option value="1/40">1/40</option><option value="1/50">1/50</option>
+        <option value="1/60">1/60</option><option value="1/80">1/80</option><option value="1/100">1/100</option>
+        <option value="1/200">1/200</option><option value="1/250">1/250</option><option value="1/300">1/300</option>
+        <option value="1/400">1/400</option><option value="1/500">1/500</option><option value="1/1000">1/1000</option>
+        <option value="custom">任意入力</option>
+      </select>
+    </div>
+    <div class="su-custom" id="su-custom-row">1 / <input type="number" id="su-custom" value="100" min="1" step="0.1"></div>
+    <div class="su-row">
+      <div class="su-lab"><span data-tip="rot">図面の角度を調整する</span><button type="button" class="su-ic" data-tip="rot" aria-label="説明">?</button></div>
+      <input type="checkbox" id="su-rot">
+    </div>
+    <div class="su-err" id="su-err"></div>
+    <div class="su-readwrap"><button type="button" id="su-read">⚠ ご利用前にお読みください</button></div>
+    <p class="su-agree">「了解してはじめる」をクリックした時点で、すべての免責事項および完全な自己責任での利用に同意したものとみなします。</p>
+    <div class="su-foot"><button type="button" id="su-start">了解してはじめる</button></div>
   </div>
+  <div id="su-tip"></div>
 </div>
 
 <div id="reorder-dim-overlay"></div>
@@ -7231,7 +7490,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
         status.style.color      = '#2196f3';
         status.textContent      = '📐 面積計算モード';
         if (helmetIcon) helmetIcon.style.color = '#2196f3';
-        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A039'; }
+        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A040'; }
       }
     }
 
@@ -7244,7 +7503,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
     window._onPmModeChange = applyStyle;
 
     /* 初期状態 */
-    document.title = _appDisplayName() + ' A039'; // A037: タブ名もロゴ名に合わせる
+    document.title = _appDisplayName() + ' A040'; // A037: タブ名もロゴ名に合わせる
     applyStyle(false);
   })();
 </script>
