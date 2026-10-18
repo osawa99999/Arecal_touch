@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0083'; // A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0084'; // A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -573,13 +573,20 @@
   // その場合は再試行分1.5秒だけゲートの「読込中」表示が長くなる)。
   async function tryAutoLoadMachinery(isRetry) {
     let failReason = null, retryable = false;
+    // A043: 「読込が遅い」原因の切り分け用に、段階ごとの所要時間(ms)をconsole.infoへ出す。
+    // t1=応答ヘッダ到着(通信待ち) / t2=本体ダウンロード完了 / t3=GZIP展開+テキスト化 / t4=JSON.parse+移行
+    const _t0 = performance.now(); let _t1=0,_t2=0,_t3=0,_t4=0,_size=0,_hdr='';
     try {
       const resp = await fetch('./CalayMachineryData.dat', {cache:'no-cache'});
+      _t1 = performance.now();
+      _hdr = 'cache-control=' + resp.headers.get('cache-control') + ' / etag=' + (resp.headers.get('etag')?'有':'無') + ' / age=' + resp.headers.get('age') + ' / status=' + resp.status;
       if (resp.ok) {
         const buf  = await resp.arrayBuffer();
+        _t2 = performance.now(); _size = buf.byteLength;
         const text = await _decodeMachineryBytes(buf);
+        _t3 = performance.now();
         const objText = _extractMachineryObjectText(text);
-        if (objText) machineryData = _migrateMachineryCategories(JSON.parse(objText));
+        if (objText) { machineryData = _migrateMachineryCategories(JSON.parse(objText)); _t4 = performance.now(); }
         else failReason = 'ファイルは読めたがMACHINERY_DATAが見つからない';
       } else {
         failReason = 'HTTP ' + resp.status;
@@ -589,6 +596,12 @@
       // file:// 運用など、fetchが失敗する環境では手動読込(#dat-gate)に委ねる
       failReason = String((err && err.message) || err);
       retryable = true;
+    }
+    {
+      const f = x => Math.round(x);
+      console.info('[A043] dat読込: 合計' + f(performance.now()-_t0) + 'ms'
+        + (_t1 ? ' (通信待ち' + f(_t1-_t0) + ' / DL' + (_t2? f(_t2-_t1):'-') + ' / 展開' + (_t3? f(_t3-_t2):'-') + ' / parse' + (_t4? f(_t4-_t3):'-') + ')' : '')
+        + ' size=' + _size + 'B ' + _hdr + (isRetry ? ' [再試行]' : ''));
     }
     if (failReason && Object.keys(machineryData).length === 0) {
       console.warn('[A041] CalayMachineryData.dat の自動読込に失敗: ' + failReason + (isRetry ? '（再試行後）' : ''));
@@ -2480,7 +2493,7 @@
       // v0.0442: ②同上(defLineStep版)。実際の線の太さに合わせる
       const lw = LINE_LW[defLineStep] * getPaperScale();
       pmCtx.save();
-      pmCtx.strokeStyle='rgba(17,17,17,.5)'; pmCtx.lineWidth=lw; pmCtx.lineCap='round';
+      pmCtx.strokeStyle='rgba(229,57,53,.6)'; pmCtx.lineWidth=lw; pmCtx.lineCap='round'; // A043: 既定色(DEF_RED)に合わせて赤
       pmCtx.setLineDash([6,4]);
       pmCtx.beginPath(); pmCtx.moveTo(s.cx,s.cy); pmCtx.lineTo(t.cx,t.cy); pmCtx.stroke();
       pmCtx.setLineDash([]);
@@ -2490,7 +2503,7 @@
       const {cx,cy}=l2c(lineStart.lx,lineStart.ly);
       const {zoom:pz}=getState();
       pmCtx.beginPath(); pmCtx.arc(cx,cy,5/Math.max(pz,0.005),0,Math.PI*2);
-      pmCtx.fillStyle='#111111'; pmCtx.fill();
+      pmCtx.fillStyle=DEF_RED; pmCtx.fill(); // A043: 始点ドットも既定色の赤に
     }
 
     if (annotMode==='machinery' && selectedAssetId && previewPos) {
