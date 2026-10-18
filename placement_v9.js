@@ -336,7 +336,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0084'; // A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0085'; // A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -951,7 +951,7 @@
           </button>`).join('')}
       </div>
       <div style="padding:4px 8px 5px;font-size:.73em;color:#CACACA;border-bottom:1px solid #2a2a2a;
-                  flex-shrink:0;">表示順序は上が前面です。<br>表示順序の変更は、オブジェクトを選択し<br>「移動」ボタンを押した後、入れ替えたい<br>オブジェクト名を選択してください</div>
+                  flex-shrink:0;">表示順序は上が前面です。<br><span class="hint-order-touch">表示順序の変更は、オブジェクトを選択し<br>「移動」ボタンを押した後、入れ替えたい<br>オブジェクト名を選択してください</span><span class="hint-order-mouse">表示順序の変更は、一覧のオブジェクト名を<br>ドラッグ＆ドロップしてください</span></div>
       <!-- A014: 更追4対応。AreCal側のreorder-cancel-btnと同じ役割の、Arecalay専用の
            入れ替えキャンセルボタン。表示/非表示は_pmStartReorderPick/_pmEndReorderModeで制御。 -->
       <button id="pm-reorder-cancel-btn" style="display:none;width:calc(100% - 12px);margin:0 6px 4px;padding:6px;
