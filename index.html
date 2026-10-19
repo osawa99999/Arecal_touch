@@ -30,7 +30,7 @@
      user-scalable=no / maximum-scale の指定を意図的に無視する仕様に変更済みのため、この
      meta指定だけでは不十分な可能性が高い。念のため指定はしつつ、実効性のある対策は下記
      script内のgesturestart/gesturechange/gestureend側(WebKit独自イベント)で行う。 -->
-<title>Arecal_Touch A050</title>
+<title>Arecal_Touch A052</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 <!-- v0.0465: 面積出力Excelへの色付け・関数対応のため、xlsx.full.min.js(SheetJS Community、
      書き込み時のセル装飾は非対応)から xlsx-js-style(SheetJS 0.18.5本体+セルスタイル拡張の
@@ -116,6 +116,34 @@
 #su-start{background:#2196f3;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:1rem;font-weight:700;cursor:pointer;}
 #su-start:active{filter:brightness(.9);} #su-cancel{display:inline-block;margin-right:10px;background:transparent;color:#b8b8b8;border:1px solid #666;border-radius:8px;padding:9px 16px;font-size:.9rem;font-weight:500;cursor:pointer;} #su-cancel:active{filter:brightness(.8);} /* A048/A050: キャンセルは「了解してはじめる」の左。Arela・PDFどちらのダイアログにも出す */
 #su-tip{display:none;position:fixed;z-index:8700;max-width:min(340px,92vw);background:rgba(20,20,35,.97);border:1px solid #4488cc;border-radius:8px;padding:9px 13px;font-size:.82em;line-height:1.7;color:#d6e6ff;white-space:pre-line;box-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none;}
+/* A051: 起動時のdat読込画面。2行を意図どおりに区切り、中央揃えにする / 進捗バー(確定%と縞の不確定表示) */
+#dat-gate-loading{text-align:center;}
+#dat-gate-loading p{line-height:1.7;}
+#dat-gate-loading small{display:block;line-height:1.7;}
+#dat-prog{position:relative;width:min(360px,100%);height:10px;margin:14px auto 6px;border-radius:6px;background:rgba(255,255,255,.14);overflow:hidden;}
+#dat-prog-bar{position:absolute;left:0;top:0;bottom:0;width:0;border-radius:6px;background:#4caf50;transition:width .15s linear;}
+/* 不確定(縞): 動きはtransformのみなので、JSON.parse等でメインスレッドが詰まっても止まりにくい */
+#dat-prog.indet #dat-prog-bar{width:40% !important;transition:none;
+  background:repeating-linear-gradient(45deg,#4caf50 0 8px,#7bd17e 8px 16px);animation:dat-slide 1.1s ease-in-out infinite alternate;}
+@keyframes dat-slide{from{transform:translateX(0);}to{transform:translateX(150%);}}
+#dat-prog-label{font-size:.82em;color:#CACACA;min-height:1.4em;}
+#dat-timing{margin-top:8px;font-size:.66em;color:#7d8896;line-height:1.6;}
+/* A052: 使用ライブラリのライセンス表記(Credits) */
+#credits-link-wrap{margin:16px 0 0;text-align:center;font-size:.74em;}
+#credits-link-wrap a{color:#8fa8c4;text-decoration:underline;cursor:pointer;}
+#credits-overlay{display:none;position:fixed;inset:0;z-index:99700;background:rgba(0,0,0,.84);}
+#credits-panel{position:absolute;left:50%;top:3vh;bottom:3vh;transform:translateX(-50%);width:min(920px,94vw);background:#1e1e2e;border:1px solid #4488cc;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;}
+#credits-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:#16162a;border-bottom:1px solid #334;font-weight:700;color:#cde;font-size:.95em;}
+#credits-head button,#credits-foot button{padding:7px 16px;background:#2a2a3a;border:1px solid #556;color:#ddd;border-radius:6px;cursor:pointer;font-size:.85em;}
+#credits-body{flex:1;overflow-y:auto;padding:14px 18px;color:#cfd8e3;font-size:.82em;line-height:1.75;-webkit-overflow-scrolling:touch;}
+#credits-foot{padding:10px 16px;border-top:1px solid #334;text-align:center;background:#16162a;}
+#credits-body .cr-note{margin:10px 0;color:#b8c4d2;}
+#credits-body .cr-item{margin:8px 0;padding:8px 12px;background:rgba(255,255,255,.05);border:1px solid #334;border-radius:6px;}
+#credits-body .cr-ver{color:#8ab4f8;margin-left:6px;} #credits-body .cr-lic{color:#a5d6a7;} #credits-body .cr-sub{color:#9aa7b5;font-size:.92em;}
+#credits-body details{margin:6px 0;border:1px solid #334;border-radius:6px;background:rgba(0,0,0,.18);}
+#credits-body summary{cursor:pointer;padding:8px 12px;color:#cde;font-weight:600;}
+#credits-body pre.lic{margin:0;padding:10px 14px;white-space:pre-wrap;word-break:break-word;font-size:.88em;line-height:1.55;color:#c8d0da;font-family:Consolas,Menlo,monospace;border-top:1px solid #334;}
+#credits-body .cr-foot{text-align:center;color:#8a96a3;margin-top:16px;}
 </style>
 </head>
 <body>
@@ -141,7 +169,7 @@
     <div id="logo-area">
       <div class="logo-row">
       <img id="logo-helmet" src="data:image/png;base64,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" alt="OSAKI Tech Lab" style="display:block;flex-shrink:0;height:34px;width:auto;border-radius:3px;">
-      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A050</div>
+      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A052</div>
       <img src="https://hits.sh/osaki-kensetsu.github.io/arecal.svg?style=flat-square&color=0088cc&labelColor=1a1a2e" alt="visits" style="height:13px;opacity:.6;" onerror="this.style.display='none'">
       </div><!-- .logo-row -->
     </div>
@@ -184,7 +212,10 @@
     <div id="dat-gate">
       <div id="dat-gate-loading">
         <p>📦 CalayMachineryData.dat を読込中……</p>
-        <small>初回のみ少々時間がかかります</small>
+        <small id="dat-gate-sub">初回のみ少々時間がかかります</small>
+        <!-- A051: 進捗バー。ダウンロード中は%の確定バー、展開/解析中などは縞の動くバー(.indet) -->
+        <div id="dat-prog" class="indet"><div id="dat-prog-bar"></div></div>
+        <div id="dat-prog-label">サーバーに接続中…</div>
       </div>
       <div id="dat-gate-notfound" style="display:none;">
         <p>📦 CalayMachineryData.dat が見つかりません</p>
@@ -201,7 +232,7 @@
     <div id="drop-hint">
       <p>最初から作図する場合は「PDF」ファイルを<br>前回の続きを行う場合は「Arela」ファイルを<br>D＆D or クリックでロードしてください。</p>
       <small>画面のどこにでもドロップできます</small>
-      
+      <div id="dat-timing"></div>
       <div class="warn-box">
         ⚠ PDFはCADデータと違い、正確ではありません。<br>
         CADデータをPDFに変換すると、cm単位で誤差が出ます。<br>
@@ -218,6 +249,7 @@
         🔖 ブックマークがまだの方は、<b><kbd>Ctrl</kbd> + <kbd>D</kbd></b> でサクッと保存しておくと、<br>
         次に開くときの一手間がなくなります。
       </div>
+      <div id="credits-link-wrap"><a href="#" id="credits-open">使用ライブラリのライセンス表記（Credits）</a></div>
       <input type="file" id="file-in" accept=".pdf,.arela" style="display:none">
     </div>
     <canvas id="pdf-cv"></canvas>
@@ -497,8 +529,12 @@
 
 <script>
 // ================================================================
-//  Arecal_Touch A050
+//  Arecal_Touch A052
 //  変更履歴・背景メモ(A041までの詳細)は Arecal_Touch_変更履歴.md に移動した(A049)。
+//  A052: ①図形確定のトーストの番号を左UIと同じ名前に(旧:配列の長さ) ②使用ライブラリのライセンス表記(Credits)を起動画面に追加
+//        ③面積出力PDFの番号を大きく ④四角形も1個描くごとにツール終了+Enterで直前のツールをリピート(Arecal/Arecalay共通)
+//  A051: 起動時のdat読込画面: ①「読込中……/（通信状況により…）」の2行を意図どおり区切って中央揃え ②進捗バー(ダウンロードは%、展開/解析は縞バー)
+//        ③読込の段階別所要時間を起動画面に小さく表示(遅さの原因切り分け用)
 //  A050: ①起動ダイアログのキャンセルを「了解してはじめる」の左へ・PDF読込でも表示(キャンセル時は現在の図面に一切触れない) ②(?)ヘルプのタップ対応(iOS)
 //        ③タッチ/ペンでSpace固着・ピンチ指の取りこぼしを解除(シングルドラッグで画面が動く不具合の対策) ④図形ボタンの色残り(placement側)
 //  A049: デッドコード掃除(旧フロー: ページ選択/スケール選択モーダル・元図確認ダイアログ・免責の同意モード等を削除)
@@ -638,6 +674,7 @@ window._supportTextScale=1;
 let pdfDoc=null,pageNum=1,scaleDenom=40;
 let _origPdfBytes=null; // v0.0406: Arela(全体保存)用に、読み込んだ元PDFのArrayBufferをそのまま保持しておく
 let shapes=[],cur=null,drawing=false,tool=null,rectLoop=false;
+let _lastArecalTool=null; // A052: Enterキーでリピートする「直前に使った作図ツール」('rect'|'poly')
 let vecPts=[]; // PDFベクター端点
 let vecSegs=[]; // PDFベクター線分
 let vecGrid=null; // v0.0422: 元図スナップ用の空間インデックス（大量線分でも軽量にスナップ探索するため）
@@ -797,6 +834,23 @@ function _resetHeldModifierKeys(){
 window.addEventListener('pointerdown',e=>{
   if(e.pointerType!=='mouse'&&spaceDown){spaceDown=false;cvWrap.style.cursor='';}
 },true);
+// A052: 「Enterで直前のツールをリピート」を安全に発動できる状況かの判定(AreCal/Arecalay共通)。
+// ダイアログ・オーバーレイ表示中、PDF未読込、他のツール/モード進行中は発動しない。
+function _appUiBlocked(){
+  const vis=id=>{const el=document.getElementById(id);return !!el&&getComputedStyle(el).display!=='none';};
+  if(['su-overlay','disclaimer-modal','credits-overlay','pdf-range-overlay','survey-dialog','sc-cal-dialog','_customConfirm','_customChoice','_scaleDialog','rot-modal','dat-gate'].some(vis))return true;
+  const ro=document.getElementById('rot-overlay');if(ro&&ro.classList.contains('active'))return true;
+  const cp=document.getElementById('clr-popup');if(cp&&cp.classList.contains('show'))return true;
+  const iom=document.getElementById('io-menu');if(iom&&iom.style.display==='block')return true;
+  if(!document.body.classList.contains('pdf-ready'))return true;
+  return !!(drawing||distMode||scCalMode||subMode||selUnionMode||surveyMode||_reorderActive);
+}
+function _enterRepeatOk(e){
+  const t=e&&e.target,tn=t&&t.tagName;
+  if(tn==='INPUT'||tn==='TEXTAREA'||tn==='SELECT'||(t&&t.isContentEditable))return false;
+  return !_appUiBlocked();
+}
+window._appUiBlocked=_appUiBlocked;window._enterRepeatOk=_enterRepeatOk; // placement側(Arecalay)からも使う
 window.addEventListener('blur',_resetHeldModifierKeys);
 document.addEventListener('visibilitychange',()=>{if(document.hidden)_resetHeldModifierKeys();});
 let animId=null,pdfW=0,pdfH=0; // pdfW/pdfH: 表示用canvasの実サイズ(回転時は外接矩形まで拡張される)
@@ -1258,8 +1312,35 @@ document.addEventListener('DOMContentLoaded',()=>{
     gate.addEventListener('click', requestLoad);
 
     window.addEventListener('arecalay:machinery-status', e => {
+      // A051: 段階別の所要時間を起動画面の隅に小さく出す(「dat読込が遅い」の原因が通信/展開/解析のどこか見分けるため)
+      const tm = e.detail && e.detail.timing, tEl = document.getElementById('dat-timing');
+      if (tm && tEl) {
+        const s = x => (Math.round(x * 10) / 10).toFixed(1) + '秒', mb = b => (b / 1048576).toFixed(1) + 'MB';
+        tEl.textContent = '起動計測：ページ読込→dat開始 ' + s(tm.startAt) + ' ／ 通信待ち ' + s(tm.wait) + ' ／ DL ' + s(tm.dl)
+          + ' ／ 展開 ' + s(tm.unzip) + ' ／ 解析 ' + s(tm.parse) + ' ／ 合計 ' + s(tm.total)
+          + '（dat ' + mb(tm.size) + (tm.textLen ? ' → 展開後 ' + mb(tm.textLen) : '') + (tm.retry ? ' ／ 再試行あり' : '') + '）';
+      }
       if (e.detail && e.detail.count > 0) showDropHintUI();
       else showNotFoundUI();
+    });
+    // A051: 進捗バー。ダウンロードは総量が分かる時だけ%(確定バー)、それ以外は縞の動くバー。
+    window.addEventListener('arecalay:machinery-progress', e => {
+      const d = e.detail || {}, box = document.getElementById('dat-prog'), bar = document.getElementById('dat-prog-bar'), lab = document.getElementById('dat-prog-label');
+      if (!box || !bar || !lab) return;
+      const mb = b => (b / 1048576).toFixed(1) + 'MB';
+      if (d.phase === 'download' && d.total > 0) {
+        const pct = Math.min(100, Math.round(d.loaded / d.total * 100));
+        box.classList.remove('indet'); bar.style.width = pct + '%';
+        lab.textContent = 'ダウンロード中… ' + pct + '%（' + mb(d.loaded) + ' / ' + mb(d.total) + '）';
+      } else if (d.phase === 'download') {
+        box.classList.add('indet'); lab.textContent = 'ダウンロード中… ' + mb(d.loaded);
+      } else if (d.phase === 'decode') {
+        box.classList.add('indet'); lab.textContent = '圧縮を展開中…';
+      } else if (d.phase === 'parse') {
+        box.classList.add('indet'); lab.textContent = 'データを解析中…';
+      } else {
+        box.classList.add('indet'); lab.textContent = 'サーバーに接続中…';
+      }
     });
 
     // 初期状態：まずは「読込中」を表示し、placement_v2.js側の自動読込(fetch)の結果
@@ -1277,8 +1358,11 @@ document.addEventListener('DOMContentLoaded',()=>{
     // 併せて、4秒経っても読込中なら読込中表示に一言添えて、固まったと思われないようにする。
     setTimeout(() => {
       if (!resolved && loading) {
+        // A051: 「……」の後ろで改行して2行にし(中央揃えはCSS)、元の補足文(初回のみ…)は隠す
         const pEl = gateLoad.querySelector('p');
-        if (pEl) pEl.textContent = '📦 CalayMachineryData.dat を読込中……（通信状況により時間がかかっています）';
+        if (pEl) pEl.innerHTML = '📦 CalayMachineryData.dat を読込中……<br>（通信状況により時間がかかっています）';
+        const subEl = document.getElementById('dat-gate-sub');
+        if (subEl) subEl.style.display = 'none';
       }
     }, 4000);
     setTimeout(() => {
@@ -1809,7 +1893,14 @@ document.addEventListener('DOMContentLoaded',()=>{
     if(e.key==='z'&&(e.ctrlKey||e.metaKey)){if(window._arecalayActive)return;e.preventDefault();undo();return;}
     if(e.key==='y'&&(e.ctrlKey||e.metaKey)){if(window._arecalayActive)return;e.preventDefault();redo();return;}
     if(e.key===' '){spaceDown=true;cvWrap.style.cursor='grab';e.preventDefault();}
-    if(e.key==='Enter'&&drawing&&tool==='poly'&&cur&&cur.pts.length>=2)finishShape();
+    if(e.key==='Enter'&&drawing&&tool==='poly'&&cur&&cur.pts.length>=2){finishShape();return;} // A052: 確定したEnterで直後にリピート発動しないようreturn
+    // A052: Enterキー=直前に使った作図ツール(四角形/多角形)をもう一度始める。1個描くごとにツールが終了する仕様の補完。
+    // 入力欄・ダイアログ・他の操作中は何もしない(_enterRepeatOk)。ボタンにフォーカスが残っていても、Enterは本機能を優先する。
+    if(e.key==='Enter'&&!e.repeat&&!e.isComposing&&!window._arecalayActive&&_lastArecalTool&&!drawing&&_enterRepeatOk(e)){
+      e.preventDefault();
+      const _rb=document.getElementById(_lastArecalTool+'-btn');if(_rb)_rb.click();
+      return;
+    }
     // 6: 長方形角度 上下矢印 0.5度ずつ
     if(drawing&&tool==='rect'){
       if(e.key==='ArrowUp'){e.preventDefault();rectAngle=(rectAngle+0.5)%360;
@@ -3313,6 +3404,7 @@ function startTool(t){
   if(surveyMode)setSurveyMode(false); // v0.0327: 他ツール開始で測点モード終了
   hlSet.clear();
   tool=t;drawing=true;cur={pts:[]};
+  if(t==='rect'||t==='poly')_lastArecalTool=t; // A052
   cvWrap.classList.add('drawing-mode'); // v0.0331
   // v0.0344 Fix1: ツール切替時に両ボタンstyleリセットしてからon付与
   ['rect-btn','poly-btn'].forEach(id=>{
@@ -3338,7 +3430,7 @@ function startTool(t){
   // 押し直す」仕様にしたいとの要望のため、四角形の連続配置ループ(rectLoop)はPC(マウス)の
   // 場合のみ有効にする。
   if(t==='rect'){
-    rectLoop=!_IS_TOUCH_DEVICE;rectAngle=0;
+    rectLoop=false;rectAngle=0; // A052: 連続配置(PC)を廃止。1個描くごとにツール終了(Enterで直前のツールをリピート)
     setStatus(_IS_TOUCH_DEVICE
       ?'⬛ 四角形：１点目を長押しで決定後、２点目を長押しして作図　「✕ キャンセル」ボタンで中止'
       :'⬛ 四角形：2点クリック　Shiftで正方形　↑↓キーで角度変更　右クリックでキャンセル');
@@ -3882,12 +3974,12 @@ function finishShape(){
   const prevTool=tool;cur=null;
   updSidebar();
   const si=sh.selfIntersect?' ⚠自己交差':'';
-  toast(`✅ 図形${shapes.length} — ${sh.area.toFixed(2)} m²${si}`);
+  toast(`✅ ${sh.name||getShapeName(sh,shapes.length-1)} — ${sh.area.toFixed(2)} m²${si}`); // A052: 左UI(サイドバー)と同じ名前を表示(旧:図形${shapes.length}=配列の長さで、途中を消すと食い違った)
   if(rectLoop&&prevTool==='rect'){cur={pts:[]};redraw();return;}
   showSnap(null); // 12: スナップドットを確実に消す
   drawing=false;tool=null;
   lastSnap=null;
-  setStatus('');
+  setStatus(_IS_TOUCH_DEVICE?'':'Enterキー：同じツールをもう一度'); // A052: 1個描くごとにツール終了。PCには再開の案内を出す
   document.getElementById('cv-wrap').classList.remove('drawing-mode'); // v0.0331
   // v0.0362 Fix1: inline styleもリセット（ボタン色が残るバグ修正）
   ['rect-btn','poly-btn'].forEach(id=>{
@@ -5907,13 +5999,18 @@ function _renderAreaPDF(items,mode){
       cx.lineWidth=.6;cx.strokeStyle='#999';cx.stroke();
     });
     // 各ピースの中心に"主番号-枝番号"ラベル(赤)。ピースが1つ(=図形全体が単一の長方形)の場合は枝番号無し
-    cx.fillStyle='#c0392b';
-    cx.font=`bold ${Math.max(9,Math.min(13,10*s+6))}px sans-serif`;
+    // A052: 番号が小さすぎるとの指摘(従来は最大13px)。画像の長辺に対する割合で約3.4倍(長辺2200pxで44px)にし、
+    // 小さい画像でも相対的に大きすぎないよう上下限を設ける。線や塗りに埋もれないよう白い縁取りも付ける。
+    const _lblFs=Math.round(Math.max(20,Math.min(56,Math.max(cv.width,cv.height)*0.02)));
+    cx.font=`bold ${_lblFs}px sans-serif`;
     cx.textAlign='center';cx.textBaseline='middle';
+    cx.lineJoin='round';cx.lineWidth=Math.max(3,_lblFs*0.22);
     it.tris.forEach((t,k)=>{
       const c=centroid(t.pts);const q=tx(c);
       const soleRect=it.tris.length===1&&t.isRect;
-      cx.fillText(soleRect?`${it.mainNo}`:`${it.mainNo}-${k+1}`,q.x,q.y);
+      const _txt=soleRect?`${it.mainNo}`:`${it.mainNo}-${k+1}`;
+      cx.strokeStyle='#ffffff';cx.strokeText(_txt,q.x,q.y);
+      cx.fillStyle='#c0392b';cx.fillText(_txt,q.x,q.y);
     });
   });
   // v0.0464: 追2対応。フッター文字(日本語)をjsPDFネイティブのdoc.text()で描画すると、
@@ -6667,6 +6764,1087 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
 </div>
 <div id="pdf-range-overlay" class=""></div>
 <div id="survey-dialog" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:8500;align-items:center;justify-content:center;"><div style="background:#1a1a2e;border:1px solid #00ccff;border-radius:10px;padding:22px 26px;width:290px;"><h4 style="color:#00eeff;margin:0 0 14px;font-size:.95em;text-align:center;">📍 測点を移動（基点から）</h4><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;"><button id="sv-up" class="sv-dir-btn" style="grid-column:2;grid-row:1;padding:10px 4px;">↑ 上（+Y）</button><button id="sv-left" class="sv-dir-btn" style="grid-column:1;grid-row:2;padding:10px 4px;">← 左（-X）</button><button id="sv-right" class="sv-dir-btn" style="grid-column:3;grid-row:2;padding:10px 4px;">→ 右（+X）</button><button id="sv-down" class="sv-dir-btn" style="grid-column:2;grid-row:3;padding:10px 4px;">↓ 下（-Y）</button></div><label style="font-size:.8em;color:#CACACA;">移動距離（m）</label><div id="sv-dist-disp" style="width:100%;box-sizing:border-box;margin:4px 0 12px;padding:9px 12px;background:#0d1b2a;border:1px solid #2a5a70;border-radius:6px;font-size:1.05em;min-height:1.3em;text-align:right;font-family:monospace;"><span id="sv-dist-txt" style="color:#5a6a76;">例: 5.000</span></div><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;"><button class="sv-num-btn" data-k="7">7</button><button class="sv-num-btn" data-k="8">8</button><button class="sv-num-btn" data-k="9">9</button><button class="sv-num-btn" data-k="4">4</button><button class="sv-num-btn" data-k="5">5</button><button class="sv-num-btn" data-k="6">6</button><button class="sv-num-btn" data-k="1">1</button><button class="sv-num-btn" data-k="2">2</button><button class="sv-num-btn" data-k="3">3</button><button class="sv-num-btn" data-k="0">0</button><button class="sv-num-btn" data-k=".">.</button><button id="sv-clear" class="sv-num-btn" style="background:rgba(180,45,25,.35);border-color:#c0402a;color:#ffb0a0;">C</button></div><div style="display:flex;gap:8px;"><button id="sv-cancel" style="flex:1;background:#333;">キャンセル</button><button id="sv-ok" disabled style="flex:1;background:rgba(0,150,200,.4);border-color:#00ccff;color:#00eeff;">設置</button></div></div></div><div class="survey-tip" id="survey-tip">右クリックで削除</div>
+<!-- A052: 使用ライブラリのライセンス表記(Credits)。起動画面の最下部のリンクから開く。 -->
+<div id="credits-overlay" role="dialog" aria-modal="true" aria-label="使用ライブラリのライセンス表記">
+  <div id="credits-panel">
+    <div id="credits-head"><span>使用ライブラリのライセンス表記（Credits）</span><button type="button" id="credits-close" aria-label="閉じる">✕ 閉じる</button></div>
+    <div id="credits-body">
+      <p class="cr-note">Arecal は、以下のオープンソース・ソフトウェアを利用しています。いずれも無償で利用できるライセンスです。各ライセンスの条件に従い、著作権表示と許諾表示を掲載します。</p>
+      <div class="cr-item"><b>PDF.js</b> <span class="cr-ver">2.12.313</span><br><span class="cr-lic">Apache License 2.0</span><br><span class="cr-sub">© Mozilla Foundation ／ 用途: PDF図面の表示 ／ 入手先: cdnjs.cloudflare.com</span></div><div class="cr-item"><b>xlsx-js-style（SheetJS Community Edition ベース）</b> <span class="cr-ver">1.2.0</span><br><span class="cr-lic">Apache License 2.0</span><br><span class="cr-sub">© SheetJS LLC / gitbrent ／ 用途: Excel(.xlsx)の出力 ／ 入手先: cdn.jsdelivr.net</span></div><div class="cr-item"><b>jsPDF</b> <span class="cr-ver">2.5.1</span><br><span class="cr-lic">MIT License</span><br><span class="cr-sub">© James Hall ほか(下記) ／ 用途: PDFの出力 ／ 入手先: cdnjs.cloudflare.com</span></div><div class="cr-item"><b>JSZip</b> <span class="cr-ver">3.10.1</span><br><span class="cr-lic">MIT License（MIT / GPLv3 のデュアルライセンスのうちMITを選択）</span><br><span class="cr-sub">© Stuart Knightley ほか ／ 用途: ZIPの出力 ／ 入手先: cdnjs.cloudflare.com</span></div><div class="cr-item"><b>Clipper（JavaScript版）</b> <span class="cr-ver">6.4.2.2</span><br><span class="cr-lic">Boost Software License 1.0</span><br><span class="cr-sub">© Angus Johnson / Timo ／ 用途: 図形の合成・部分削除(ポリゴン演算) ／ 入手先: 同梱ファイル</span></div>
+      <p class="cr-note">上記のうち <b>jsPDF</b>、<b>JSZip</b>、<b>Clipper</b> のファイルには、次の第三者ソフトウェアが含まれています。</p><div class="cr-item"><b>pako</b>（JSZip内）— MIT License ／ zlib 由来部分は zlib License<br><b>fflate</b>（jsPDF内）— MIT License<br><b>omggif</b>（jsPDF内）— MIT License<br><b>Adobe Systems Incorporated の JPEG エンコーダ</b>（jsPDF内）— 修正BSDライセンス(3条項)<br><b>jsbn</b>（Tom Wu, Clipper内）— Tom Wu のライセンス<br><b>jsPDF 内の小規模部品</b>（MD5=Joseph Myers、RGBColor=Stoyan Stefanov、RC4暗号化=FPDF 由来、PDF暗号化=Owen Leong(MIT)、Dominik Homberger(MIT) ほか）</div>
+      <p class="cr-note">以下に、各ライセンスの表示を掲載します（項目をタップすると開きます）。</p>
+      <details><summary>PDF.js — 著作権表示とライセンス告知</summary><pre class="lic">Copyright 2021 Mozilla Foundation
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0</pre></details><details><summary>xlsx-js-style / SheetJS — 著作権表示とライセンス告知</summary><pre class="lic">Copyright (C) 2012-present SheetJS LLC
+
+Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0</pre></details><details><summary>Apache License, Version 2.0 — 全文（PDF.js・xlsx-js-style に適用）</summary><pre class="lic">Apache License
+                           Version 2.0, January 2004
+                        http://www.apache.org/licenses/
+
+   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
+
+   1. Definitions.
+
+      &quot;License&quot; shall mean the terms and conditions for use, reproduction,
+      and distribution as defined by Sections 1 through 9 of this document.
+
+      &quot;Licensor&quot; shall mean the copyright owner or entity authorized by
+      the copyright owner that is granting the License.
+
+      &quot;Legal Entity&quot; shall mean the union of the acting entity and all
+      other entities that control, are controlled by, or are under common
+      control with that entity. For the purposes of this definition,
+      &quot;control&quot; means (i) the power, direct or indirect, to cause the
+      direction or management of such entity, whether by contract or
+      otherwise, or (ii) ownership of fifty percent (50%) or more of the
+      outstanding shares, or (iii) beneficial ownership of such entity.
+
+      &quot;You&quot; (or &quot;Your&quot;) shall mean an individual or Legal Entity
+      exercising permissions granted by this License.
+
+      &quot;Source&quot; form shall mean the preferred form for making modifications,
+      including but not limited to software source code, documentation
+      source, and configuration files.
+
+      &quot;Object&quot; form shall mean any form resulting from mechanical
+      transformation or translation of a Source form, including but
+      not limited to compiled object code, generated documentation,
+      and conversions to other media types.
+
+      &quot;Work&quot; shall mean the work of authorship, whether in Source or
+      Object form, made available under the License, as indicated by a
+      copyright notice that is included in or attached to the work
+      (an example is provided in the Appendix below).
+
+      &quot;Derivative Works&quot; shall mean any work, whether in Source or Object
+      form, that is based on (or derived from) the Work and for which the
+      editorial revisions, annotations, elaborations, or other modifications
+      represent, as a whole, an original work of authorship. For the purposes
+      of this License, Derivative Works shall not include works that remain
+      separable from, or merely link (or bind by name) to the interfaces of,
+      the Work and Derivative Works thereof.
+
+      &quot;Contribution&quot; shall mean any work of authorship, including
+      the original version of the Work and any modifications or additions
+      to that Work or Derivative Works thereof, that is intentionally
+      submitted to Licensor for inclusion in the Work by the copyright owner
+      or by an individual or Legal Entity authorized to submit on behalf of
+      the copyright owner. For the purposes of this definition, &quot;submitted&quot;
+      means any form of electronic, verbal, or written communication sent
+      to the Licensor or its representatives, including but not limited to
+      communication on electronic mailing lists, source code control systems,
+      and issue tracking systems that are managed by, or on behalf of, the
+      Licensor for the purpose of discussing and improving the Work, but
+      excluding communication that is conspicuously marked or otherwise
+      designated in writing by the copyright owner as &quot;Not a Contribution.&quot;
+
+      &quot;Contributor&quot; shall mean Licensor and any individual or Legal Entity
+      on behalf of whom a Contribution has been received by Licensor and
+      subsequently incorporated within the Work.
+
+   2. Grant of Copyright License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      copyright license to reproduce, prepare Derivative Works of,
+      publicly display, publicly perform, sublicense, and distribute the
+      Work and such Derivative Works in Source or Object form.
+
+   3. Grant of Patent License. Subject to the terms and conditions of
+      this License, each Contributor hereby grants to You a perpetual,
+      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
+      (except as stated in this section) patent license to make, have made,
+      use, offer to sell, sell, import, and otherwise transfer the Work,
+      where such license applies only to those patent claims licensable
+      by such Contributor that are necessarily infringed by their
+      Contribution(s) alone or by combination of their Contribution(s)
+      with the Work to which such Contribution(s) was submitted. If You
+      institute patent litigation against any entity (including a
+      cross-claim or counterclaim in a lawsuit) alleging that the Work
+      or a Contribution incorporated within the Work constitutes direct
+      or contributory patent infringement, then any patent licenses
+      granted to You under this License for that Work shall terminate
+      as of the date such litigation is filed.
+
+   4. Redistribution. You may reproduce and distribute copies of the
+      Work or Derivative Works thereof in any medium, with or without
+      modifications, and in Source or Object form, provided that You
+      meet the following conditions:
+
+      (a) You must give any other recipients of the Work or
+          Derivative Works a copy of this License; and
+
+      (b) You must cause any modified files to carry prominent notices
+          stating that You changed the files; and
+
+      (c) You must retain, in the Source form of any Derivative Works
+          that You distribute, all copyright, patent, trademark, and
+          attribution notices from the Source form of the Work,
+          excluding those notices that do not pertain to any part of
+          the Derivative Works; and
+
+      (d) If the Work includes a &quot;NOTICE&quot; text file as part of its
+          distribution, then any Derivative Works that You distribute must
+          include a readable copy of the attribution notices contained
+          within such NOTICE file, excluding those notices that do not
+          pertain to any part of the Derivative Works, in at least one
+          of the following places: within a NOTICE text file distributed
+          as part of the Derivative Works; within the Source form or
+          documentation, if provided along with the Derivative Works; or,
+          within a display generated by the Derivative Works, if and
+          wherever such third-party notices normally appear. The contents
+          of the NOTICE file are for informational purposes only and
+          do not modify the License. You may add Your own attribution
+          notices within Derivative Works that You distribute, alongside
+          or as an addendum to the NOTICE text from the Work, provided
+          that such additional attribution notices cannot be construed
+          as modifying the License.
+
+      You may add Your own copyright statement to Your modifications and
+      may provide additional or different license terms and conditions
+      for use, reproduction, or distribution of Your modifications, or
+      for any such Derivative Works as a whole, provided Your use,
+      reproduction, and distribution of the Work otherwise complies with
+      the conditions stated in this License.
+
+   5. Submission of Contributions. Unless You explicitly state otherwise,
+      any Contribution intentionally submitted for inclusion in the Work
+      by You to the Licensor shall be under the terms and conditions of
+      this License, without any additional terms or conditions.
+      Notwithstanding the above, nothing herein shall supersede or modify
+      the terms of any separate license agreement you may have executed
+      with Licensor regarding such Contributions.
+
+   6. Trademarks. This License does not grant permission to use the trade
+      names, trademarks, service marks, or product names of the Licensor,
+      except as required for reasonable and customary use in describing the
+      origin of the Work and reproducing the content of the NOTICE file.
+
+   7. Disclaimer of Warranty. Unless required by applicable law or
+      agreed to in writing, Licensor provides the Work (and each
+      Contributor provides its Contributions) on an &quot;AS IS&quot; BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
+      implied, including, without limitation, any warranties or conditions
+      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
+      PARTICULAR PURPOSE. You are solely responsible for determining the
+      appropriateness of using or redistributing the Work and assume any
+      risks associated with Your exercise of permissions under this License.
+
+   8. Limitation of Liability. In no event and under no legal theory,
+      whether in tort (including negligence), contract, or otherwise,
+      unless required by applicable law (such as deliberate and grossly
+      negligent acts) or agreed to in writing, shall any Contributor be
+      liable to You for damages, including any direct, indirect, special,
+      incidental, or consequential damages of any character arising as a
+      result of this License or out of the use or inability to use the
+      Work (including but not limited to damages for loss of goodwill,
+      work stoppage, computer failure or malfunction, or any and all
+      other commercial damages or losses), even if such Contributor
+      has been advised of the possibility of such damages.
+
+   9. Accepting Warranty or Additional Liability. While redistributing
+      the Work or Derivative Works thereof, You may choose to offer,
+      and charge a fee for, acceptance of support, warranty, indemnity,
+      or other liability obligations and/or rights consistent with this
+      License. However, in accepting such obligations, You may act only
+      on Your own behalf and on Your sole responsibility, not on behalf
+      of any other Contributor, and only if You agree to indemnify,
+      defend, and hold each Contributor harmless for any liability
+      incurred by, or claims asserted against, such Contributor by reason
+      of your accepting any such warranty or additional liability.
+
+   END OF TERMS AND CONDITIONS</pre></details><details><summary>jsPDF — 著作権表示と MIT License（ファイル冒頭の表示そのまま）</summary><pre class="lic">jsPDF - PDF Document creation from JavaScript
+Version 2.5.1 Built on 2022-01-28T15:37:57.789Z
+                     CommitID 00000000
+
+Copyright (c) 2010-2021 James Hall &lt;james@parall.ax&gt;, https://github.com/MrRio/jsPDF
+              2015-2021 yWorks GmbH, http://www.yworks.com
+              2015-2021 Lukas Holländer &lt;lukas.hollaender@yworks.com&gt;, https://github.com/HackbrettXXX
+              2016-2018 Aras Abbasi &lt;aras.abbasi@gmail.com&gt;
+              2010 Aaron Spike, https://github.com/acspike
+              2012 Willow Systems Corporation, https://github.com/willowsystems
+              2012 Pablo Hess, https://github.com/pablohess
+              2012 Florian Jenett, https://github.com/fjenett
+              2013 Warren Weckesser, https://github.com/warrenweckesser
+              2013 Youssef Beddad, https://github.com/lifof
+              2013 Lee Driscoll, https://github.com/lsdriscoll
+              2013 Stefan Slonevskiy, https://github.com/stefslon
+              2013 Jeremy Morel, https://github.com/jmorel
+              2013 Christoph Hartmann, https://github.com/chris-rock
+              2014 Juan Pablo Gaviria, https://github.com/juanpgaviria
+              2014 James Makes, https://github.com/dollaruw
+              2014 Diego Casorran, https://github.com/diegocr
+              2014 Steven Spungin, https://github.com/Flamenco
+              2014 Kenneth Glassey, https://github.com/Gavvers
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+Contributor(s):
+   siefkenj, ahwolf, rickygu, Midnith, saintclair, eaparango,
+   kim3er, mfo, alnorth, Flamenco</pre></details><details><summary>jsPDF 同梱: Adobe Systems Incorporated（BSD 3-Clause）</summary><pre class="lic">Copyright (c) 2008, Adobe Systems Incorporated
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without 
+modification, are permitted provided that the following conditions are
+met:
+
+* Redistributions of source code must retain the above copyright notice, 
+  this list of conditions and the following disclaimer.
+
+* Redistributions in binary form must reproduce the above copyright
+  notice, this list of conditions and the following disclaimer in the 
+  documentation and/or other materials provided with the distribution.
+
+* Neither the name of Adobe Systems Incorporated nor the names of its 
+  contributors may be used to endorse or promote products derived from 
+  this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre></details><details><summary>jsPDF 同梱: omggif（MIT License）</summary><pre class="lic">(c) Dean McNamee &lt;dean@gmail.com&gt;, 2013.
+
+https://github.com/deanm/omggif
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+omggif is a JavaScript implementation of a GIF 89a encoder and decoder,
+including animation and compression.  It does not rely on any specific
+underlying system, so should run in the browser, Node, or Plask.</pre></details><details><summary>jsPDF 同梱: Dominik Homberger（MIT License）</summary><pre class="lic">Copyright (c) 2017 Dominik Homberger
+    Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the &quot;Software&quot;), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+    https://webpjs.appspot.com
+    WebPRiffParser dominikhlbg@gmail.com</pre></details><details><summary>jsPDF 同梱: fflate（MIT License）</summary><pre class="lic">MIT License
+
+Copyright (c) 2020 Arjun Barrett
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.</pre></details><details><summary>jsPDF 同梱: そのほかの小規模部品について</summary><pre class="lic">jsPDF には、MD5 (Joseph Myers: &quot;does not specify a particular license for his work&quot;)、
+RGBColor (Stoyan Stefanov: &quot;Use it if you like it&quot;)、RC4 暗号化 (FPDF: &quot;released under a permissive license:
+there is no usage restriction&quot;) などの小さな部品が含まれています。いずれも jsPDF の配布物にそのまま含まれており、
+jsPDF の著作権表示（上記）とともに表示します。</pre></details><details><summary>JSZip — MIT License</summary><pre class="lic">Copyright (c) 2009-2016 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+GPL version 3
+
+                    GNU GENERAL PUBLIC LICENSE
+                       Version 3, 29 June 2007
+
+ Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
+ Everyone is permitted to copy and distribute verbatim copies
+ of this license document, but changing it is not allowed.
+
+                            Preamble
+
+  The GNU General Public License is a free, copyleft license for
+software and other kinds of works.
+
+  The licenses for most software and other practical works are designed
+to take away your freedom to share and change the works.  By contrast,
+the GNU General Public License is intended to guarantee your freedom to
+share and change all versions of a program--to make sure it remains free
+software for all its users.  We, the Free Software Foundation, use the
+GNU General Public License for most of our software; it applies also to
+any other work released this way by its authors.  You can apply it to
+your programs, too.
+
+  When we speak of free software, we are referring to freedom, not
+price.  Our General Public Licenses are designed to make sure that you
+have the freedom to distribute copies of free software (and charge for
+them if you wish), that you receive source code or can get it if you
+want it, that you can change the software or use pieces of it in new
+free programs, and that you know you can do these things.
+
+  To protect your rights, we need to prevent others from denying you
+these rights or asking you to surrender the rights.  Therefore, you have
+certain responsibilities if you distribute copies of the software, or if
+you modify it: responsibilities to respect the freedom of others.
+
+  For example, if you distribute copies of such a program, whether
+gratis or for a fee, you must pass on to the recipients the same
+freedoms that you received.  You must make sure that they, too, receive
+or can get the source code.  And you must show them these terms so they
+know their rights.
+
+  Developers that use the GNU GPL protect your rights with two steps:
+(1) assert copyright on the software, and (2) offer you this License
+giving you legal permission to copy, distribute and/or modify it.
+
+  For the developers&#x27; and authors&#x27; protection, the GPL clearly explains
+that there is no warranty for this free software.  For both users&#x27; and
+authors&#x27; sake, the GPL requires that modified versions be marked as
+changed, so that their problems will not be attributed erroneously to
+authors of previous versions.
+
+  Some devices are designed to deny users access to install or run
+modified versions of the software inside them, although the manufacturer
+can do so.  This is fundamentally incompatible with the aim of
+protecting users&#x27; freedom to change the software.  The systematic
+pattern of such abuse occurs in the area of products for individuals to
+use, which is precisely where it is most unacceptable.  Therefore, we
+have designed this version of the GPL to prohibit the practice for those
+products.  If such problems arise substantially in other domains, we
+stand ready to extend this provision to those domains in future versions
+of the GPL, as needed to protect the freedom of users.
+
+  Finally, every program is threatened constantly by software patents.
+States should not allow patents to restrict development and use of
+software on general-purpose computers, but in those that do, we wish to
+avoid the special danger that patents applied to a free program could
+make it effectively proprietary.  To prevent this, the GPL assures that
+patents cannot be used to render the program non-free.
+
+  The precise terms and conditions for copying, distribution and
+modification follow.
+
+                       TERMS AND CONDITIONS
+
+  0. Definitions.
+
+  &quot;This License&quot; refers to version 3 of the GNU General Public License.
+
+  &quot;Copyright&quot; also means copyright-like laws that apply to other kinds of
+works, such as semiconductor masks.
+
+  &quot;The Program&quot; refers to any copyrightable work licensed under this
+License.  Each licensee is addressed as &quot;you&quot;.  &quot;Licensees&quot; and
+&quot;recipients&quot; may be individuals or organizations.
+
+  To &quot;modify&quot; a work means to copy from or adapt all or part of the work
+in a fashion requiring copyright permission, other than the making of an
+exact copy.  The resulting work is called a &quot;modified version&quot; of the
+earlier work or a work &quot;based on&quot; the earlier work.
+
+  A &quot;covered work&quot; means either the unmodified Program or a work based
+on the Program.
+
+  To &quot;propagate&quot; a work means to do anything with it that, without
+permission, would make you directly or secondarily liable for
+infringement under applicable copyright law, except executing it on a
+computer or modifying a private copy.  Propagation includes copying,
+distribution (with or without modification), making available to the
+public, and in some countries other activities as well.
+
+  To &quot;convey&quot; a work means any kind of propagation that enables other
+parties to make or receive copies.  Mere interaction with a user through
+a computer network, with no transfer of a copy, is not conveying.
+
+  An interactive user interface displays &quot;Appropriate Legal Notices&quot;
+to the extent that it includes a convenient and prominently visible
+feature that (1) displays an appropriate copyright notice, and (2)
+tells the user that there is no warranty for the work (except to the
+extent that warranties are provided), that licensees may convey the
+work under this License, and how to view a copy of this License.  If
+the interface presents a list of user commands or options, such as a
+menu, a prominent item in the list meets this criterion.
+
+  1. Source Code.
+
+  The &quot;source code&quot; for a work means the preferred form of the work
+for making modifications to it.  &quot;Object code&quot; means any non-source
+form of a work.
+
+  A &quot;Standard Interface&quot; means an interface that either is an official
+standard defined by a recognized standards body, or, in the case of
+interfaces specified for a particular programming language, one that
+is widely used among developers working in that language.
+
+  The &quot;System Libraries&quot; of an executable work include anything, other
+than the work as a whole, that (a) is included in the normal form of
+packaging a Major Component, but which is not part of that Major
+Component, and (b) serves only to enable use of the work with that
+Major Component, or to implement a Standard Interface for which an
+implementation is available to the public in source code form.  A
+&quot;Major Component&quot;, in this context, means a major essential component
+(kernel, window system, and so on) of the specific operating system
+(if any) on which the executable work runs, or a compiler used to
+produce the work, or an object code interpreter used to run it.
+
+  The &quot;Corresponding Source&quot; for a work in object code form means all
+the source code needed to generate, install, and (for an executable
+work) run the object code and to modify the work, including scripts to
+control those activities.  However, it does not include the work&#x27;s
+System Libraries, or general-purpose tools or generally available free
+programs which are used unmodified in performing those activities but
+which are not part of the work.  For example, Corresponding Source
+includes interface definition files associated with source files for
+the work, and the source code for shared libraries and dynamically
+linked subprograms that the work is specifically designed to require,
+such as by intimate data communication or control flow between those
+subprograms and other parts of the work.
+
+  The Corresponding Source need not include anything that users
+can regenerate automatically from other parts of the Corresponding
+Source.
+
+  The Corresponding Source for a work in source code form is that
+same work.
+
+  2. Basic Permissions.
+
+  All rights granted under this License are granted for the term of
+copyright on the Program, and are irrevocable provided the stated
+conditions are met.  This License explicitly affirms your unlimited
+permission to run the unmodified Program.  The output from running a
+covered work is covered by this License only if the output, given its
+content, constitutes a covered work.  This License acknowledges your
+rights of fair use or other equivalent, as provided by copyright law.
+
+  You may make, run and propagate covered works that you do not
+convey, without conditions so long as your license otherwise remains
+in force.  You may convey covered works to others for the sole purpose
+of having them make modifications exclusively for you, or provide you
+with facilities for running those works, provided that you comply with
+the terms of this License in conveying all material for which you do
+not control copyright.  Those thus making or running the covered works
+for you must do so exclusively on your behalf, under your direction
+and control, on terms that prohibit them from making any copies of
+your copyrighted material outside their relationship with you.
+
+  Conveying under any other circumstances is permitted solely under
+the conditions stated below.  Sublicensing is not allowed; section 10
+makes it unnecessary.
+
+  3. Protecting Users&#x27; Legal Rights From Anti-Circumvention Law.
+
+  No covered work shall be deemed part of an effective technological
+measure under any applicable law fulfilling obligations under article
+11 of the WIPO copyright treaty adopted on 20 December 1996, or
+similar laws prohibiting or restricting circumvention of such
+measures.
+
+  When you convey a covered work, you waive any legal power to forbid
+circumvention of technological measures to the extent such circumvention
+is effected by exercising rights under this License with respect to
+the covered work, and you disclaim any intention to limit operation or
+modification of the work as a means of enforcing, against the work&#x27;s
+users, your or third parties&#x27; legal rights to forbid circumvention of
+technological measures.
+
+  4. Conveying Verbatim Copies.
+
+  You may convey verbatim copies of the Program&#x27;s source code as you
+receive it, in any medium, provided that you conspicuously and
+appropriately publish on each copy an appropriate copyright notice;
+keep intact all notices stating that this License and any
+non-permissive terms added in accord with section 7 apply to the code;
+keep intact all notices of the absence of any warranty; and give all
+recipients a copy of this License along with the Program.
+
+  You may charge any price or no price for each copy that you convey,
+and you may offer support or warranty protection for a fee.
+
+  5. Conveying Modified Source Versions.
+
+  You may convey a work based on the Program, or the modifications to
+produce it from the Program, in the form of source code under the
+terms of section 4, provided that you also meet all of these conditions:
+
+    a) The work must carry prominent notices stating that you modified
+    it, and giving a relevant date.
+
+    b) The work must carry prominent notices stating that it is
+    released under this License and any conditions added under section
+    7.  This requirement modifies the requirement in section 4 to
+    &quot;keep intact all notices&quot;.
+
+    c) You must license the entire work, as a whole, under this
+    License to anyone who comes into possession of a copy.  This
+    License will therefore apply, along with any applicable section 7
+    additional terms, to the whole of the work, and all its parts,
+    regardless of how they are packaged.  This License gives no
+    permission to license the work in any other way, but it does not
+    invalidate such permission if you have separately received it.
+
+    d) If the work has interactive user interfaces, each must display
+    Appropriate Legal Notices; however, if the Program has interactive
+    interfaces that do not display Appropriate Legal Notices, your
+    work need not make them do so.
+
+  A compilation of a covered work with other separate and independent
+works, which are not by their nature extensions of the covered work,
+and which are not combined with it such as to form a larger program,
+in or on a volume of a storage or distribution medium, is called an
+&quot;aggregate&quot; if the compilation and its resulting copyright are not
+used to limit the access or legal rights of the compilation&#x27;s users
+beyond what the individual works permit.  Inclusion of a covered work
+in an aggregate does not cause this License to apply to the other
+parts of the aggregate.
+
+  6. Conveying Non-Source Forms.
+
+  You may convey a covered work in object code form under the terms
+of sections 4 and 5, provided that you also convey the
+machine-readable Corresponding Source under the terms of this License,
+in one of these ways:
+
+    a) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by the
+    Corresponding Source fixed on a durable physical medium
+    customarily used for software interchange.
+
+    b) Convey the object code in, or embodied in, a physical product
+    (including a physical distribution medium), accompanied by a
+    written offer, valid for at least three years and valid for as
+    long as you offer spare parts or customer support for that product
+    model, to give anyone who possesses the object code either (1) a
+    copy of the Corresponding Source for all the software in the
+    product that is covered by this License, on a durable physical
+    medium customarily used for software interchange, for a price no
+    more than your reasonable cost of physically performing this
+    conveying of source, or (2) access to copy the
+    Corresponding Source from a network server at no charge.
+
+    c) Convey individual copies of the object code with a copy of the
+    written offer to provide the Corresponding Source.  This
+    alternative is allowed only occasionally and noncommercially, and
+    only if you received the object code with such an offer, in accord
+    with subsection 6b.
+
+    d) Convey the object code by offering access from a designated
+    place (gratis or for a charge), and offer equivalent access to the
+    Corresponding Source in the same way through the same place at no
+    further charge.  You need not require recipients to copy the
+    Corresponding Source along with the object code.  If the place to
+    copy the object code is a network server, the Corresponding Source
+    may be on a different server (operated by you or a third party)
+    that supports equivalent copying facilities, provided you maintain
+    clear directions next to the object code saying where to find the
+    Corresponding Source.  Regardless of what server hosts the
+    Corresponding Source, you remain obligated to ensure that it is
+    available for as long as needed to satisfy these requirements.
+
+    e) Convey the object code using peer-to-peer transmission, provided
+    you inform other peers where the object code and Corresponding
+    Source of the work are being offered to the general public at no
+    charge under subsection 6d.
+
+  A separable portion of the object code, whose source code is excluded
+from the Corresponding Source as a System Library, need not be
+included in conveying the object code work.
+
+  A &quot;User Product&quot; is either (1) a &quot;consumer product&quot;, which means any
+tangible personal property which is normally used for personal, family,
+or household purposes, or (2) anything designed or sold for incorporation
+into a dwelling.  In determining whether a product is a consumer product,
+doubtful cases shall be resolved in favor of coverage.  For a particular
+product received by a particular user, &quot;normally used&quot; refers to a
+typical or common use of that class of product, regardless of the status
+of the particular user or of the way in which the particular user
+actually uses, or expects or is expected to use, the product.  A product
+is a consumer product regardless of whether the product has substantial
+commercial, industrial or non-consumer uses, unless such uses represent
+the only significant mode of use of the product.
+
+  &quot;Installation Information&quot; for a User Product means any methods,
+procedures, authorization keys, or other information required to install
+and execute modified versions of a covered work in that User Product from
+a modified version of its Corresponding Source.  The information must
+suffice to ensure that the continued functioning of the modified object
+code is in no case prevented or interfered with solely because
+modification has been made.
+
+  If you convey an object code work under this section in, or with, or
+specifically for use in, a User Product, and the conveying occurs as
+part of a transaction in which the right of possession and use of the
+User Product is transferred to the recipient in perpetuity or for a
+fixed term (regardless of how the transaction is characterized), the
+Corresponding Source conveyed under this section must be accompanied
+by the Installation Information.  But this requirement does not apply
+if neither you nor any third party retains the ability to install
+modified object code on the User Product (for example, the work has
+been installed in ROM).
+
+  The requirement to provide Installation Information does not include a
+requirement to continue to provide support service, warranty, or updates
+for a work that has been modified or installed by the recipient, or for
+the User Product in which it has been modified or installed.  Access to a
+network may be denied when the modification itself materially and
+adversely affects the operation of the network or violates the rules and
+protocols for communication across the network.
+
+  Corresponding Source conveyed, and Installation Information provided,
+in accord with this section must be in a format that is publicly
+documented (and with an implementation available to the public in
+source code form), and must require no special password or key for
+unpacking, reading or copying.
+
+  7. Additional Terms.
+
+  &quot;Additional permissions&quot; are terms that supplement the terms of this
+License by making exceptions from one or more of its conditions.
+Additional permissions that are applicable to the entire Program shall
+be treated as though they were included in this License, to the extent
+that they are valid under applicable law.  If additional permissions
+apply only to part of the Program, that part may be used separately
+under those permissions, but the entire Program remains governed by
+this License without regard to the additional permissions.
+
+  When you convey a copy of a covered work, you may at your option
+remove any additional permissions from that copy, or from any part of
+it.  (Additional permissions may be written to require their own
+removal in certain cases when you modify the work.)  You may place
+additional permissions on material, added by you to a covered work,
+for which you have or can give appropriate copyright permission.
+
+  Notwithstanding any other provision of this License, for material you
+add to a covered work, you may (if authorized by the copyright holders of
+that material) supplement the terms of this License with terms:
+
+    a) Disclaiming warranty or limiting liability differently from the
+    terms of sections 15 and 16 of this License; or
+
+    b) Requiring preservation of specified reasonable legal notices or
+    author attributions in that material or in the Appropriate Legal
+    Notices displayed by works containing it; or
+
+    c) Prohibiting misrepresentation of the origin of that material, or
+    requiring that modified versions of such material be marked in
+    reasonable ways as different from the original version; or
+
+    d) Limiting the use for publicity purposes of names of licensors or
+    authors of the material; or
+
+    e) Declining to grant rights under trademark law for use of some
+    trade names, trademarks, or service marks; or
+
+    f) Requiring indemnification of licensors and authors of that
+    material by anyone who conveys the material (or modified versions of
+    it) with contractual assumptions of liability to the recipient, for
+    any liability that these contractual assumptions directly impose on
+    those licensors and authors.
+
+  All other non-permissive additional terms are considered &quot;further
+restrictions&quot; within the meaning of section 10.  If the Program as you
+received it, or any part of it, contains a notice stating that it is
+governed by this License along with a term that is a further
+restriction, you may remove that term.  If a license document contains
+a further restriction but permits relicensing or conveying under this
+License, you may add to a covered work material governed by the terms
+of that license document, provided that the further restriction does
+not survive such relicensing or conveying.
+
+  If you add terms to a covered work in accord with this section, you
+must place, in the relevant source files, a statement of the
+additional terms that apply to those files, or a notice indicating
+where to find the applicable terms.
+
+  Additional terms, permissive or non-permissive, may be stated in the
+form of a separately written license, or stated as exceptions;
+the above requirements apply either way.
+
+  8. Termination.
+
+  You may not propagate or modify a covered work except as expressly
+provided under this License.  Any attempt otherwise to propagate or
+modify it is void, and will automatically terminate your rights under
+this License (including any patent licenses granted under the third
+paragraph of section 11).
+
+  However, if you cease all violation of this License, then your
+license from a particular copyright holder is reinstated (a)
+provisionally, unless and until the copyright holder explicitly and
+finally terminates your license, and (b) permanently, if the copyright
+holder fails to notify you of the violation by some reasonable means
+prior to 60 days after the cessation.
+
+  Moreover, your license from a particular copyright holder is
+reinstated permanently if the copyright holder notifies you of the
+violation by some reasonable means, this is the first time you have
+received notice of violation of this License (for any work) from that
+copyright holder, and you cure the violation prior to 30 days after
+your receipt of the notice.
+
+  Termination of your rights under this section does not terminate the
+licenses of parties who have received copies or rights from you under
+this License.  If your rights have been terminated and not permanently
+reinstated, you do not qualify to receive new licenses for the same
+material under section 10.
+
+  9. Acceptance Not Required for Having Copies.
+
+  You are not required to accept this License in order to receive or
+run a copy of the Program.  Ancillary propagation of a covered work
+occurring solely as a consequence of using peer-to-peer transmission
+to receive a copy likewise does not require acceptance.  However,
+nothing other than this License grants you permission to propagate or
+modify any covered work.  These actions infringe copyright if you do
+not accept this License.  Therefore, by modifying or propagating a
+covered work, you indicate your acceptance of this License to do so.
+
+  10. Automatic Licensing of Downstream Recipients.
+
+  Each time you convey a covered work, the recipient automatically
+receives a license from the original licensors, to run, modify and
+propagate that work, subject to this License.  You are not responsible
+for enforcing compliance by third parties with this License.
+
+  An &quot;entity transaction&quot; is a transaction transferring control of an
+organization, or substantially all assets of one, or subdividing an
+organization, or merging organizations.  If propagation of a covered
+work results from an entity transaction, each party to that
+transaction who receives a copy of the work also receives whatever
+licenses to the work the party&#x27;s predecessor in interest had or could
+give under the previous paragraph, plus a right to possession of the
+Corresponding Source of the work from the predecessor in interest, if
+the predecessor has it or can get it with reasonable efforts.
+
+  You may not impose any further restrictions on the exercise of the
+rights granted or affirmed under this License.  For example, you may
+not impose a license fee, royalty, or other charge for exercise of
+rights granted under this License, and you may not initiate litigation
+(including a cross-claim or counterclaim in a lawsuit) alleging that
+any patent claim is infringed by making, using, selling, offering for
+sale, or importing the Program or any portion of it.
+
+  11. Patents.
+
+  A &quot;contributor&quot; is a copyright holder who authorizes use under this
+License of the Program or a work on which the Program is based.  The
+work thus licensed is called the contributor&#x27;s &quot;contributor version&quot;.
+
+  A contributor&#x27;s &quot;essential patent claims&quot; are all patent claims
+owned or controlled by the contributor, whether already acquired or
+hereafter acquired, that would be infringed by some manner, permitted
+by this License, of making, using, or selling its contributor version,
+but do not include claims that would be infringed only as a
+consequence of further modification of the contributor version.  For
+purposes of this definition, &quot;control&quot; includes the right to grant
+patent sublicenses in a manner consistent with the requirements of
+this License.
+
+  Each contributor grants you a non-exclusive, worldwide, royalty-free
+patent license under the contributor&#x27;s essential patent claims, to
+make, use, sell, offer for sale, import and otherwise run, modify and
+propagate the contents of its contributor version.
+
+  In the following three paragraphs, a &quot;patent license&quot; is any express
+agreement or commitment, however denominated, not to enforce a patent
+(such as an express permission to practice a patent or covenant not to
+sue for patent infringement).  To &quot;grant&quot; such a patent license to a
+party means to make such an agreement or commitment not to enforce a
+patent against the party.
+
+  If you convey a covered work, knowingly relying on a patent license,
+and the Corresponding Source of the work is not available for anyone
+to copy, free of charge and under the terms of this License, through a
+publicly available network server or other readily accessible means,
+then you must either (1) cause the Corresponding Source to be so
+available, or (2) arrange to deprive yourself of the benefit of the
+patent license for this particular work, or (3) arrange, in a manner
+consistent with the requirements of this License, to extend the patent
+license to downstream recipients.  &quot;Knowingly relying&quot; means you have
+actual knowledge that, but for the patent license, your conveying the
+covered work in a country, or your recipient&#x27;s use of the covered work
+in a country, would infringe one or more identifiable patents in that
+country that you have reason to believe are valid.
+
+  If, pursuant to or in connection with a single transaction or
+arrangement, you convey, or propagate by procuring conveyance of, a
+covered work, and grant a patent license to some of the parties
+receiving the covered work authorizing them to use, propagate, modify
+or convey a specific copy of the covered work, then the patent license
+you grant is automatically extended to all recipients of the covered
+work and works based on it.
+
+  A patent license is &quot;discriminatory&quot; if it does not include within
+the scope of its coverage, prohibits the exercise of, or is
+conditioned on the non-exercise of one or more of the rights that are
+specifically granted under this License.  You may not convey a covered
+work if you are a party to an arrangement with a third party that is
+in the business of distributing software, under which you make payment
+to the third party based on the extent of your activity of conveying
+the work, and under which the third party grants, to any of the
+parties who would receive the covered work from you, a discriminatory
+patent license (a) in connection with copies of the covered work
+conveyed by you (or copies made from those copies), or (b) primarily
+for and in connection with specific products or compilations that
+contain the covered work, unless you entered into that arrangement,
+or that patent license was granted, prior to 28 March 2007.
+
+  Nothing in this License shall be construed as excluding or limiting
+any implied license or other defenses to infringement that may
+otherwise be available to you under applicable patent law.
+
+  12. No Surrender of Others&#x27; Freedom.
+
+  If conditions are imposed on you (whether by court order, agreement or
+otherwise) that contradict the conditions of this License, they do not
+excuse you from the conditions of this License.  If you cannot convey a
+covered work so as to satisfy simultaneously your obligations under this
+License and any other pertinent obligations, then as a consequence you may
+not convey it at all.  For example, if you agree to terms that obligate you
+to collect a royalty for further conveying from those to whom you convey
+the Program, the only way you could satisfy both those terms and this
+License would be to refrain entirely from conveying the Program.
+
+  13. Use with the GNU Affero General Public License.
+
+  Notwithstanding any other provision of this License, you have
+permission to link or combine any covered work with a work licensed
+under version 3 of the GNU Affero General Public License into a single
+combined work, and to convey the resulting work.  The terms of this
+License will continue to apply to the part which is the covered work,
+but the special requirements of the GNU Affero General Public License,
+section 13, concerning interaction through a network will apply to the
+combination as such.
+
+  14. Revised Versions of this License.
+
+  The Free Software Foundation may publish revised and/or new versions of
+the GNU General Public License from time to time.  Such new versions will
+be similar in spirit to the present version, but may differ in detail to
+address new problems or concerns.
+
+  Each version is given a distinguishing version number.  If the
+Program specifies that a certain numbered version of the GNU General
+Public License &quot;or any later version&quot; applies to it, you have the
+option of following the terms and conditions either of that numbered
+version or of any later version published by the Free Software
+Foundation.  If the Program does not specify a version number of the
+GNU General Public License, you may choose any version ever published
+by the Free Software Foundation.
+
+  If the Program specifies that a proxy can decide which future
+versions of the GNU General Public License can be used, that proxy&#x27;s
+public statement of acceptance of a version permanently authorizes you
+to choose that version for the Program.
+
+  Later license versions may give you additional or different
+permissions.  However, no additional obligations are imposed on any
+author or copyright holder as a result of your choosing to follow a
+later version.
+
+  15. Disclaimer of Warranty.
+
+  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
+APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
+HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM &quot;AS IS&quot; WITHOUT WARRANTY
+OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
+IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
+ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+
+  16. Limitation of Liability.
+
+  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
+WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
+GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
+USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
+DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
+PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
+EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
+SUCH DAMAGES.
+
+  17. Interpretation of Sections 15 and 16.
+
+  If the disclaimer of warranty and limitation of liability provided
+above cannot be given local legal effect according to their terms,
+reviewing courts shall apply local law that most closely approximates
+an absolute waiver of all civil liability in connection with the
+Program, unless a warranty or assumption of liability accompanies a
+copy of the Program in return for a fee.
+
+                     END OF TERMS AND CONDITIONS</pre></details><details><summary>JSZip 同梱: pako（MIT License）</summary><pre class="lic">(The MIT License)
+
+Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</pre></details><details><summary>JSZip 同梱: pako 内の zlib 由来部分（zlib License）</summary><pre class="lic">(C) 1995-2013 Jean-loup Gailly and Mark Adler
+(C) 2014-2017 Vitaly Puzrin and Andrey Tupitsin
+
+This software is provided &#x27;as-is&#x27;, without any express or implied
+warranty. In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.</pre></details><details><summary>Clipper — 著作権表示</summary><pre class="lic">Clipper (JavaScript port 6.4.2.2)
+Author    : Angus Johnson
+Version   : 6.4.2
+Date      : 27 February 2017
+Website   : http://www.angusj.com
+Copyright : Angus Johnson 2010-2017
+License   : Use, modification &amp; distribution is subject to Boost Software
+            License Ver 1. http://www.boost.org/LICENSE_1_0.txt
+
+JavaScript translation: Timo (Version 6.4.2.2, 8 September 2017).
+Int128 is implemented using JSBN by Tom Wu (see below).</pre></details><details><summary>Boost Software License 1.0 — 全文（Clipper に適用）</summary><pre class="lic">Boost Software License - Version 1.0 - August 17th, 2003
+
+Permission is hereby granted, free of charge, to any person or organization
+obtaining a copy of the software and accompanying documentation covered by
+this license (the &quot;Software&quot;) to use, reproduce, display, distribute,
+execute, and transmit the Software, and to prepare derivative works of the
+Software, and to permit third-parties to whom the Software is furnished to
+do so, all subject to the following:
+
+The copyright notices in the Software and this entire statement, including
+the above license grant, this restriction and the following disclaimer,
+must be included in all copies of the Software, in whole or in part, and
+all derivative works of the Software, unless such copies or derivative
+works are solely in the form of machine-executable object code generated by
+a source language processor.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, TITLE AND NON-INFRINGEMENT. IN NO EVENT
+SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+FOR ANY DAMAGES OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.</pre></details><details><summary>Clipper 同梱: jsbn（Tom Wu）</summary><pre class="lic">Copyright (c) 2003-2005  Tom Wu
+All Rights Reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+&quot;Software&quot;), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS-IS&quot; AND WITHOUT WARRANTY OF ANY KIND,
+EXPRESS, IMPLIED OR OTHERWISE, INCLUDING WITHOUT LIMITATION, ANY
+WARRANTY OF MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.
+
+IN NO EVENT SHALL TOM WU BE LIABLE FOR ANY SPECIAL, INCIDENTAL,
+INDIRECT OR CONSEQUENTIAL DAMAGES OF ANY KIND, OR ANY DAMAGES WHATSOEVER
+RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER OR NOT ADVISED OF
+THE POSSIBILITY OF DAMAGE, AND ON ANY THEORY OF LIABILITY, ARISING OUT
+OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+In addition, the following condition applies:
+
+All redistributions must retain an intact copy of this copyright notice
+and disclaimer.</pre></details>
+      <p class="cr-note cr-foot">各ソフトウェアの商標・著作権は、それぞれの権利者に帰属します。</p>
+    </div>
+    <div id="credits-foot"><button type="button" id="credits-close2">閉じる</button></div>
+  </div>
+</div>
+<script>
+// A052: Creditsの開閉。リンクは起動画面(クリックでファイル選択が開く領域)の内側にあるため、伝播を止める。
+document.addEventListener('DOMContentLoaded',()=>{
+  const ov=document.getElementById('credits-overlay'),lk=document.getElementById('credits-open');
+  if(!ov||!lk)return;
+  const open=()=>{ov.style.display='block';const b=document.getElementById('credits-body');if(b)b.scrollTop=0;};
+  const close=()=>{ov.style.display='none';};
+  lk.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();open();});
+  document.getElementById('credits-close').addEventListener('click',close);
+  document.getElementById('credits-close2').addEventListener('click',close);
+  ov.addEventListener('click',e=>{if(e.target===ov)close();}); // 外側(暗い部分)をタップで閉じる
+  ov.addEventListener('pointerdown',e=>e.stopPropagation());
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&ov.style.display==='block'){e.stopPropagation();close();}},true);
+});
+</script>
 <!-- A040: 免責ダイアログは「起動時に最初に出る画面」から「起動ダイアログのリンクで開く別窓」に変更。
      初期は非表示(inline display:none)。表示は style.display="" (外部CSS既定の表示方法に戻す) で行う -->
 <div id="disclaimer-modal" style="display:none;z-index:99600;">
@@ -6867,7 +8045,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
         status.style.color      = '#2196f3';
         status.textContent      = '📐 面積計算モード';
         if (helmetIcon) helmetIcon.style.color = '#2196f3';
-        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A050'; }
+        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A052'; }
       }
     }
 
@@ -6880,13 +8058,13 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
     window._onPmModeChange = applyStyle;
 
     /* 初期状態 */
-    document.title = _appDisplayName() + ' A050'; // A037: タブ名もロゴ名に合わせる
+    document.title = _appDisplayName() + ' A052'; // A037: タブ名もロゴ名に合わせる
     applyStyle(false);
   })();
 </script>
 
 <!-- Arecalay 拡張スクリプト -->
-<script src="placement_v13.js"></script>
+<script src="placement_v15.js"></script>
 <!-- /Arecalay 統合 -->
 
 </body>

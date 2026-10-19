@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0089'; // A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0091'; // A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -54,6 +54,7 @@
     return phase === 0 ? 1.0 : PM_SELECT_BLINK_LOW;
   }
   let annotMode     = null;
+  let _pmLastTool   = null; // A052: Enterキーでリピートする「直前に使ったツール」{mode, assetId?}
   let arrowStart    = null;
   let lineStart     = null;
   // 矢印の「向き変更ヒント」トースト：連続で出るとウザいので前回表示から一定時間は再表示しない
@@ -218,7 +219,7 @@
   // v0.0027: Dat読込状況の変化をAreCal本体側(#dat-gate)へ知らせるイベント
   function _pmAnnounceMachineryStatus() {
     const count = Object.keys(machineryData).length;
-    window.dispatchEvent(new CustomEvent('arecalay:machinery-status', {detail:{count}}));
+    window.dispatchEvent(new CustomEvent('arecalay:machinery-status', {detail:{count, timing: window._datTiming || null}})); // A051: timing=段階別所要時間(診断用)
     return count;
   }
 
@@ -237,6 +238,39 @@
       return await blob.text();
     }
     return new TextDecoder('utf-8').decode(bytes);
+  }
+
+  // A051: 起動画面(AreCal本体の#dat-gate)に進捗バーを出すため、本体を少しずつ読みながら進捗イベントを飛ばす。
+  // 総量が分かるのは、Content-Lengthがあり、かつサーバーが追加圧縮(Content-Encoding)をしていない場合だけ
+  // (追加圧縮があると、届くバイト数とContent-Lengthの単位が食い違うため)。分からない時はtotal=0(=不確定表示)。
+  async function _readBodyWithProgress(resp, prog) {
+    const len   = parseInt(resp.headers.get('content-length') || '0', 10) || 0;
+    const enc   = resp.headers.get('content-encoding');
+    const total = (len > 0 && !enc) ? len : 0;
+    if (!resp.body || typeof resp.body.getReader !== 'function') {
+      prog('download', 0, 0);
+      return await resp.arrayBuffer();
+    }
+    const reader = resp.body.getReader();
+    const chunks = []; let loaded = 0;
+    for (;;) {
+      const r = await reader.read();
+      if (r.done) break;
+      chunks.push(r.value); loaded += r.value.length;
+      prog('download', loaded, total);
+    }
+    const out = new Uint8Array(loaded); let o = 0;
+    for (const c of chunks) { out.set(c, o); o += c.length; }
+    return out.buffer;
+  }
+  // A051: 重い同期処理(JSON.parse等)の前に、画面(進捗バーの文言)を1回描画させるための待ち。
+  // タブが非表示でrequestAnimationFrameが止まっていても詰まらないよう、60msの保険付き。
+  function _yieldPaint() {
+    return new Promise(res => {
+      let done = false; const f = () => { if (!done) { done = true; res(); } };
+      try { requestAnimationFrame(() => setTimeout(f, 0)); } catch (_) {}
+      setTimeout(f, 60);
+    });
   }
 
   // v0.0054: 正規表現([\s\S]*の貪欲マッチ)をやめ、indexOf/lastIndexOfによる軽量な切り出しに変更。
@@ -261,16 +295,22 @@
     let failReason = null, retryable = false;
     // A043: 「読込が遅い」原因の切り分け用に、段階ごとの所要時間(ms)をconsole.infoへ出す。
     // t1=応答ヘッダ到着(通信待ち) / t2=本体ダウンロード完了 / t3=GZIP展開+テキスト化 / t4=JSON.parse+移行
-    const _t0 = performance.now(); let _t1=0,_t2=0,_t3=0,_t4=0,_size=0,_hdr='';
+    const _t0 = performance.now(); let _t1=0,_t2=0,_t3=0,_t4=0,_size=0,_hdr='',_textLen=0; // _t0=ページ起動(navigationStart)からの経過ms
+    const _prog = (phase, loaded, total) => { // A051: 起動画面の進捗バー用
+      try { window.dispatchEvent(new CustomEvent('arecalay:machinery-progress', {detail:{phase, loaded:loaded||0, total:total||0}})); } catch (_) {}
+    };
     try {
+      _prog('wait');
       const resp = await fetch('./CalayMachineryData.dat', {cache:'no-cache'});
       _t1 = performance.now();
       _hdr = 'cache-control=' + resp.headers.get('cache-control') + ' / etag=' + (resp.headers.get('etag')?'有':'無') + ' / age=' + resp.headers.get('age') + ' / status=' + resp.status;
       if (resp.ok) {
-        const buf  = await resp.arrayBuffer();
+        const buf  = await _readBodyWithProgress(resp, _prog);
         _t2 = performance.now(); _size = buf.byteLength;
+        _prog('decode'); await _yieldPaint();
         const text = await _decodeMachineryBytes(buf);
-        _t3 = performance.now();
+        _t3 = performance.now(); _textLen = text.length;
+        _prog('parse'); await _yieldPaint();
         const objText = _extractMachineryObjectText(text);
         if (objText) { machineryData = _migrateMachineryCategories(JSON.parse(objText)); _t4 = performance.now(); }
         else failReason = 'ファイルは読めたがMACHINERY_DATAが見つからない';
@@ -288,6 +328,10 @@
       console.info('[A043] dat読込: 合計' + f(performance.now()-_t0) + 'ms'
         + (_t1 ? ' (通信待ち' + f(_t1-_t0) + ' / DL' + (_t2? f(_t2-_t1):'-') + ' / 展開' + (_t3? f(_t3-_t2):'-') + ' / parse' + (_t4? f(_t4-_t3):'-') + ')' : '')
         + ' size=' + _size + 'B ' + _hdr + (isRetry ? ' [再試行]' : ''));
+      if (_t4) { // A051: 成功時のみ、段階別の所要時間(秒)を保存→statusイベントで起動画面へ(「遅い」の原因切り分け用)
+        window._datTiming = { startAt:_t0/1000, wait:(_t1-_t0)/1000, dl:(_t2-_t1)/1000, unzip:(_t3-_t2)/1000, parse:(_t4-_t3)/1000,
+                              total:(_t4-_t0)/1000, size:_size, textLen:_textLen, retry:!!isRetry };
+      }
     }
     if (failReason && Object.keys(machineryData).length === 0) {
       console.warn('[A041] CalayMachineryData.dat の自動読込に失敗: ' + failReason + (isRetry ? '（再試行後）' : ''));
@@ -1014,6 +1058,7 @@
     pmCv.style.cursor = annotMode ? 'crosshair' : 'default';
     const d = document.getElementById('draw-cv');
     if (d) d.style.cursor = '';
+    if (annotMode && annotMode !== 'machinery') _pmLastTool = { mode: annotMode }; // A052: 直前ツールの記録(図形は選択時に記録)
   }
 
   function cancelAnnotMode() {
@@ -1032,6 +1077,34 @@
     const d = document.getElementById('draw-cv');
     if (d) d.style.cursor = '';
   }
+
+  // A052: 1個配置するごとにツールを終了する(連続配置はしない)。再度配置するにはツールボタンを押す、
+  // またはEnterキー(直前に使ったツールをリピート)。ボタンの色(on)もここで必ず戻る(syncToolBtns経由)。
+  function _pmEndOneShot() {
+    cancelAnnotMode();
+    if (!_IS_TOUCH_DEVICE) _setStatus('✅ 配置しました — Enterキー：同じツールをもう一度');
+  }
+  function _pmRepeatLastTool() {
+    const t = _pmLastTool; if (!t) return;
+    if (t.mode === 'machinery') {
+      const a = machineryData[t.assetId]; if (!a) return;
+      setAnnotMode('machinery'); selectedAssetId = t.assetId;
+      _toast(_IS_TOUCH_DEVICE ? `🏗 「${a.name}」→ タップで配置` : `🏗 「${a.name}」→ クリックで配置`, 2000);
+      return;
+    }
+    const b = document.getElementById(`pm-${t.mode}-btn`);
+    if (b) b.click();
+  }
+  // A052: Enterキー = 直前に使ったツールをもう一度(Arecalayモード中)。入力欄・ダイアログ・他の操作中は何もしない。
+  document.addEventListener('keydown', e => {
+    if (e.key !== 'Enter' || e.repeat || e.isComposing) return;
+    if (!placementMode || !_pmLastTool) return;
+    if (document.getElementById('pm-text-float')) return;
+    if (typeof window._pmHasCancelable === 'function' && window._pmHasCancelable()) return; // 配置中/ダイアログ/入出力メニュー等
+    if (typeof window._enterRepeatOk === 'function' && !window._enterRepeatOk(e)) return;
+    e.preventDefault();
+    _pmRepeatLastTool();
+  });
 
   function syncToolBtns() {
     ['arrow','text','line','circle'].forEach(m => {
@@ -1181,11 +1254,11 @@
   }
   // v0.0409: 種別表示（B3） — カテゴリ／注釈タイプ単位で表示状態(ON/半透明/OFF)を一括変更
   const PM_VISTYPE_DEFS = [
-    {key:'heavy_vehicle', label:'🔵 重機・車両', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='heavy_vehicle'},
-    {key:'temp_material', label:'🟡 仮設・資材', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='temp_material'},
+    {key:'heavy_vehicle', label:'⚪️ 重機・車両', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='heavy_vehicle'},
+    {key:'temp_material', label:'⚪️ 仮設・資材', match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='temp_material'},
     {key:'scaffold',      label:'⚪️ 足場材',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='scaffold'},
-    {key:'operation',     label:'🔴 作業',       match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='operation'},
-    {key:'other',         label:'🟢 その他',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='other'},
+    {key:'operation',     label:'⚪️ 作業',       match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='operation'},
+    {key:'other',         label:'⚪️ その他',     match: a => a.type==='machinery' && (machineryData[a.assetId]?.category)==='other'},
     {key:'arrow',         label:'↗ 矢印',        match: a => a.type==='arrow'},
     {key:'text',          label:'💬 テキスト',    match: a => a.type==='text'},
     {key:'line',          label:'📏 線',         match: a => a.type==='line'},
@@ -1339,6 +1412,7 @@
       card.onclick = () => {
         if (annotMode !== 'machinery') setAnnotMode('machinery');
         selectedAssetId = id;
+        _pmLastTool = { mode: 'machinery', assetId: id }; // A052: Enterでリピートできるよう記録
         closeMachineryPicker();
         _toast(_IS_TOUCH_DEVICE ? `🏗 「${a.name}」→ タップで配置` : `🏗 「${a.name}」→ クリックで配置`, 2000);
       };
@@ -1421,6 +1495,7 @@
         flipped: asset.flip_x || false
       });
       updatePlacedList();
+      _pmEndOneShot(); // A052: 1個配置したらツール終了
       return;
     }
     if (annotMode==='arrow') {
@@ -1442,10 +1517,8 @@
           x1:arrowStart.lx,y1:arrowStart.ly,x2:endLx,y2:endLy,
           color:COLORS[0],sizeStep:defArrowStep,arrowDir:'fwd'});
         arrowStart=null; previewPos=null;
-        _setStatus(_IS_TOUCH_DEVICE
-          ? '↗ 矢印：始点をタップ  |  「✕ キャンセル」ボタンで終了'
-          : '↗ 矢印：始点クリック  |  ESC：キャンセル');
         updatePlacedList();
+        _pmEndOneShot(); // A052: 1本描いたらツール終了
         // 矢印を描くたびに毎回出すとウザいので、前回表示から5分以上経った時だけヒントを出す
         const _nowMs = Date.now();
         if (_nowMs - _lastArrowDirToastAt > ARROW_DIR_TOAST_COOLDOWN_MS) {
@@ -1477,10 +1550,8 @@
           x1:lineStart.lx,y1:lineStart.ly,x2:endLx,y2:endLy,
           color:COLORS[0],sizeStep:defLineStep}); // A048: 既定色=矢印と同じCOLORS[0](A042〜A047はDEF_RED)
         lineStart=null; previewPos=null;
-        _setStatus(_IS_TOUCH_DEVICE
-          ? '📏 線：始点をタップ  |  「✕ キャンセル」ボタンで終了'
-          : '📏 線：始点クリック  |  ESC：キャンセル');
         updatePlacedList();
+        _pmEndOneShot(); // A052: 1本描いたらツール終了
         // 矢印と同様、線を描くたびに毎回出すとウザいので前回表示から5分以上経った時だけヒントを出す
         const _nowMsL = Date.now();
         if (_nowMsL - _lastLineStyleToastAt > ARROW_DIR_TOAST_COOLDOWN_MS) {
@@ -1511,9 +1582,7 @@
       color: COLORS[0], sizeStep: defLineStep, lineStyle: 'solid' // A048: 既定色=矢印と同じCOLORS[0](A042〜A047はDEF_RED)
     });
     updatePlacedList();
-    _setStatus(_IS_TOUCH_DEVICE
-      ? '⭕ 円：中心をタップ  |  「✕ キャンセル」ボタンで終了'
-      : '⭕ 円：中心をクリック  |  右クリック/ESC：キャンセル');
+    _pmEndOneShot(); // A052: 1個描いたらツール終了
   }
 
   function handleEditClick(e, hit) {
@@ -2051,6 +2120,7 @@
       const lbl = pmRightPanel && pmRightPanel.querySelector('#pm-text-step-lbl');
       if (lbl) lbl.textContent = defTextStep;
       updatePlacedList();
+      if (!editAnn && annotMode === 'text') _pmEndOneShot(); // A052: 新規テキストを1個置いたらツール終了(編集では終了しない)
     }
     document.getElementById('pm-text-ok').onclick     = confirm;
     inp.addEventListener('keydown', ev => {
