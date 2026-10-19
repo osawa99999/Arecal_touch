@@ -30,7 +30,7 @@
      user-scalable=no / maximum-scale の指定を意図的に無視する仕様に変更済みのため、この
      meta指定だけでは不十分な可能性が高い。念のため指定はしつつ、実効性のある対策は下記
      script内のgesturestart/gesturechange/gestureend側(WebKit独自イベント)で行う。 -->
-<title>Arecal_Touch A047</title>
+<title>Arecal_Touch A049</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
 <!-- v0.0465: 面積出力Excelへの色付け・関数対応のため、xlsx.full.min.js(SheetJS Community、
      書き込み時のセル装飾は非対応)から xlsx-js-style(SheetJS 0.18.5本体+セルスタイル拡張の
@@ -114,7 +114,7 @@
 #su-dlg .su-agree{font-size:.88em;font-weight:700;line-height:1.7;margin:6px 0 14px;color:#f2f2f2;}
 #su-dlg .su-foot{text-align:right;}
 #su-start{background:#2196f3;color:#fff;border:none;border-radius:8px;padding:10px 24px;font-size:1rem;font-weight:700;cursor:pointer;}
-#su-start:active{filter:brightness(.9);}
+#su-start:active{filter:brightness(.9);} #su-cancel{display:none;margin-left:10px;background:transparent;color:#b8b8b8;border:1px solid #666;border-radius:8px;padding:9px 16px;font-size:.9rem;font-weight:500;cursor:pointer;} #su-cancel:active{filter:brightness(.8);} /* A048: Arela簡易ダイアログ専用。PDF用では出さない */
 #su-tip{display:none;position:fixed;z-index:8700;max-width:min(340px,92vw);background:rgba(20,20,35,.97);border:1px solid #4488cc;border-radius:8px;padding:9px 13px;font-size:.82em;line-height:1.7;color:#d6e6ff;white-space:pre-line;box-shadow:0 2px 12px rgba(0,0,0,.6);pointer-events:none;}
 </style>
 </head>
@@ -141,7 +141,7 @@
     <div id="logo-area">
       <div class="logo-row">
       <img id="logo-helmet" src="data:image/png;base64,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" alt="OSAKI Tech Lab" style="display:block;flex-shrink:0;height:34px;width:auto;border-radius:3px;">
-      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A047</div>
+      <div id="logo-app-ver" class="app-ver" style="flex:1;white-space:nowrap;"><b>Arecal</b> A049</div>
       <img src="https://hits.sh/osaki-kensetsu.github.io/arecal.svg?style=flat-square&color=0088cc&labelColor=1a1a2e" alt="visits" style="height:13px;opacity:.6;" onerror="this.style.display='none'">
       </div><!-- .logo-row -->
     </div>
@@ -447,41 +447,8 @@
   </div>
 </div>
 
-<!-- ページ選択 -->
-<div id="pg-modal" class="modal">
-  <div class="modal-c">
-    <h3>ページを選択</h3>
-    <div id="pg-btns"></div>
-  </div>
-</div>
-<!-- スケール選択 -->
-<div id="sc-modal" class="modal">
-  <div class="modal-c">
-    <h3>スケール比を設定</h3>
-    <p id="paper-size-info" style="font-size:.82em;color:#7af;margin:4px 0 8px;min-height:1.2em;"></p>
-    <p>縮尺を選択してください</p>
-    <div class="sgrid" id="sc-grid-modal">
-      <button class="sbtn" data-sc="1/30">1/30</button>
-      <button class="sbtn" data-sc="1/40">1/40</button>
-      <button class="sbtn" data-sc="1/50">1/50</button>
-      <button class="sbtn" data-sc="1/60">1/60</button>
-      <button class="sbtn" data-sc="1/80">1/80</button>
-      <button class="sbtn" data-sc="1/100">1/100</button>
-      <button class="sbtn" data-sc="1/200">1/200</button>
-      <button class="sbtn" data-sc="1/250">1/250</button>
-      <button class="sbtn" data-sc="1/300">1/300</button>
-      <button class="sbtn" data-sc="1/400">1/400</button>
-      <button class="sbtn" data-sc="1/500">1/500</button>
-      <button class="sbtn" data-sc="1/1000">1/1000</button>
-    </div>
-    <p style="margin-top:8px;">数値入力:</p>
-    <div class="row" style="justify-content:center;margin-top:4px;">
-      <span style="color:#CACACA;font-size:.9em;white-space:nowrap;">1 /</span>
-      <input type="number" id="sc-init-in" placeholder="75" min="1" step="0.1" style="width:48px;text-align:center;">
-      <button id="sc-confirm">設定</button>
-    </div>
-  </div>
-</div>
+<!-- 用紙サイズ表示用(A049: 旧スケール選択モーダルから独立。PDF読込時にJSが文字を書き込むため要素だけ残置) -->
+<span id="paper-size-info" hidden></span>
 <!-- カラーポップアップ -->
 <div id="clr-popup">
   <button data-clr="blue"   style="background:#003a5c;color:#60c0ff;">● 青（デフォルト）</button>
@@ -530,674 +497,10 @@
 
 <script>
 // ================================================================
-//  Arecal_Touch A041 (A040の実機確認を受けた調整+不具合1件)
-//  --- 今セッション変更履歴 ---
-//  A041     ①起動ダイアログの縮尺初期値を1/100に(「選択してください」を廃止)。
-//           ②「スケール比を設定(?)」と「用紙: A3（横）」を最初から2段表示にし、ドロップダウンは2段の中間に配置。
-//           ③Arela読込も新しい起動ダイアログに。縮尺・回転はArela内に保存済みのため簡易版(元図の線を読込む+免責のみ)。
-//             旧askVecExtractConsent(個別の確認ダイアログ)はArela読込でも使わなくなった。
-//           ④不具合「PDF読込後に起動画面の『最初から作図する場合は…』が残る/dat未検出表示」の調査と修正。
-//             原因: datゲート表示中(読込中/見つかりません)でもD&Dで図面が読めてしまい、その後にdat読込が完了(または手動読込)
-//             すると showDropHintUI() が無条件でdrop-hintを再表示していた。A040で免責モーダルが起動時に出なくなり、
-//             暗黙の待ち時間が消えたため顕在化したと推定。対策: dat未読込の間はPDF/Arelaの読込を拒否(_datGuard)、
-//             図面読込後はdrop-hintを再表示しない。placement_v6.js側でdat自動読込の失敗理由をconsole.warnに出し、
-//             通信エラー系は1回だけ自動再試行(ARECALAY_VER 0.0082)。
-//  A040     (実機確認中) 起動フローの大改造。A039は未確認のまま継続
-//  A040     起動フローを統合。従来「免責→PDF→ページ選択→元図の線を読む？→縮尺→角度調整する？」(4〜5ダイアログ)だったものを、
-//           ①起動直後=PDF/Arelaを入れる画面(旧免責モーダルは廃止) ②PDF読込後=1つの起動ダイアログ(ページ/元図の線/縮尺/角度調整)
-//           ③縮尺適用→(角度調整ONなら回転UI)→(元図の線ONなら抽出)→従来どおり、の順に変更。
-//           ・元図の抽出を回転の後に移したので、回転ありでも抽出は1回で済む(旧: 抽出→回転後に再抽出)。
-//           ・縮尺は「選択してください」を初期値にして必ず選ばせる(誤縮尺による面積誤差の防止)。任意入力は「1/○○」(初期100)。
-//           ・各項目の「?」(タッチは「?」タップ、マウスはホバー)で解説をフロート表示。
-//           ・免責文を改訂し、旧免責モーダルを「ご利用前にお読みください」リンクで開く別窓に変更。同意=「了解してはじめる」。
-//             Arelaを直接開く場合はこのダイアログを通らないため、読込前に別窓で同意確認を挟む。
-//           ・Apple Pencil非対応バナーとブックマーク案内を、起動画面(drop-hint)へ移設。
-//           ・renderPage(o)/bakeRotation(angle,skipVec)に引数追加(旧フローは無指定で従来どおり動作。旧ページ選択/縮尺/角度確認モーダルは残置)。
-//           ・旧フローでは元図の抽出をスキップすると_rotPageが未設定で回転が効かない恐れがあったが、新フローでは必ず設定する。
-//  A039     (実機確認待ち) A038の作図エリア外ドロップ拒否を拡張
-//  A039     A038の「作図エリア外にはオブジェクトを配置出来ません」を、①新規配置のクリック(重機/矢印/線/円/テキスト)、
-//           ②矢印・線・円(中心)・テキストのドラッグ移動にも拡張(placement_v5.js: handleCanvasClick/endDrag、ARECALAY_VER 0.0081)。
-//           移動は「移動前は内側だったのに外へ出た」場合のみ元へ戻す。AreCal本体はバージョン表記とplacementの読込先のみ変更。
-//  A038     (実機確認待ち) Arecalay重機の基点(赤丸)を作図エリア外にドロップ不可にした
-//  A038     Arecalayで重機等の基点(赤丸)をドラッグして作図エリア外にドロップすると、基点が描画範囲外に出て表示・選択・移動が
-//           出来なくなる不具合に対応。ドロップ時に作図エリア(PDF領域+四方の余白_CPAD)外なら元の位置へ戻し、
-//           トースト「作図エリア外にはオブジェクトを配置出来ません」を表示(placement_v4.js: endDrag/_pmInWorkArea、ARECALAY_VER 0.0080)。
-//           ※新規配置(クリックで置く時)や矢印/線/円/テキストの移動は今回の対象外。AreCal本体はバージョン表記とplacementの読込先のみ変更。
-//  A037     (実機確認OK) 実機報告3件に対応
-//  A037     ①作図済みの状態でPDFをD&Dした時の動作を変更。「ベースPDFの入れ替え」→「現在の図面を破棄して、新しいPDFでの作図を開始』に変更。
-//           Yesの場合、Arecal・Arecalay両方の図形/配置/測点/距離計測/Undo履歴をすべて消去してから新PDFの読込フローへ進む
-//           (消去は新PDFの解析に成功した直後に実行。読込失敗時は現在の図面を残す)。_resetForNewPdf()を新設、loadPDF(file,resetFirst)に第2引数追加。
-//           Arecalay側は window._pmResetAll を新設(placement_v3.js)。
-//           ②「図面の角度を調整しますか？」ダイアログの「No — そのまま」を強調表示(Yesは従来の控えめな見た目のまま)。
-//           ③左上ロゴの名称を端末で自動切替(PC=Arecal / iOS・iPadOS・Android=Arecal_Touch)。バージョン表記A037は共通。タブのtitleも同じ名称に合わせる。
-//           ④A036のIndex.htmlに手元で加えられていた「初回のみ少々時間がかかります」(dat-gate-loading)を引継ぎ。
-//  A036 (※実機未確認だった候補。穴バグ検証済みで事実上のFIX版)
-//  A036     穴バグの根本対策。複数穴(2〜)で面積が過小になる不具合(格子状に整列した穴で約19%、星形外周でも約2%)の原因は、
-//           先に結合した穴の頂点がリング上に同座標で2箇所存在するのに、次の橋を「どちらの添字につなぐか」を座標だけで
-//           選んでいたこと。_mergeHolesIntoOuterに(1)内角判定inCone (2)橋の線上/共線重なり候補の却下onOpenSegを追加。
-//           _earClipTriangles自体は無変更(ear clippingを弄る案は逆に過大化することを検証で確認済みのため)。
-//           あわせて、穴あり図形は三角分割合計と図形面積を照合し、不一致なら警告(toast+console.warn)する安全網を追加。
-//           コメント整理: triangulateShape用コメントがcalcLenPts直上に迷い込んでいたのを移動(コード不変)。
-//           オフライン検証: 格子/対称/星形/コの字/L字穴/45°回転/最大8穴 各1500件×複数条件でA035の数百件NG→ほぼ0件。
-//           既知の残り: 45°回転かつ座標が数千px級の大きな平行移動の組合せで約1%残る(浮動小数点。安全網の警告で検知可能)。
-//  Arecal_Touch A035
-//  A035     穴バグ対策。_mergeHolesIntoOuterに巻き順の正規化(外周=負/穴=正)のみ追加。他AI提案(修正提案.txt)のうち
-//           Step2(結合後の共線点除去)とStep3(ear clipping強制切り落とし)は、検証で
-//           「面積が過大に化ける(逆向き三角形がabs集計で加算される)」ことを確認したため不採用。
-//           検証(Clipper出力と同じ向きの中心対称穴): 現行290/1805件で面積過小 → 正規化後2件。
-//           残課題: 穴が格子状に整列/複数穴の一部で、ear clippingが停止し面積過小になるケースが別に残る(要対応)。
-//  A034     ファイル分割(引継ぎ書6章の2番)。ClipperLib(BigInteger込み、約131KB)をclipper_6.4.2.2.js へ、
-//           CSS(約29KB)をarecal_touch.css へ、コード内容は1バイトも変えずに別ファイル化(元の位置に
-//           <script src>/<link>を置換したので読込順は不変)。本体ロジックの変更なし。
-//           HTMLと同じフォルダにclipper_6.4.2.2.js / arecal_touch.css / placement_v2.js の3ファイルが必要。
-//  Arecal_Touch A033
-//  --- 前セッション変更履歴 ---
-//  A033     A025持ち越しの②「距離測定でShiftを押していないのに直交モードが解除できない」の原因を特定・
-//           対応。真因：shiftDown/spaceDownはkeydownでtrue・keyupでfalseにするだけの単純フラグ管理で、
-//           Shift(またはSpace)を押した状態のままウィンドウ/タブがフォーカスを失うと(アプリ切替、
-//           別ウィンドウ選択、iOSでの多指ジェスチャ等)keyupが発火せず、フラグがONのまま残り続ける。
-//           再現性が低く感じられたのはこのため(Shift自体の問題ではなく、保持中のフォーカス喪失有無に
-//           依存する)。対応：window 'blur' と document 'visibilitychange'(非表示時)で、shiftDown/
-//           spaceDownを強制的にfalseへ戻す処理を追加(spaceDown解除時はカーソルも元に戻す)。
-//           ロジックの他の部分(直交補正/パン処理そのもの)は変更なし。構文チェック通過済み、実機未検証。
-//  Arecal_Touch A032
-//  --- 前セッション変更履歴 ---
-//  A032     マスター要望(おまけ)：入出力メニュー表示中、上部コメント(status-bar)・入出力/読込/書出
-//           ボタン(メニュー全体)・タッチ用✕キャンセルボタン以外を暗くして操作不可を強調(Arecal/
-//           Arecalay両方)。実装は全画面の暗転オーバーレイ(_ioDimShow/_ioDimHide)にclip-path(evenodd)で
-//           「穴」を開ける方式(親のstacking contextに縛られず、穴の部分はクリックが下の要素に通る)。
-//           暗転部分の右クリックはキャンセル(メニューを閉じる)、左クリックは無視。メニューの
-//           大きさが変わる場合(Arecalayの書出サブメニュー展開等)はResizeObserverで穴を再計算。
-//           あわせてArecalay側でも上部コメント「読込か書出を選択してください」を表示するように
-//           した(閉じた時はArecalayモード表示へ復帰)。placement_v2.js ARECALAY_VER 0.0077→0.0078。
-//           構文チェック(node --check)通過済み、実機未検証。
-//  Arecal_Touch A031
-//  --- 前セッション変更履歴 ---
-//  A031     A025持ち越しの③「Arecalay側の図形/入出力ボタンで距離測定がキャンセルされない」に対応。
-//           placement_v2.js(ARECALAY_VER 0.0076→0.0077)側で、図形(機器)ボタンと入出力ボタンの
-//           クリック時に、距離測定がONなら先にsetDistMode(false)で強制OFFにする_pmCancelDistIfOn()を
-//           追加(矢印/線/円/テキストはsetAnnotMode内で既に対応済みだった、この2ボタンだけ漏れていた)。
-//           なお全体表示ボタン不具合(④)は静的解析では原因を特定できず、A025の仮説対処のまま(要実機確認)。
-//           構文チェック(node --check)通過済み、実機未検証。
-//  Arecal_Touch A030
-//  --- 前セッション変更履歴 ---
-//  A030     A029の「最小幅基準」を、マスターの実務指摘(1/100でも10mm幅の線を引く可能性がある)を受けて
-//           「面積基準」に変更。図面の単位で1/1なら1x1未満はNG、縮尺に比例して(1辺=scaleDenom mm相当)
-//           実面積が scaleDenom² mm²(=用紙上1mm²)未満の図形を作成不可とする。細長い図形は面積が
-//           足りれば描ける。作図確定時/合成・削除・自己交差分割後の極小片除去に同じ基準を適用。
-//           最小幅の計算関数(_minWidthCanvasPx)は廃止。
-//  Arecal_Touch A029
-//  --- 前セッション変更履歴 ---
-//  A029     極小判定を「画面px基準」から「図面上の最小幅基準」に変更(マスター指示)。画面px基準は
-//           ホイールズームで小さい図形が描けてしまう/縮小しすぎると普通の図形が弾かれる欠陥があった。
-//           新基準：図形(外周)の最小幅(凸包の回転キャリパー法、斜め細長い図形も正しく判定)が
-//           「縮尺の実寸で scaleDenom mm 未満」(=1/1で1mm、1/100で100mm)なら作成不可。
-//           用紙上1mm相当と等価で縮尺・ズームに依存しない。ちょうど100mm幅はOK(未満のみ弾く)。
-//           極細線状オブジェクトも作成不可。作図確定時と、合成/削除/自己交差分割後の極小片除去に
-//           同じ基準を適用。A027/A028のMIN_DRAW_SCREEN_PX2/MIN_PIECE_CANVAS_PX2は廃止。
-//           換算は_curRS依存のため、元PDF無しArelaの既知制限(_curRS未補正)下ではずれる場合あり。
-//  Arecal_Touch A028
-//  --- 前セッション変更履歴 ---
-//  A028     A027の極小判定の閾値をマスター指示で引き上げ。作図確定時25→40px²(約6.3x6.3px)、
-//           極小片除去4→12px²(約3.5x3.5px)。ロジック変更なし、定数2つのみ。実機で要調整。
-//  Arecal_Touch A027
-//  --- 前セッション変更履歴 ---
-//  A027     「極小面積の自動削除」を実面積(m²)基準からピクセル基準に変更。目的は①誤クリック防止
-//           ②変な極小オブジェクト混入による面積誤計算・極小面見落としの防止で、どちらも画面上の
-//           見え方の問題。従来の0.005m²固定閾値は縮尺依存で、1/1作図だと何も描けなくなっていた。
-//           ・作図確定時(finishShape本体/自己交差補正後の0面積フォールバック)＝画面px基準
-//             (キャンバス座標px²×zoom²、MIN_DRAW_SCREEN_PX2)
-//           ・自己交差分割後の極小片除去/部分削除後の極小片除去＝キャンバス座標px基準
-//             (ズーム非依存、MIN_PIECE_CANVAS_PX2)
-//           4箇所に重複していた判定を共通関数(_shapeCanvasPx2/_tooSmallForDraw/_isTinyPiece)に集約。
-//           閾値の数値は暫定(画面25px²=約5x5px、極小片4px²=約2x2px)、実機で要調整。
-//           構文チェック(node --check)通過済み、実機未検証。
-//  Arecal_Touch A026
-//  --- 前セッション変更履歴 ---
-//  A026     マスターが穴バグ検証用テストファイル(PDF実体を含まないArela)で実機検証中に発覚した
-//           別件2つのうち、①「PDFが読み込まれていません」で.arela保存(saveArela)がブロックされる
-//           不具合に対応。従来は_origPdfBytes(元PDFバイト)が無いと即return、保存自体ができなかった
-//           が、そもそも_origPdfBytesはloadArela側で「読込自体には必須ではない」任意項目として
-//           扱われている(将来の高精細出力用途のみ)ため、保存側の必須化が過剰だったと判断。
-//           保存条件を「pdfCvが存在する(スナップショット画像だけは撮れる)」に緩和し、
-//           _origPdfBytesが無い場合はbundle.pdfをnullのまま保存するように変更。トースト文言も
-//           「元PDF無し・画像のみ」の場合は区別して表示するようにした。
-//           なお「_origPdfBytesが無いArela復元時は_curRSの補正が効かない」というA007由来の
-//           既知の残課題(未対応)はそのまま残っている点に注意。
-//           ②のドーナツ穴バグ(中心対称だと面積が本来より小さく返る件)は引き続き調査中、今回未対応。
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A025
-//  --- 前セッション変更履歴 ---
-//  A025     マスターの実機テスト結果を受けて対応(未完了分は次回引継ぎ)。
-//           【対応済み】
-//           ・「縮尺変更」「全消去」「評価・要望・バグ報告」「全体表示」の4ボタンに、押下時の
-//             全ツールリセット(_resetAllTools())を追加。距離測定中に縮尺を変えられてしまう等の
-//             バグの温床を塞ぐ目的
-//           ・上記の過程で、feedback-btnのonclick属性(グローバルスコープで実行される)から
-//             _resetAllTools()(DOMContentLoaded内のローカル関数)を呼ぼうとして参照できない
-//             作業ミスを起こしたが、実装中に自己発見・修正。他の3ボタンと同じaddEventListener
-//             方式に統一した
-//           ・「全体表示ボタンが機能していない(ホイールダブルクリックは動く)」報告について、
-//             op-guide-fit-btnの束縛コードを追ったが静的解析だけでは原因を確定できなかった。
-//             A004の教訓(cvWrap子要素のタッチボタンはpointerdown/up/moveのstopPropagationが
-//             必要だった前例)に倣った仮説的対処として、同様のstopPropagation処理を追加。
-//             実機未検証の仮説に基づく修正であり、直らなければ別原因の調査が必要
-//           【今回は未着手・次回に持ち越し】
-//           ・ドーナツ型の穴が中心対称だと面積計算がおかしくなるバグ(A022で発見・報告済み)の調査
-//           ・Arecal距離測定：Shiftを押していないのに直交モードが解除できなくなる不具合の調査
-//             (マスター実機で発現、再起動で復旧。テスト担当も1名発現、オートリピート等を疑ったが
-//             未確定)
-//           ・Arecalay側の「図形」「入出力」ボタンで距離測定がキャンセルされない不具合の修正
-//             (Arecal本体側は今回A025で対応したが、Arecalay側は placement_v2.js 側の実装調査が
-//             別途必要、未着手)
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A024
-//  --- 前セッション変更履歴 ---
-//  A024     A023の案2(ドーナツ型があれば矩形分割を断る)について、マスターより
-//           「トーストだと見逃して『あれ？ファイルどこ？』となりやすい」との指摘を受け、
-//           customChoice()を使ったモーダルダイアログ(OKボタン付き、押すまで消えない)に変更。
-//           あわせて「面積出力（矩形分割）」ボタン自体も、ドーナツ型(穴あり)図形が1件でも
-//           あれば`_updateRectExportBtnState()`が薄く(opacity 0.4)グレーアウト表示にするように
-//           した(updSidebar()の中で毎回チェックするため、図形の追加・削除・穴の生成/削除
-//           すぐに反映される)。ボタン自体はクリック可能なままにしてあり、押せば上記ダイアログで
-//           理由を説明する(完全に無効化はしていない)。
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A023
-//  --- 前セッション変更履歴 ---
-//  A023     A022の実機出力(PDF/Excel)をマスターが確認、面積がArecal/Excel/AutoCAD経由DXFの
-//           3者で一致することを確認済みとの報告を受け、3件のフィードバック対応：
-//            ・E1: Excelの見出し「三辺の長さ (m)」→「辺の長さ（ｍ）」に変更
-//              (矩形も混在するため"三辺"という三角形限定の表現が実態と合わなくなっていた)
-//            ・E2: 「四角形 #7」「五角形 #8」のように長方形以外の多角形ピースは、辺の長さだけ
-//              では人力で面積の妥当性を確認できない(三角形なら3辺から検算できるが、任意の
-//              四角形・五角形は辺の長さだけでは形が定まらないため)とのマスター指摘を受け、
-//              貪欲凸結合(_greedyConvexMerge/_decompIsConvexPolygon等、A022で新設したばかりの
-//              ロジック)を全廃止。矩形分割モードの残り部分も、通常の三角分割と同じく
-//              ドロネーフリップのみ(枚数不変、対角線の最適化のみ)に統一し、
-//              「長方形以外は必ず三角形」を徹底した
-//            ・P1: PDF出力で矩形ピース同士の境界線(細線)が描かれていなかった不具合を修正。
-//              矩形も他のピースと同様に自分の輪郭を描くようにした
-//           あわせて「ドーナツ型(穴あり)図形と矩形分割の共存」について、①矩形分割にも対応する
-//           案と②穴あり図形があれば矩形分割そのものを断る案をマスターに相談し、②で合意。
-//           理由：穴の橋渡し処理(_mergeHolesIntoOuter)自体が、前回報告した「穴が中心対称だと
-//           面積を正しく引けない」バグの震源地であり、そこに輪郭分割のレイキャスト処理を
-//           重ねるのはリスクに見合わない。矩形分割モードで穴あり図形が1件でもあれば、
-//           出力そのものを行わずトーストで断るようにした(exportAreaOutputZip冒頭でチェック)。
-//           なお改良三角分割(ドロネーフリップ)側は、ドーナツ型でも綺麗に分割できることを
-//           マスターが実機で確認済み。
-//           構文チェック(node --check、全<script>ブロック)通過済み。実データでの統合テストで、
-//           全ピースが「矩形」か「三角形」のいずれかのみになっていること(四角形・五角形ピースが
-//           一切残っていないこと)、および分割前後の面積合計が一致することを再確認済み。
-//           実機動作確認はまだ。
-//  Arecal_Touch A022
-//  --- 前セッション変更履歴 ---
-//  A022     マスターがテストデータ(19点ポリゴン、V字ノッチ入り)を実際に出力して見せてくれた
-//           ことをきっかけに、面積出力の分割方式を「三角分割」と「矩形分割」の2本立てにした。
-//           I/Oメニューの面積出力ボタンを2つに分割:
-//            ・📊 面積出力（三角分割）: 従来の求積方式そのまま。ただし新たにドロネーフリップ
-//              (辺を挟む2三角形の対角線を、より正三角形に近くなる方に入れ替える処理。
-//              マスター提供の「凸分解シミュレーターv2」で試作したロジックを移植)を適用し、
-//              三角形の枚数・形状の分類は変えずに、細長い(スリバー)三角形を減らして見やすくした
-//            ・📊 面積出力（矩形分割）: 新設。輪郭が直交多角形(水平・垂直の辺だけで構成)の部分を
-//              `_rectilinearDecomposeCore()`で矩形の組み合わせに自動分解し、斜め辺が絡んで
-//              矩形化できない残り部分だけ、上記ドロネーフリップに加えて貪欲凸結合(隣接する
-//              三角形同士を、結合後も凸多角形のままなら合体させる処理。これもシミュレーターから
-//              移植)まで適用し、ピース数自体を減らして表示する。マスター提供の実データで検証した
-//              ところ、19点ポリゴン(斜め辺2本のV字ノッチ入り)が矩形6個+非矩形2個(元は三角形17枚)
-//              まで整理できることを確認。面積の算出方法(calcAreaPts)自体は一切変えておらず、
-//              全テストケースで分割前後の面積合計の差はゼロ(浮動小数点誤差レベル)であることを
-//              単体テスト・実データでのシミュレーションの両方で確認済み。
-//           Excel/PDF出力側もピースが矩形/三角形/四角形/五角形…と混在しうる前提に対応:
-//            ・PDF: 図形全体が単一の長方形の場合のみ枝番号を省略(既存通り)、それ以外は
-//              矩形・三角形・多角形を問わず「主番号-枝番号」を振る
-//            ・Excel: 主番号行の「(三角数:N)」を、矩形分割モードでは「(分割:N)」という
-//              中立的な表現に変更。明細行のラベルもピースの辺数から「三角形/四角形/五角形…」を
-//              汎用的に組み立てるようにした。シート名も「面積計算書（三角分割）」
-//              「面積計算書（矩形分割）」で区別
-//           なお穴(ドーナツ型)を持つ図形は、従来通り矩形分割の対象外とし、必ず
-//           改良三角分割(ドロネーフリップのみ)の経路を通るようにした(理由は下記バグ報告参照)。
-//           【今回判明した別件のバグ、今回は対象外・要報告】
-//           検証中、穴が中心に対して完全に対称な配置になっている場合、既存の
-//           `_earClipTriangles`/`_mergeHolesIntoOuter`(このセッションより前からある既存コード)が
-//           穴の面積を正しく引けず、本来より大幅に小さい面積を返す不具合を発見した。今回のA022の
-//           変更が原因ではなく、穴の位置を少しでもずらすと正常に動作することを確認済み。実務データで
-//           踏む可能性は低いと思われるが、次回以降に切り分けが必要
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A021
-//  --- 前セッション変更履歴 ---
-//  A021     引継ぎ書4章「別2」対応。面積出力(PDF+PNG+Excelの面積計算書)において、
-//           穴が無く「明確な長方形」と判定できる図形は、三斜(三角形)分割せず単一の
-//           長方形として出力するようにした。判定は`_detectRect()`が輪郭点から冗長な
-//           共線点(多角形ツールで打った辺の途中の点など)を除去したうえで4頂点に絞り、
-//           全内角が90°(±0.5°)に収まるかで判定(4頂点で全内角90°なら数学的に長方形と
-//           確定するため、辺の長さの一致チェックは不要)。回転した長方形・辺の途中に
-//           冗長点が入った長方形も正しく検出できることを単体テストで確認済み。
-//           面積の算出方法自体(calcAreaPts)は変えておらず、変わるのは出力の表示のみ:
-//            ・PNG: 長方形と判定された図形は対角線を引かず、ラベルも枝番号無しの主番号のみ
-//            ・Excel: 主番号行の「(三角数:N)」を省略、明細行を「長方形（W×H）」の1行のみに
-//              (三辺の長さの「＋」区切り表記ではなく、W×Hの「×」区切り表記)
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A020
-//  --- 前セッション変更履歴 ---
-//  A020     マスターより「ZIPファイル自動展開」の可否を相談されたが、実装コスト対効果を
-//           踏まえマスター判断で見送り。代わりにZIPファイルをドラッグ&ドロップ/選択した際の
-//           専用警告文言「これは圧縮されたファイルです。解凍してから使用してください。」を
-//           file-inのchangeハンドラ・ドロップハンドラの両方に追加(挙動としては新規追加)。
-//           続けてマスターより、ツール切替時の排他制御ルールとして「ツール使用中の右クリックは
-//           1点戻る、戻れなくなったらキャンセル。他のツールボタンを押すと全キャンセルしてから
-//           押されたボタンのツールへ移行」という仕様の確認を得た。これに照らして7箇所の排他制御
-//           コードを全て突き合わせた結果、単なるコード重複ではなく実際に仕様違反の不具合が
-//           複数見つかったため、マスター了承のもと修正:
-//            ・最重要バグ：setSubMode/setSelUnionMode/io-btn展開時/setScCalModeの4箇所が、
-//              本来「ボタン押下＝全キャンセル」であるべきところ、右クリック専用の
-//              _distRightClickUndo()(1点戻る/戻れなければキャンセル)を誤って呼んでいた。
-//              距離測定に2区間以上の履歴がある状態で他のツールボタンを押しても、履歴を
-//              使い切るまでモードが切り替わらない(io-btnの場合はメニューのグレーアウト・
-//              ステータス表示にも到達できない)不具合だったと判明。setSurveyModeだけが
-//              本来あるべき`setDistMode(false)`直接呼び出し(全キャンセル)になっており、
-//              他の4箇所をこれに合わせて修正(returnも撤去し、モード切替処理へ正常に進行)
-//            ・排他リセット漏れ：setSelUnionModeにscCalMode/surveyModeの、setScCalModeに
-//              surveyModeの道連れリセットが無かったのを追加
-//            ・右クリック対応漏れ：scCalMode(手動縮尺調整)には右クリックの「1点戻る/
-//              キャンセル」処理自体が存在せず、1点目を置いた状態で右クリックしても無反応
-//              だった。poly/surveyと同じパターンで新規実装
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//  Arecal_Touch A019
-//  --- 前セッション変更履歴 ---
-//  A019     A018の続き。マスター了承のもと、機械的に見つかった①未使用関数の削除
-//           ②完全一致コピペの共通関数化、を実施(いずれも機能・挙動の変更は無し)。
-//           ①未使用関数の削除：
-//            ・subSignedArea2（do-sub内、呼び出し元皆無、calcAreaPts等に完全に置換済み）
-//            ・showUnionDialog（v0.0442でALL UNIONボタン自体を削除して以来、呼び出し元が
-//              消滅していた。「関数自体は残す」という古いコメントの対象はexecUnionのみで
-//              showUnionDialogは含まれないと確認した上で削除、コメントも実態に合わせて修正）
-//           ②完全一致コピペの共通関数化：
-//            ・extractVecs/extractVecsRotated（元図ベクター抽出、通常/回転込み）で同一だった
-//              「vecSegsから重複点を除去してvecPtsを構築しグリッド再構築」処理(9行)を
-//              _buildVecPtsFromSegs()に統合
-//            ・ハイライトUNION(_doUnionExec)とSELECT UNION(do-sel-union)で同一だった
-//              「Union結果(merged)から編集形状の配列を組み立てる」処理(8行)を
-//              _buildUnionNewShapes()に統合
-//            ・placement_v2.js側：_drawFills/_drawStrokesで同一だった「SVGのpolygonタグを
-//              正規表現で拾い座標配列にパースする」処理(16行)を_forEachSvgPolygon()に統合
-//              (ARECALAY_VER 0.0075→0.0076)。単体テスト(モックctxでの呼び出し順比較)で
-//              リファクタ前後の描画コマンド列が完全一致することを確認済み
-//           構文チェック(node --check、全<script>ブロック)通過済み。実機動作確認はまだ。
-//           次回以降の課題：③似ているが完全一致ではない箇所（他ツール排他解除ロジック6箇所、
-//           距離測定結果setStatus()のコピーボタン演出の左右非対称）は仕様差異の確認が
-//           必要なため今回は対象外、マスターへ判断を仰ぐ形で保留
-//  Arecal_Touch A018
-//  --- 前セッション変更履歴 ---
-//  A018     マスターより「関数の重複や無駄は他にもあるか、ファイルサイズも考えたい」との
-//           質問への調査・対応(機能・挙動の変更は一切無し)。
-//           調査結果：ファイル全体555KB中、約131KB(約24%)は外部ライブラリClipperLib
-//           (ポリゴンUnion/Offset計算に必須、圧縮・削除不可)が占めており、これは無駄では
-//           なく必要なコスト。その上で、完全に同一のコードが複数箇所にコピペされている
-//           箇所を機械的に検出(長い行の重複頻度を走査)したところ、「距離モード中に右クリック
-//           →1点戻る、履歴が無ければ測定キャンセル」という約22行のロジックが、
-//           setSelUnionMode/io-btnクリック/contextmenu/setScCalModeの4箇所に一字一句
-//           同一のままコピペされていることを発見。共通関数_distRightClickUndo()に統一し、
-//           4箇所とも「if(distMode){_distRightClickUndo();return;}」の呼び出しに置き換えた
-//           (元のコードも各分岐の末尾で必ずreturnしていたため、この形にしても実行順序・
-//           挙動は完全に同一)。構文チェック(node --check、全<script>ブロック)通過済み。
-//           次回以降の課題：他にも同種の完全一致コピペが埋もれている可能性はあるが、今回は
-//           時間の都合上、機械的検出で見つかった中で最も明確だったこの1件のみ対応した。
-//  Arecal_Touch A017
-//  --- 前セッション変更履歴 ---
-//  A017     マスターより依頼のデッドコード・コメント整理を実施(機能・挙動の変更は一切無し)。
-//           ①A001でタブレット対応版として分岐する前の、安定版[[arecalay]]の開発履歴
-//           (v0.0104初版～v0.0474、約925行)を要約1ブロックに圧縮。詳細は安定版ブランチの
-//           ファイル自体に残っているため、可読性のためここでは要点のみ残した。
-//           ②呼び出し元が存在しない未使用関数7個を削除(いずれも既存の別関数に機能が
-//           完全に置き換わっていたことを確認済み)：calcArea(→calcAreaPts/calcAreaShapeに
-//           置換済み)・ptInShape・hasHolePaths・calcUnion・showClrPopup(色ボタンは
-//           cycleShapeColor(idx)に一本化済み)・saveJSON(保存はsaveArela()に一本化済み)・
-//           importDXF(v0.0335でDXF読込ボタン自体が削除されて以来ずっと呼び出し元が無い状態
-//           だった)。placement_v2.js側も未使用の_mToPx(逆変換の_pxToMは現役のため維持)を
-//           削除。全て「grep等で呼び出し元ゼロを確認 → 該当機能が既に他の実装に置き換わって
-//           いることをコードで裏取り」した上で削除しており、動作に影響する変更ではない。
-//           構文チェック(node --check、全<script>ブロック)を通過済み。
-//           ③未着手・次回以降の課題として残す：#clr-popup関連のDOM/CSS(色ボタンのクリック
-//           ハンドラがcycleShapeColorに置き換わって以来、ポップアップ自体は開かれなくなって
-//           いるが、閉じる処理のイベントリスナー等は残っている)。HTML/CSS側の削除は
-//           JSより影響範囲の見極めが難しいため、今回はJSの未使用関数削除のみに留めた。
-//  Arecal_Touch A016
-//  --- 前セッション変更履歴 ---
-//  A016     A015の左UI説明文、改行位置がおかしい件のマスター指摘への対応。
-//           Arecal/Arecalay両方の左UI説明文を「表示順序は上が前面です。／表示順序の変更は、
-//           オブジェクトを選択し／「移動」ボタンを押した後、入れ替えたい／オブジェクト名を
-//           選択してください」の4行に統一(Arecalay側は末尾の「（上：前面/下：背面）」の
-//           括弧書きを廃止し、1行目に統合)。
-//  Arecal_Touch A015
-//  --- 前セッション変更履歴 ---
-//  A015     A014実機チェックへの追加指摘・更追3の修正対応。
-//           アイコン変更：オブジェクト入れ替えの矢印を⇄(左右)→⇅(上下)に統一(ボタン/トースト/
-//           説明文すべて)。
-//           Arecal左UI：説明文を「表示順序を変える場合、オブジェクトを選択し／「移動」ボタンを
-//           押した後、入れ替えたいオブジェクト名を選択してください」の3行表示に変更。
-//           Arecal四角形：ステータス表示を「１点目を長押しで決定後、２点目を長押しして作図
-//           「✕ キャンセル」ボタンで中止」に変更(2段階の操作が分かるよう明示)。
-//           起動画面：Apple Pencil非対応バナーが1行で変な位置改行されていた件を、
-//           「このアプリは Apple Pencil には対応していません。」「指でのタッチ操作をご利用
-//           ください。」の明示的な2行表示に修正。あわせて、タッチ端末では意味を持たない
-//           「Ctrl+Dでブックマーク」案内を非表示化。
-//           更追4：Arecalay左UIにもAreCal同様の「選択→⇅移動ボタン→対象選択」スワップ方式の
-//           入れ替え機能を新規実装(pmSwapAnnAt/_pmStartReorderPick/_pmEndReorderMode追加、
-//           各行に⇅移動ボタン、専用キャンセルボタン、入れ替えモード中の他ボタン無効化CSS、
-//           AreCal⇄Arecalayモード切替時の後始末を追加)。
-//           更追3：Arecalayの距離測定で、拡大鏡の長押し閾値(450ms)未満で指を離す(中断する)と
-//           変な仮想線が残る不具合を修正。原因はdistCursorX/Y(Arecalay側pmCvのゴムライン
-//           終点として毎フレーム参照される値)が、長押し確定の成否に関わらずタッチ移動のたびに
-//           更新されてしまい、中断後もその「離した瞬間の座標」がpmCv側にだけ残り続けていた
-//           ため(AreCal本体側の描画はイベント駆動でmode='dist'指定時のみ描くため症状が
-//           出なかった)。「今まさに有効なプレビュー座標があるか」を示すdistCursorLiveフラグを
-//           新設し、拡大鏡ジェスチャー終了時(確定/中断いずれも)に必ずfalseへ戻すことで解消。
-//  Arecal_Touch A014
-//  --- 前セッション変更履歴 ---
-//  A014     A013実機チェック(3回目)への対応。
-//           更追2：Apple Pencilは中途半端に使えてしまい誤操作の元と判断、サポート対象外に。
-//           iPad実機検出時のみ起動画面(免責ダイアログ)にApple Pencil非対応バナーを表示。
-//           左UI(Arecal)：「ドラッグで並べ替え」というPC向け表記を削除し、タッチ向け
-//           (オブジェクト選択→「⇄移動」)の文言のみに統一。
-//           左UI(Arecalay)：「クリックで選択/Shift+クリックで複数選択」の表記を削除
-//           (タブレットは複数選択非対応のため)。
-//           右UI(Arecalay)：矢印/線/円/テキスト/図形のステータス表示・トーストがPC文言
-//           (クリック/Shift/右クリック・ESC)固定だった件を、タッチ端末では「タップ」
-//           「✕キャンセルボタン」表記に、矢印・線の編集案内トーストも「ダブルタップ」表記に
-//           出し分けるよう修正。
-//           距離測定：区間結果表示下部のヒント(右クリック：1回戻る/ESC：測定モード終了)が
-//           タッチ端末向けに出し分けられていなかった件を修正(共通ヘルパー_distResultHintText化)。
-//           更追3(Arecalay距離測定：長押しを拡大鏡確定前に離すと仮想線が誤表示される件)は
-//           マスターより継続調査の申し出があり、今回は対応見送り。
-//  Arecal_Touch A013
-//  --- 前セッション変更履歴 ---
-//  A013     A012実機チェックへの対応。
-//           気1バグ修正：「↩ 戻す」ボタンが消えていた件。flexコンテナ(touchBtnBar)への
-//           refactor時に、このボタンだけ誤ってcvWrapへ直接appendChildしていた(position指定も
-//           無いため画面外/不可視になっていた)。touchBtnBarへ追加するよう修正。
-//           気4(続き)：まだ強いとのことで、マスター了承のもとTOUCH_SNAP_TOL_MULTを1.4→1.0
-//           (タッチ専用の追加ブーストを実質無し)に変更。
-//           重大バグ修正：距離測定・測点設置・縮尺調整が拡大鏡経由でまったく反応しなくなって
-//           いた件(四角形・多角形は無事だった)。原因は、長押し確定時に使っていたlastEvt
-//           (長押し中の最後のpointermoveイベント)のbuttonプロパティが、PointerEvent仕様上
-//           pointermoveでは-1になること。距離測定/測点設置/縮尺調整はe.button===0を要求する
-//           判定になっていたため素通りしていた(四角形/多角形はbuttonを見ていないため無事だった)。
-//           ネイティブイベントを直接使い回さず、button:0を明示したプレーンオブジェクトを
-//           onMouseDown()に渡す形に変更して解消。
-//           挙A追加①：多角形に「✓ 確定」ボタンを新設(現在の形状のまま確定してツール終了)。
-//           挙A追加②：多角形を「始点タップで閉じて確定する」操作だけは、長押し無しの通常タップ
-//           でも即時実行できる例外を追加(閉じる操作は速さ・分かりやすさを優先)。
-//           拡大鏡の表示位置改善：画面上部を長押しした場合、従来は指の下に表示していたが
-//           「自分の手で隠れて見えない」との報告のため、縦方向ではなく横方向(タップ位置が
-//           画面右側なら左、左側なら右)へ逃がすよう変更。
-//  Arecal_Touch A012
-//  --- 前セッション変更履歴 ---
-//  A012     A011実機チェック＋挙動変更依頼への対応。
-//           気1(続き)：「✕キャンセル」「↩戻す」ボタンが横並びで重なっていた件、flexコンテナ+
-//           gapに変更して確実に間隔を空けた。多角形の始点(緑)・頂点マーカー・始点リングが
-//           zoomに応じて画面上のサイズが変わってしまっていた件(縮小すると見えなくなる)を、
-//           他のスナップマーカーと同じ/zoom方式に統一して画面上つねに一定サイズに修正。
-//           気4(続き)：スナップの吸着がまだ強いとのことで、TOUCH_SNAP_TOL_MULTを1.8→1.4に
-//           緩和(スライダーで強める余地は残すため、デフォルトは控えめに)。
-//           測点設置の「1回のタップでダイアログが出ず、2回目にタップした位置(B)を基準に
-//           設置されてしまう」件：今回のコード調査では、ダイアログ表示処理自体に明確な不具合は
-//           見つけられなかった(A010で入れたpreventDefault対策も効いていない模様)。挙動Aの対応
-//           (下記、タップ単独では確定させない仕様に変更)により、少なくとも「2回目のタップが
-//           誤ってBの位置で確定してしまう」という経路は塞がれるはずだが、そもそも1回目の
-//           長押し確定でダイアログが正しく開くかどうかは実機でないと判断できない。直っていなければ
-//           改めて詳しい状況(長押しを離した瞬間に何か表示の変化があるか等)を報告してほしい。
-//           挙動A：拡大鏡が付くツール(四角形・多角形・距離測定・測点設置)は、画面タップだけでは
-//           点を打てないようにし、必ず長押し(拡大鏡)を経由しないと確定しない仕様に変更。
-//           該当ツールの案内文言もすべて「タップ」→「長押し」に変更。対象外(選択合成・部分削除、
-//           Arecalayの線/矢印/テキスト/円/図形)はタップのまま。
-//           挙動B：左UIのオブジェクト並べ替えについて、▲▼(1段階ずつ挿入)方式を廃止し、
-//           「A選択→⇄移動ボタン→画面暗転(左UIとキャンセルのみ操作可)→B選択→AとBの位置を
-//           入れ替え」という2点指定のスワップ方式に変更(swapShapeAt()を新設)。
-//  Arecal_Touch A011
-//  --- 前セッション変更履歴 ---
-//  A011     A010実機チェックへの対応。
-//           更追2（強化）：Apple Pencilが「AreCalでは作図はできないがボタン操作/選択はできる」
-//           「Arecalayでは距離測定以外は全部使える」状態だった件。onMouseDown/onMouseMove内の
-//           ガードだけでは、ボタン押下やArecalay側の別経路のイベントには効いていなかったため、
-//           document捕捉フェーズでpointerType==='pen'のpointerdown/move/up/cancelを
-//           他の全リスナーより先に止める方式に変更。
-//           気1：多角形のキャンセルボタンが実質「1点戻す」動作になっていた件。「✕ キャンセル」は
-//           常に全体終了に統一し、1点だけ戻したい場合用に「↩ 戻す」ボタンを新設。あわせて、
-//           キャンセルボタンをタップした際にボタン位置へ仮想線が描かれていた不具合(ボタンへの
-//           pointermoveがcvWrapまで伝播しlastMouseX/Yを書き換えていたのが原因)を、ボタン側で
-//           pointermoveも止めるよう修正。多角形の1点目(始点)は他の頂点と別の色(緑)で表示し、
-//           閉じる位置がわかるようにした。
-//           気2：ステータスバー/トーストのPC向け文言(クリック・右クリック・Enter等)をタッチ/PCで
-//           出し分け。距離測定・矩形・多角形・縮尺調整・測点設置・入出力メニュー・PDF出力範囲
-//           選択など、該当箇所をタッチ向け文言に変更(矢印キーでの角度調整メッセージ等、
-//           キーボードでしか到達しない箇所は対象外)。
-//           気3：入出力メニュー表示中もキャンセルボタンが出るよう、表示条件にioMenuOpenを追加
-//           (キャンセル処理自体は元々あったが、ボタンの表示条件に含まれていなかった)。
-//           気4：スナップの吸着が強すぎる件を調査。tol計算(SNAP_PX_CURRENT/zoom*tolMult)は
-//           RS/effRS(PDFレンダリング解像度)とは無関係とわかり、実際の原因はTOUCH_SNAP_TOL_MULT
-//           自体が2.5倍と大きめだったことと判断(導入時から「暫定値」と明記されていた)。1.8倍に
-//           緩和。
-//  Arecal_Touch A010
-//  --- 前セッション変更履歴 ---
-//  A010     A009実機チェックへの対応。
-//           Problem B：長押しで時々「全画面選択」やコンテキストメニューが出て操作不能になる件。
-//           #cv-wrap/#pdf-cv/#draw-cvにのみ-webkit-touch-callout:noneを設定していたが、
-//           body要素そのものには設定していなかったため、起動画面など他の場所では長押しで
-//           OS標準のテキスト選択/コンテキストメニューが出ていた。bodyに一括指定し、
-//           保険としてselectstartのグローバル抑制・pointerdown時の選択範囲クリアも追加。
-//           ４（拡大鏡の副作用）：測点設置でダイアログが1回のタップで出ず2回目で出る件。
-//           iOSの遅延合成クリック(ghost click)が疑わしいため、拡大鏡フロー側でpreventDefault()
-//           を追加(Problem Bの修正と合わせて改善する可能性が高いが実機再確認必須)。Arecalayの
-//           距離測定でネイティブ拡大鏡も一緒に出る件はProblem Bの修正(body一括)で解消見込み。
-//           別3・更追4：Snap!(元図)マーカーが白くなる件。canvas描画側のcolors辞書に'vector'
-//           エントリが無く白にフォールバックしていたことが原因と判明、シアン系に統一。
-//           更追1：タッチ端末では、矩形ツールの連続配置ループ(rectLoop)を無効化。1つ配置する
-//           たびにツールを終了し、再度描く場合はツールボタンを押し直す仕様に変更。
-//           更追2：Apple Pencil(pointerType==='pen')をキャンバス操作の対象外に(onMouseDown/
-//           onMouseMove冒頭でガード)。
-//           更追3：ファイルを開く際にiOSの「写真ライブラリ/カメラ/ブラウズ」選択メニューが
-//           出てしまう件。追7対応でaccept属性を完全に外していたのが原因と判断し、非画像系の
-//           MIME/拡張子を並べた値に変更(file-in・imp-inの両方)。
-//           更追5：Snap!チップ(#survey-tip)が指を離しても/ツール終了後も消えない件。
-//           _hideFloatTips()ヘルパーを追加し、各キャンセル関数とタッチのpointerup/pointercancel
-//           から確実に呼ぶようにした。
-//           更追6：AreCal本体にはある全体表示ボタンをArecalay側にも追加(詳細はplacement_v2.js
-//           側の履歴参照)。
-//           6（残り）：矩形/多角形ツールのステータスバー文言(画面上部)をタッチ/PCで分岐。
-//  Arecal_Touch A009
-//  --- 前セッション変更履歴 ---
-//  A009     A008実機チェック(4,6,7,9,10,別4)への対応。
-//           ４：拡大鏡(ルーペ)機能を新規実装。矩形/多角形の頂点指定・距離測定・測点設置で、
-//           タッチ長押し→拡大鏡表示→指で位置調整(スナップ候補を拡大鏡内にプレビュー)→指を
-//           離した位置で確定、というフローに対応(MAG_LONGPRESS_MS/MAG_SIZE/MAG_ZOOMで調整可)。
-//           短いタップは従来通り即時確定で体感差なし。あわせて、iPad Pro第4世代の長押しで
-//           出ていた「拡大鏡」はOS標準のテキスト選択ルーペと判明(#cv-wrapのtouch-callout:none
-//           がcanvas要素には継承されないWebKitの既知の癖)。#pdf-cv/#draw-cvに直接
-//           -webkit-touch-callout:noneを指定して対策(実機再確認必須)。
-//           追9：DXF出力の拡張子が iPad で「.dxf.txt」になる/保存されない件。原因は他の出力
-//           (.arela保存・面積出力ZIP)がBlob+URL.createObjectURL方式に統一済みなのに対し、DXF
-//           出力だけ旧来のdata:text/plain URIのままだったこと。iOS Safariのdata URIダウンロードは
-//           MIMEタイプから拡張子を機械的に付け直す既知の挙動があるため、Blob方式に統一して解消。
-//           追7：Arelaファイルが選択できない件。「.arela」はOS未登録の独自拡張子(実体はJSON)の
-//           ため、iOS Safariのファイルピッカーがaccept属性をUTIに変換する際に候補から除外されて
-//           いた可能性が高いと判断。判定自体は元々拡張子ベースでJS側にあるため、iOS端末の場合
-//           のみaccept属性を外し、フィルタをJS側に委ねる形に変更。
-//           別4：部分削除の「元オブジェクトを消す/残す」ボタンの文字が薄い件。v0.0464で半透明
-//           18%背景に変更したのが原因(以前v0.0445で同様の指摘を受けて一度不透明化していたのが
-//           再び読みにくい配色に戻っていた)。色分けの意図は維持しつつ不透明の濃色背景に変更。
-//           6：操作ガイドのタッチ/PC分岐をArecalay(placement_v2.js)側にも横展開(詳細は同ファイル
-//           側の履歴参照)。
-//           10：Arecalay側のPDF出力で「Arecalで行われている全画面表示が行われない」件。
-//           pmStartRangeSelect()の冒頭でfitScreen(true)を呼ぶよう追加、AreCal本体側
-//           (startPdfRangeSelect)と同じ挙動に統一(詳細は同ファイル側の履歴参照)。
-//  A008     優先順位3位「UI細部」(追2/5/6/10/11)への対応、およびマスター指摘によるArecalay側
-//           への横展開。
-//           追2：ファイルを開いた時に「🔍全体表示」トーストが出る件。fitScreen()にsilent引数を
-//           追加し、自動発火箇所(PDF/Arela読込完了時・回転焼き込み関連3箇所)は無音化。中クリック
-//           ダブルタップ等、直接のユーザー操作の時だけ従来通り表示。
-//           追5：左UIのオブジェクト一覧がドラッグで並べ替えできない件。原因はHTML5標準DnD
-//           (draggable属性)がタッチでは発火しない既知の制約だったため。並べ替え本体を
-//           moveShapeTo(src,dst)として切り出し(挙動は無変更)、新たに▲▼ボタンを各項目に追加。
-//           従来のドラッグ&ドロップ(PC/マウス用)はそのまま残し、タッチには▲▼で対応する形。
-//           追6：操作ガイドがPC版のままの件。タッチ検出時はPC向けガイド(ホイール/中クリック等)を
-//           隠し、実際の操作(2本指ピンチ・✕キャンセルボタン)に即したタッチ向けガイドを表示する
-//           よう分岐。あわせて、タッチ環境には元々「全体表示」を呼ぶ手段が中ダブルクリック以外
-//           無かったため、ガイド内に🔍全体表示ボタンも新設。
-//           追10：PDF出力範囲選択中に画面移動できない件。マスター提案の通り、出力範囲選択の
-//           開始時点(startPdfRangeSelect)で自動的に全体表示するよう変更。
-//           追11：足場材の⚪(白丸)がオブジェクト名の横だけ黒っぽく見える件。原因はplacement_v2.js
-//           側で判明(詳細は同ファイルのA008変更履歴参照)。
-//           ・マスター指摘によるArecalay側への横展開：①A003のsticky :hover対策(全:hoverを
-//           @media(hover:hover)で無効化)がplacement_v2.js側の#union-btn:hover(Arecalayテーマ
-//           適用時に!important付きで後から上書きする別ルール)には及んでおらず、Arecalayモード中
-//           だけ症状がぶり返す状態だったため、同じ対策をplacement_v2.js側にも追加(詳細は同ファイル
-//           側の履歴参照)。②A003の常設キャンセルボタンの表示判定がAreCal側の状態しか見ておらず、
-//           Arecalay側だけがキャンセル可能な状態(注釈モード中・機器ピッカー表示中・入出力メニュー
-//           展開中)ではボタンが出ないままだった件。placement_v2.js側にwindow._pmHasCancelable()を
-//           新設してもらい、AreCal側のポーリング判定に追加した。
-//           ・注意：追2/5/6/10/11・Arecalay横展開分ともに実機未検証。
-//  Arecal_Touch A007
-//  --- 今セッション変更履歴 ---
-//  A007     マスター実機報告「用紙サイズによって実測値がズレる」の根本原因を修正。
-//           マスター自身の詳細な実測調査により、A0で約0.3倍・A1で0.4倍・A2で0.6倍・
-//           A3で0.845倍という縮小率が、v0.0473のiOS Canvas上限回避策(_CPAD込みの二次方程式で
-//           effRSを算出し、大判図面ではRENDER_SCALE(RS=4)より小さい値で実際に描画する仕組み)の
-//           解と一致することを特定。距離計測・面積計算・スナップ丸め・手動縮尺キャリブ・
-//           DXF入出力など、実測値換算ロジック全21箇所が、実際に描画に使われた縮小後のeffRSでは
-//           なく固定のRS定数のまま計算していたため、縮小が発生したページでは
-//           実測値が(effRS/RS)倍だけ小さく出てしまっていた(A006で見つけた元図スナップの座標
-//           ズレと同根の問題)。
-//           →「実際に今描画に使われているスケール」を追跡する_curRSを新設。renderPage()で
-//           effRS確定時・bakeRotation()完了時(nominal RSで自己完結)・Arela復元時(_effVecScale()
-//           で_origPdfWから逆算、A006と同ロジック再利用)のそれぞれで同期し、実測値換算箇所は
-//           全てRS定数直接参照から_curRS参照に置き換え(面積計算2箇所は「点数²への変換」経由の
-//           式のため一見無関係に見えたが、これも同じ理由でズレることを再検証の上で確認・修正)。
-//           ・注意：A4サイズなのに0.35倍だった件は、マスターの推測通り、テスト用PDFの内部
-//           BoundingBoxがA0相当になっている等、PDFファイル側の特殊事情である可能性が高い
-//           (ラベル上のA4サイズと無関係に、実際のページ寸法が大きければ同じ縮小ロジックが
-//           働くため、矛盾ではなくむしろ理論と整合する)。原因はPDF側の可能性が高いため、
-//           アプリ側の追加対応は今回見送り。
-//           ・注意：_origPdfBytesが無くpdfDoc再構築が行われないArela復元の場合、_curRSの補正が
-//           効かない既知の残課題あり(未対応)。
-//           ・注意：実機未検証の仮説に基づく修正(ただしマスター自身の実測データに基づく強い
-//           状況証拠あり)。
-//  Arecal_Touch A006
-//  --- 今セッション変更履歴 ---
-//  A006     マスター実機報告「PDFの元図にスナップができない」の原因調査・修正。
-//           コードを追った結果、extractVecs()/extractVecsRotated()が独自にpg.getViewport
-//           ({scale:RS})で座標変換していたのに対し、実際に画面に描画されるcanvas(pdfW/pdfH)は
-//           renderPage()内のiOS canvas上限対策(v0.0473のeffRS計算、大判図面で発動)によって
-//           RSより小さい値に縮小されることがあり、両者が食い違うケースがあった。Arela復元時も
-//           同様(保存時に縮小されていた場合、復元後のpdfW/pdfHは縮小後の値だが、再抽出は
-//           やはりRS固定で行っていた)。座標系が食い違うと元図の線とカーソル位置が別スケールに
-//           なり、距離判定が常に閾値を超えて元図スナップが機能しなくなっていたと考えられる。
-//           →_origPdfW(実際に使われた「原寸」canvas幅。iOS縮小時・Arela復元時いずれも常に
-//           実際の実効スケールを反映)から逆算する_effVecScale()ヘルパーを新設し、extractVecs/
-//           extractVecsRotated/loadArela内の該当3箇所を置き換え。bakeRotation()経由の回転焼き込み
-//           パスは元々自己完結(pdfW/pdfHも同じ nominal RS 基準で計算)しているため、この修正による
-//           影響は無い(_effVecScaleが計算上RSとほぼ一致する値を返すだけ)ことを確認済み。
-//           ・注意：実機未検証の仮説に基づく修正。A0等の大判図面でiOS縮小が発動していたかどうかは
-//           未確認(発動していなければ今回の修正では改善しない＝別原因の可能性が残る)。
-//  Arecal_Touch A005
-//  --- 今セッション変更履歴 ---
-//  A005     マスター実機報告：Android+外付けペンディスプレイ(Wacom Movink Pad)環境で、
-//           常設キャンセルボタンが画面下端で見切れる(少ししか見えない)。
-//           原因：body/.appがheight:100vhを使用していた。100vhはブラウザのアドレスバー等の
-//           ツールバーが「非表示になった時の最大サイズ」を基準に計算されるため、実際に
-//           ツールバーが表示されている状態では見た目のビューポートより大きく確保されてしまい、
-//           下端に配置した要素が画面外にはみ出す。iOS Safari(iPad実機)ではあまり目立たなかったが、
-//           Android Chrome等では典型的に発生する既知の問題。
-//           →100dvh(実際に見えている範囲を動的に反映する単位)をフォールバックとして追加。
-//           未対応の古いブラウザはそのまま100vhで動作するため、退行リスクは低いはず。
-//           ・注意：実機未検証。改善しなければ別要因(端末固有のsafe-area等)を要調査。
-//           ・確認事項：Arecalay側(placement_v2.js)はこの表示崩れについては未調査・未対応。
-//           前回(A004)で直したArecalayの図形ボタン再タップキャンセルとは別件。
-//  Arecal_Touch A004
-//  --- 今セッション変更履歴 ---
-//  A004     マスターの優先順位指定(キャンセル関連を最優先)に対応。
-//           ①距離測定モード中、常設キャンセルボタンが効かない件を調査。touchCancelBtnはcvWrapの
-//           子要素だが、cvWrap自体に(キャンバス操作用の)複数のpointerdown/clickリスナーが
-//           登録されており、ボタンをタップした際のイベントがDOMバブリングでcvWrapまで届き、
-//           特に距離測定モードでは「キャンバス上のクリック」として計測点が誤って追加されて
-//           いた可能性が高いと判断。ボタン自身のpointerdown/pointerup段階でstopPropagation()し、
-//           cvWrap側に一切届かないよう変更(clickでのstopPropagationだけでは、より先に発生する
-//           pointerdownの伝播を止められていなかった)。※実機未検証の仮説に基づく修正。
-//           ②Arecalayの図形(機器)ボタンが再タップでキャンセルにならない件はplacement_v2.js側
-//           (別ファイル)で対応。矢印/線/円/テキストは既にsetAnnotMode()のトグルで再タップ
-//           キャンセルに対応していたが、図形ボタンだけopenMachineryPicker()を無条件に呼んで
-//           いたため、開いている時に再タップするとダイアログが再生成されてしまっていた。
-//           既に開いている時はcloseMachineryPickerを呼ぶよう分岐追加(ARECALAY_VER 0.0067→0.0068)。
-//  Arecal_Touch A003
-//  --- 今セッション変更履歴 ---
-//  A003     A002の実機報告2件の再修正＋新規1件。
-//           ①ボタン色が消えない件、真因を特定：CSSのtransitionではなくiOS Safari既知の
-//           「sticky :hover」(タップ後もhover状態が次のタップまで残留し続ける仕様)が原因だった。
-//           button.on{background:var(--blue)}と汎用button:hover{background:var(--blue)}が
-//           同色だったため、キャンセル後も「hoverとして」色が残って見えていた
-//           (「画面移動などをすると消える」＝別要素に触れて初めてhoverが解除される、という
-//           報告内容とも一致)。A002でのtransition:none対応(rect/poly限定)は的外れだったため
-//           撤回はせず残すが、本質的な対処として全:hoverルール(17箇所)を
-//           @media (hover:hover) and (pointer:fine) 内に移動。タッチのみの端末はそもそも
-//           hoverスタイルを受け取らなくなるため、sticky hover自体が発生しなくなる。
-//           ②多角形(poly)の再タップキャンセルが機能しない不具合を修正。原因：poly-btnの
-//           再タップハンドラがcancelCurrentOperation()を呼んでいたが、これは本来Escapeキー用の
-//           「頂点を1つ戻す」処理(cur.pts.length>0の間はtool='poly'のまま)であり、矩形のような
-//           完全キャンセルにはならなかった。矩形と同じくcancelDraw()を直接呼ぶよう変更。
-//           ・注意：Arecalay側の図形ボタン(再タップで毎回オブジェクトダイアログが出る問題)は
-//           今回未対応。placement_v2.js側の実装調査が別途必要(次回以降)。
-//           追1：常設キャンセルボタンを、最初から表示ではなく「何かキャンセル可能な操作中
-//           (作図/距離計測/測点設置/縮尺キャリブ/結合選択/差引選択)」の時だけ表示するよう変更。
-//           個々の状態変更箇所を全部フックする方式は見落としリスクがある(v0.0472の教訓)ため、
-//           あえて250ms間隔の軽量ポーリングで表示・非表示を追従させる方式を採用。
-//           ・注意：Arecalay側の配置モード状態は今回の判定に含めていない(要調査)。
-//  Arecal_Touch A002
-//  --- 今セッション変更履歴 ---
-//  A002     ②近接タップでのスナップ吸着強化。getSnap(lx,ly,tolMult)に第3引数tolMultを追加
-//           (省略時=1倍=従来と完全に同じ挙動、マウス/ペンには一切影響なし)。呼び出し側全8箇所
-//           (測点/縮尺キャリブ/距離計測/矩形・多角形の頂点確定とホバー)で、pointerType==='touch'
-//           の時のみTOUCH_SNAP_TOL_MULT(=2.5)倍に拡大する_snapTolMult(e)ヘルパーを追加。
-//           getSnap内部の距離判定ロジック(chk関数)・優先度自体は無変更、tolの入り口のみ変更。
-//           ポリゴン始点への閉じ込みスナップ(SNAP_PX*2)判定にも同係数を反映。
-//           ・注意：TOUCH_SNAP_TOL_MULT=2.5は暫定値、実機で強すぎ/弱すぎがあれば要調整。
-//           ・①④⑥(A001での修正)はマスター未実機確認のまま今回の変更に着手。②③④(4本柱残り)・
-//           ③(誤タッチ防止)・⑤(色分け表示)・拡大鏡機能は未着手のまま次回以降。
-//  A001     【ファイル名・バージョン体系の変更】マスターの判断により、タブレット対応ブランチを
-//           「Arecal_Touch」として正式にファイル名分離。バージョン番号も安定版チャット側(v0.0XXX)
-//           との衝突・混乱を避けるため、このバージョンから独自の「A001, A002, ...」体系に変更。
-//           中身はAreCal_v0_0474.htmlと完全に同一(コードの変更は無し、名称とバージョン表記のみ)。
-//           ・運用方針(マスター決定事項)：①ファイル名は分けるが、コアロジックのバグ修正は当面
-//           両ブランチで都度手動移植し合う。②タブレット対応がある程度進み、PC/タブレット両方で
-//           問題無いと判断できた時点で、こちらを本筋に切り替えることも検討する。③タッチ専用UI
-//           要素(キャンセルボタン・将来のルーペ機能等)はif(タッチ端末)のガードの中に閉じ込めて
-//           あるため、将来的にデスクトップ版ファイルへマージしても実害は無い、という前提で運用する。
-//           ・注意：起動時の免責事項モーダル(disclaimer-modal内、furigana「アレカル」/appname
-//           「AreCal」表記)は今回未変更のまま残してある。ブランド表示自体も変える場合は次回対応。
-//           ・今後、モジュール化(ES Modules / Vite導入)の是非をマスターが検討中。Claudeの意見は
-//           「今すぐは非推奨」：①巨大な単一HTMLをモジュール分割する作業自体が、この複雑な
-//           コードベース(v0.0458インシデントのような繊細な設計が多い)では既存バグの再燃リスクが
-//           高い ②Viteはビルドステップ(Node/npm)を必要とし、現在の「HTMLを直接編集→即実機で
-//           試す」という軽快な開発サイクルを損なう恐れがある ③まずは今の「2ファイル+手動移植」
-//           運用で様子を見て、本当に両ブランチを長期的に別々に育てる方針が固まってから検討すべき。
-//           やるとしても、まずはビルド不要な素のES Modules(<script type="module">)だけを試す、
-//           という軽量な第一段階を推奨。
-//  v0.0108～v0.0474  【タブレット分岐前の履歴を要約】このブロックは、A001でタブレット対応版として
-//           分離する前の、AreCal本体(安定版[[arecalay]]ブランチ)の開発履歴(v0.0104初版～v0.0474)を
-//           分岐当時そのまま引き継いだものです。タッチ対応固有の変更は一切含まれておらず、詳細な
-//           改変履歴は安定版ブランチのファイル自体に残っているため、可読性のためここでは要約のみ
-//           残します(2026-09-08 デッドコード・コメント整理にて要約化。元の全文はこのセッション以前の
-//           バージョン管理履歴から復元可能)。
-//           【現行コードに関わる要点のみ抜粋】
-//           ・iOS Safariはcanvas物理ピクセル数に上限(4096×4096=16,777,216px)があり、超過時は
-//           エラーを出さず描画を黙って放棄する(v0.0469)。RS(レンダリング解像度倍率、既定4倍)を
-//           iOSデバイスの場合のみ動的に縮小し、drawCv側の余白_CPADもiOS限定で2000→300pxに縮小
-//           することで大判図面でも安全域に収めている(v0.0473)。
-//           ・スナップ判定(getSnap)は_snapCacheで図形変更時のみ再構築する方式(v0.0472)。
-//           ・面積出力(PNG+PDF+Excel、三角分割はear clipping・穴/ドーナツ対応)、DXF/Excel出力の
-//           文字化け対策、図形の永続連番(shapeSeq)による名前の不変化(v0.0459)など、AreCal本体側の
-//           コア機能はこの間に整備された。
-//           ・ピンチズーム/パン操作はrequestAnimationFrameで間引き、CSS変形のみでフレームを
-//           更新しジェスチャー終了時に一度だけ本redrawする方式(v0.0470/0471)。この設計はタブレット
-//           対応(挙動A/拡大鏡機構含む)の土台にもなっている。
+//  Arecal_Touch A049
+//  変更履歴・背景メモ(A041までの詳細)は Arecal_Touch_変更履歴.md に移動した(A049)。
+//  A049: デッドコード掃除(旧フロー: ページ選択/スケール選択モーダル・元図確認ダイアログ・免責の同意モード等を削除)
+//  A048: 円・線の既定色を矢印と同じCOLORS[0]に戻す / Arela簡易ダイアログにキャンセルボタン
 // ================================================================
 pdfjsLib.GlobalWorkerOptions.workerSrc=
   'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js';
@@ -1979,8 +1282,6 @@ document.addEventListener('DOMContentLoaded',()=>{
     }, 60000);
   })();
 
-  // スケールグリッド（モーダルのみ）
-  setupScGrid('sc-grid-modal');
   // sc-set / sc-input はプルダウン内のカスタム入力
   document.getElementById('sc-set').addEventListener('click',()=>{
     const raw=document.getElementById('sc-input').value.trim();
@@ -1992,17 +1293,6 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('sc-input').addEventListener('keydown',e=>{
     if(e.key==='Enter'){const r=document.getElementById('sc-input').value.trim();applyScale(r.includes('/')?r:'1/'+r);
       document.getElementById('sc-dropdown-wrap').style.display='none';}
-  });
-  document.getElementById('sc-confirm').addEventListener('click',()=>{
-    const v=document.getElementById('sc-init-in').value.trim();
-    if(!v)return;
-    const dv=validateScaleDenom(v);
-    if(dv===null)return;
-    applyScale('1/'+dv);
-    document.getElementById('sc-modal').style.display='none';showRotModal();
-  });
-  document.getElementById('sc-init-in').addEventListener('keydown',e=>{
-    if(e.key==='Enter')document.getElementById('sc-confirm').click();
   });
 
   // Undoボタン
@@ -3177,19 +2467,8 @@ document.addEventListener('DOMContentLoaded',()=>{
 });
 
 // ================================================================
-//  スケールグリッド
+//  スケール選択ボタンのハイライト
 // ================================================================
-function setupScGrid(id){
-  const g=document.getElementById(id);if(!g)return;
-  g.querySelectorAll('.sbtn[data-sc]').forEach(b=>{
-    if(b.dataset.sc==='custom')return;
-    b.addEventListener('click',()=>{
-      applyScale(b.dataset.sc);
-      const m=document.getElementById('sc-modal');
-      if(m.style.display==='block'){m.style.display='none';showRotModal();}
-    });
-  });
-}
 function hlScBtn(str){
   document.querySelectorAll('.sbtn[data-sc]').forEach(b=>{
     b.classList.toggle('on',b.dataset.sc===str);
@@ -3248,7 +2527,6 @@ function _resetForNewPdf(){
 //  角度調整→元図抽出の順にしたため、回転を織り込んだ抽出が1回で済む(旧フローは抽出→回転後に再抽出の2回)。
 //  免責: 同意は「了解してはじめる」ボタン。Arelaを直接開く場合(このダイアログを通らない)は、読込前に別窓で同意確認する。
 // ================================================================
-let _consentGiven=false;       // このセッションで免責に同意済みか
 // A041: CalayMachineryData.dat(重機データ)の読込状態。'loading'=自動読込中 / 'notfound'=見つからず手動読込待ち / 'ready'=読込済み。
 // 旧: ゲート表示中でもD&Dで図面を読めてしまい、後からdat読込が完了すると起動画面(drop-hint)が作図中の画面に
 // 再表示される不具合があった(A040で免責モーダルが先頭から無くなり、暗黙の待ち時間が消えたため顕在化)。
@@ -3260,8 +2538,6 @@ function _datGuard(){
     : '📦 重機データを読込中です。少々お待ちください',2500);
   return false;
 }
-let _discConsentMode=false;    // 免責の別窓が「同意確認」モードか(false=読むだけ)
-let _discCb=null;
 let _startupPostRot=null;      // 角度調整のOK確定後に続けて実行する処理(元図の線の読込)
 let _suPdf=null,_suInited=false,_suPaperSeq=0,_suTipOwner=null;
 const _SU_TIPS={
@@ -3270,24 +2546,14 @@ const _SU_TIPS={
   rot:'斜めにスキャンされた図面の角度を補正できます'
 };
 
-function _showDisclaimer(consentMode,cb){
-  _discConsentMode=!!consentMode;_discCb=cb||null;
+function _showDisclaimer(){ // A049: 同意確認モード(consentMode/cb)は廃止。読むだけの別窓
   const m=document.getElementById('disclaimer-modal');
   const b=document.getElementById('disclaimer-ok');
-  if(b)b.textContent=consentMode?'了解してはじめる':'閉じる';
+  if(b)b.textContent='閉じる';
   m.style.display=''; // 外部CSS(arecal_touch.css)の既定の表示方法に戻す
 }
 function _discClose(){
   document.getElementById('disclaimer-modal').style.display='none';
-  if(_discConsentMode){
-    _consentGiven=true;_discConsentMode=false;
-    const f=_discCb;_discCb=null;
-    if(f)f();
-  }
-}
-function _requireConsent(cb){
-  if(_consentGiven){cb();return;}
-  _showDisclaimer(true,cb);
 }
 
 function _suEl(id){return document.getElementById(id);}
@@ -3322,6 +2588,7 @@ function _suApplyMode(){
   const isPdf=(_suMode==='pdf');
   ['su-row-page','su-row-scale','su-row-rot'].forEach(id=>{const r=_suEl(id);if(r)r.style.display=isPdf?'':'none';});
   if(!isPdf)_suEl('su-custom-row').style.display='none';
+  _suEl('su-cancel').style.display=isPdf?'none':'inline-block'; // A048: キャンセルはArela簡易ダイアログのみ
 }
 function showArelaDialog(file){
   _suInit();
@@ -3342,8 +2609,9 @@ function _suInit(){
     if(isCustom){const ci=_suEl('su-custom');ci.focus();ci.select();}
   });
   _suEl('su-custom').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();_suStart();}});
-  _suEl('su-read').addEventListener('click',()=>_showDisclaimer(false));
+  _suEl('su-read').addEventListener('click',()=>_showDisclaimer());
   _suEl('su-start').addEventListener('click',_suStart);
+  _suEl('su-cancel').addEventListener('click',_suCancelArela); // A048
   // 解説: マウスはホバーで表示。タッチ端末は「?」ボタンのタップで表示/非表示(ホバーが無いため)。
   document.querySelectorAll('#su-dlg [data-tip]').forEach(t=>{
     t.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')_suShowTip(t);});
@@ -3379,11 +2647,18 @@ function showStartupDialog(pdf){
   _suUpdatePaper();
   _suEl('su-overlay').style.display='flex';
 }
+// A048: Arela簡易ダイアログのキャンセル。読込せずに閉じ、現在の図面・作図内容には一切触れない。
+function _suCancelArela(){
+  if(_suMode!=='arela')return;
+  _suArelaFile=null;
+  _suEl('su-overlay').style.display='none';
+  _suHideTip();
+  const fin=document.getElementById('file-in');if(fin)fin.value=''; // 同じファイルを選び直しても再度changeが飛ぶように
+}
 function _suStart(){
   if(_suMode==='arela'){ // A041: Arela簡易版は「元図の線」の選択だけ受けて、そのまま読込へ
     const f=_suArelaFile;_suArelaFile=null;
     const opt={vec:_suEl('su-vec').checked};
-    _consentGiven=true;
     _suEl('su-overlay').style.display='none';
     _suHideTip();
     if(f)loadArela(f,opt);
@@ -3407,7 +2682,6 @@ function _suStart(){
   }
   err.textContent='';
   const o={page:parseInt(_suEl('su-page').value)||1,vec:_suEl('su-vec').checked,rot:_suEl('su-rot').checked,denom};
-  _consentGiven=true; // 「了解してはじめる」=免責に同意
   _suEl('su-overlay').style.display='none';
   _suHideTip();
   renderPage(o);
@@ -3592,19 +2866,6 @@ function loadArela(file,opt){
   rd.readAsText(file);
 }
 
-function showPgModal(n){
-  const m=document.getElementById('pg-modal');
-  const btns=document.getElementById('pg-btns');
-  btns.innerHTML='';
-  for(let i=1;i<=n;i++){
-    const b=document.createElement('button');
-    b.textContent='ページ '+i;
-    b.addEventListener('click',()=>{m.style.display='none';pageNum=i;renderPage();});
-    btns.appendChild(b);
-  }
-  m.style.display='block';
-}
-
 async function renderPage(o){ // A040: oが渡された場合は起動ダイアログ経由の新フロー。無指定は旧フロー(旧ページ選択モーダル用に残置)
   document.getElementById('loading').style.display='block';
   bakedRotAngle=0; // v0.0427: 新規ページ読込時は前回の回転角を引き継がない
@@ -3654,31 +2915,11 @@ async function renderPage(o){ // A040: oが渡された場合は起動ダイア�
     document.getElementById('loading').style.display='none';
     // A040: 起動ダイアログの選択(縮尺→角度調整→元図の線の順)で進める。旧フロー(元図の確認→縮尺→角度確認)は通らない
     if(o){await _startupAfterRender(pg,o);return;}
-    // v0.0428: 元図の読み取り(ベクター抽出)を行うかどうか、都度ユーザーに判断してもらう
-    const wantExtract=await new Promise(resolve=>askVecExtractConsent(resolve));
-    if(wantExtract){
-      document.getElementById('loading').style.display='block';
-      await extractVecs(pg);
-      document.getElementById('loading').style.display='none';
-    }else{
-      vecExtractSkipped=true;
-      vecPts=[];vecSegs=[];vecGrid=null;
-      const statusEl=document.getElementById('vec-extract-status');
-      if(statusEl)statusEl.textContent='➖ 元図の読み取りをスキップしました（軽量モード）';
-    }
-    fitScreen(true);
-    document.getElementById('sc-modal').style.display='block';
-    document.getElementById('sc-init-in').focus();
-    toast('📄 PDF読込完了。縮尺を選択してください');
+    // A049: 旧フロー(元図確認→縮尺→角度確認モーダル)は廃止。renderPageは起動ダイアログ経由(o指定)のみ
   }catch(err){
     alert('レンダリングエラー: '+err.message);
     document.getElementById('loading').style.display='none';
   }
-}
-
-// スケール確定後に回転確認を表示
-function showRotModal(){
-  document.getElementById('rot-modal').style.display='block';
 }
 
 // 回転プレビュー（CSSで即時反映）
@@ -3793,22 +3034,6 @@ function runVecWorker(opsFn,opsArgs,transform,minLen){
     w.onerror=err=>{reject(err);w.terminate();};
     w.postMessage({opsFn,opsArgs,transform,OPS:pdfjsLib.OPS,minLen});
   });
-}
-
-// v0.0428: PDF/Arela読込のたびに、元図の読み取り(ベクター抽出)を行うか都度確認する。
-// 低スペックPCでの負荷を心配するユーザーが多かったため、各自の判断でスキップできるようにした。
-// 一度スキップした場合、その回では再度読み込み直すまで元図スナップは使えない(仕様として明示)。
-function askVecExtractConsent(cb){
-  customChoice(
-    '🧷 元図の線の位置を読み取りますか？\n\n'+
-    'CADデータから作られたPDFの場合、だいたいの線の位置を抽出して「元図スナップ」機能で使えるようにします。\n'+
-    '図面によっては抽出処理に多少時間がかかったり、低スペックPCでは動作が重くなる可能性があります。\n\n'+
-    '※この設定は今回の読込では後から変更できません(有効にするには読み込み直しが必要です)',
-    [
-      {label:'いいえ（読み取らない・軽量）',style:'padding:8px 22px;background:#333;border:1px solid #666;color:#ddd;border-radius:6px;cursor:pointer;',onClick:()=>cb(false)},
-      {label:'はい（読み取る）',style:'padding:8px 22px;background:#1a55cc;border:1px solid #4488ff;color:#fff;border-radius:6px;cursor:pointer;',onClick:()=>cb(true)}
-    ]
-  );
 }
 
 async function extractVecs(pg){
@@ -7466,7 +6691,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
     <div class="su-err" id="su-err"></div>
     <div class="su-readwrap"><button type="button" id="su-read">⚠ ご利用前にお読みください</button></div>
     <p class="su-agree">「了解してはじめる」をクリックした時点で、すべての免責事項および完全な自己責任での利用に同意したものとみなします。</p>
-    <div class="su-foot"><button type="button" id="su-start">了解してはじめる</button></div>
+    <div class="su-foot"><button type="button" id="su-start">了解してはじめる</button><button type="button" id="su-cancel">キャンセル</button></div>
   </div>
   <div id="su-tip"></div>
 </div>
@@ -7603,7 +6828,7 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
         status.style.color      = '#2196f3';
         status.textContent      = '📐 面積計算モード';
         if (helmetIcon) helmetIcon.style.color = '#2196f3';
-        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A047'; }
+        if (appVerLbl)  { appVerLbl.style.color = '#2196f3'; appVerLbl.innerHTML = '<b>' + _appDisplayName() + '</b> A049'; }
       }
     }
 
@@ -7616,13 +6841,13 @@ function _doExportPDF(_pdfWithLbl,mnX,mnY,mxX,mxY){
     window._onPmModeChange = applyStyle;
 
     /* 初期状態 */
-    document.title = _appDisplayName() + ' A047'; // A037: タブ名もロゴ名に合わせる
+    document.title = _appDisplayName() + ' A049'; // A037: タブ名もロゴ名に合わせる
     applyStyle(false);
   })();
 </script>
 
 <!-- Arecalay 拡張スクリプト -->
-<script src="placement_v10.js"></script>
+<script src="placement_v12.js"></script>
 <!-- /Arecalay 統合 -->
 
 </body>
