@@ -1,0 +1,255 @@
+================================================================
+  Voldia_3D 機械的全数検査レポート (Deterministic Audit Report)
+================================================================
+
+■ 1. 検出された外部CDN URL一覧（ブラウザが通信する外部先）
+----------------------------------------------------------------
+  - https://cdn.jsdelivr.net/gh/gitbrent/xlsx-js-style@1.2.0/dist/xlsx.bundle.js
+  - https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js
+  - https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js
+
+
+■ 2. ファイル別 検出行一覧（著作権・ライセンス・通信・スクリプト）
+----------------------------------------------------------------
+
+【対象】 [ローカル] clipper_6.4.2.2.js (検出: 5 箇所)
+  Line     3 [COPYRIGHT]: * Copyright (c) 2012-2015 Timo
+  Line     4 [COPYRIGHT]: * Copyright (c) 2010-2014 Angus Johnson
+  Line     5 [LICENSE_KEYWORD,EXTERNAL_URL]: * License: Boost Software License - Version 1.0 (http://www.boost.org/LICENSE_1_0.txt)
+  Line     8 [COPYRIGHT]: * Copyright (c) 2005  Tom Wu
+  Line     9 [LICENSE_KEYWORD]: * License: BSD License
+
+【対象】 [ローカル] index.html (検出: 112 箇所)
+  Line    34 [SCRIPT_SRC,EXTERNAL_URL]: <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js"></script>
+  Line    38 [SCRIPT_SRC,EXTERNAL_URL]: <script src="https://cdn.jsdelivr.net/gh/gitbrent/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+  Line    39 [SCRIPT_SRC,EXTERNAL_URL]: <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  Line    40 [SCRIPT_SRC,EXTERNAL_URL]: <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  Line    93 [SCRIPT_SRC]: <script src="clipper_6.4.2.2.js"></script>
+  Line   173 [EXTERNAL_URL]: <img src="https://hits.sh/osaki-kensetsu.github.io/arecal.svg?style=flat-square&color=0088cc&labelColor=1a1a2e" alt="visits" style="height:13px;opacity:.6;" onerror="this.style.display='none'">
+  Line   547 [EXTERNAL_URL]: 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.worker.min.js';
+  Line  1589 [EXTERNAL_URL]: window.open('https://docs.google.com/forms/d/e/1FAIpQLSe82_50OHAm-0qFG0e2rEeaOMYjyev3mmmlN0O7m-1sMQAJRA/viewform?usp=dialog','_blank');
+  Line  6841 [COPYRIGHT,LICENSE_KEYWORD]: <div class="cr-item"><b>PDF.js</b> <span class="cr-ver">2.12.313</span><br><span class="cr-lic">Apache License 2.0</span><br><span class="cr-sub">© Mozilla Foundation ／ 用途: PDF図面の表示 ／ 入手先: cdnjs.cloud
+  Line  6842 [LICENSE_KEYWORD]: <p class="cr-note">上記のうち <b>jsPDF</b>、<b>JSZip</b>、<b>Clipper</b> のファイルには、次の第三者ソフトウェアが含まれています。</p><div class="cr-item"><b>pako</b>（JSZip内）— MIT License ／ zlib 由来部分は zlib License<br><b>fflate</b>（jsPDF
+  Line  6844 [COPYRIGHT]: <details><summary>PDF.js — 著作権表示とライセンス告知</summary><pre class="lic">Copyright 2021 Mozilla Foundation
+  Line  6846 [LICENSE_KEYWORD]: Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+  Line  6850 [COPYRIGHT,EXTERNAL_URL]: http://www.apache.org/licenses/LICENSE-2.0</pre></details><details><summary>xlsx-js-style / SheetJS — 著作権表示とライセンス告知</summary><pre class="lic">Copyright (C) 2012-present SheetJS LLC
+  Line  6852 [LICENSE_KEYWORD]: Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+  Line  6856 [LICENSE_KEYWORD,EXTERNAL_URL]: http://www.apache.org/licenses/LICENSE-2.0</pre></details><details><summary>Apache License, Version 2.0 — 全文（PDF.js・xlsx-js-style に適用）</summary><pre class="lic">Apache License
+  Line  6858 [EXTERNAL_URL]: http://www.apache.org/licenses/
+  Line  6867 [COPYRIGHT]: &quot;Licensor&quot; shall mean the copyright owner or entity authorized by
+  Line  6868 [COPYRIGHT]: the copyright owner that is granting the License.
+  Line  6892 [COPYRIGHT]: copyright notice that is included in or attached to the work
+  Line  6906 [COPYRIGHT]: submitted to Licensor for inclusion in the Work by the copyright owner
+  Line  6908 [COPYRIGHT]: the copyright owner. For the purposes of this definition, &quot;submitted&quot;
+  Line  6915 [COPYRIGHT]: designated in writing by the copyright owner as &quot;Not a Contribution.&quot;
+  Line  6921 [COPYRIGHT]: 2. Grant of Copyright License. Subject to the terms and conditions of
+  Line  6924 [COPYRIGHT]: copyright license to reproduce, prepare Derivative Works of,
+  Line  6955 [COPYRIGHT]: (c) You must retain, in the Source form of any Derivative Works
+  Line  6978 [COPYRIGHT]: You may add Your own copyright statement to Your modifications and
+  Line  7031 [LICENSE_KEYWORD]: END OF TERMS AND CONDITIONS</pre></details><details><summary>jsPDF — 著作権表示と MIT License（ファイル冒頭の表示そのまま）</summary><pre class="lic">jsPDF - PDF Document creation from JavaScript
+  Line  7035 [COPYRIGHT,EXTERNAL_URL]: Copyright (c) 2010-2021 James Hall &lt;james@parall.ax&gt;, https://github.com/MrRio/jsPDF
+  Line  7036 [EXTERNAL_URL]: 2015-2021 yWorks GmbH, http://www.yworks.com
+  Line  7037 [EXTERNAL_URL]: 2015-2021 Lukas Holländer &lt;lukas.hollaender@yworks.com&gt;, https://github.com/HackbrettXXX
+  Line  7039 [EXTERNAL_URL]: 2010 Aaron Spike, https://github.com/acspike
+  Line  7040 [EXTERNAL_URL]: 2012 Willow Systems Corporation, https://github.com/willowsystems
+  Line  7041 [EXTERNAL_URL]: 2012 Pablo Hess, https://github.com/pablohess
+  Line  7042 [EXTERNAL_URL]: 2012 Florian Jenett, https://github.com/fjenett
+  Line  7043 [EXTERNAL_URL]: 2013 Warren Weckesser, https://github.com/warrenweckesser
+  Line  7044 [EXTERNAL_URL]: 2013 Youssef Beddad, https://github.com/lifof
+  Line  7045 [EXTERNAL_URL]: 2013 Lee Driscoll, https://github.com/lsdriscoll
+  Line  7046 [EXTERNAL_URL]: 2013 Stefan Slonevskiy, https://github.com/stefslon
+  Line  7047 [EXTERNAL_URL]: 2013 Jeremy Morel, https://github.com/jmorel
+  Line  7048 [EXTERNAL_URL]: 2013 Christoph Hartmann, https://github.com/chris-rock
+  Line  7049 [EXTERNAL_URL]: 2014 Juan Pablo Gaviria, https://github.com/juanpgaviria
+  Line  7050 [EXTERNAL_URL]: 2014 James Makes, https://github.com/dollaruw
+  Line  7051 [EXTERNAL_URL]: 2014 Diego Casorran, https://github.com/diegocr
+  Line  7052 [EXTERNAL_URL]: 2014 Steven Spungin, https://github.com/Flamenco
+  Line  7053 [EXTERNAL_URL]: 2014 Kenneth Glassey, https://github.com/Gavvers
+  Line  7063 [COPYRIGHT]: The above copyright notice and this permission notice shall be
+  Line  7069 [COPYRIGHT]: NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line  7076 [COPYRIGHT]: kim3er, mfo, alnorth, Flamenco</pre></details><details><summary>jsPDF 同梱: Adobe Systems Incorporated（BSD 3-Clause）</summary><pre class="lic">Copyright (c) 2008, Adobe Systems Incorporated
+  Line  7083 [COPYRIGHT]: * Redistributions of source code must retain the above copyright notice,
+  Line  7094 [COPYRIGHT]: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &quot;AS
+  Line  7097 [COPYRIGHT]: PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  Line  7104 [COPYRIGHT,LICENSE_KEYWORD]: SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</pre></details><details><summary>jsPDF 同梱: omggif（MIT License）</summary><pre class="lic">(c) Dean McNamee &lt;dean@gmail.com&gt;, 2013.
+  Line  7106 [EXTERNAL_URL]: https://github.com/deanm/omggif
+  Line  7115 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in
+  Line  7121 [COPYRIGHT]: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  Line  7128 [COPYRIGHT,LICENSE_KEYWORD]: underlying system, so should run in the browser, Node, or Plask.</pre></details><details><summary>jsPDF 同梱: Dominik Homberger（MIT License）</summary><pre class="lic">Copyright (c) 2017 Dominik Homberge
+  Line  7130 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  Line  7131 [COPYRIGHT]: THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONIN
+  Line  7132 [EXTERNAL_URL]: https://webpjs.appspot.com
+  Line  7133 [LICENSE_KEYWORD]: WebPRiffParser dominikhlbg@gmail.com</pre></details><details><summary>jsPDF 同梱: fflate（MIT License）</summary><pre class="lic">MIT License
+  Line  7135 [COPYRIGHT]: Copyright (c) 2020 Arjun Barrett
+  Line  7144 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in all
+  Line  7150 [COPYRIGHT]: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  Line  7156 [COPYRIGHT,LICENSE_KEYWORD]: jsPDF の著作権表示（上記）とともに表示します。</pre></details><details><summary>JSZip — MIT License</summary><pre class="lic">Copyright (c) 2009-2016 Stuart Knightley, David Duponchel, Franz Buchinger, António Afonso
+  Line  7165 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in
+  Line  7171 [COPYRIGHT]: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  Line  7177 [LICENSE_KEYWORD]: GPL version 3
+  Line  7182 [COPYRIGHT,EXTERNAL_URL]: Copyright (C) 2007 Free Software Foundation, Inc. &lt;http://fsf.org/&gt;
+  Line  7218 [LICENSE_KEYWORD]: Developers that use the GNU GPL protect your rights with two steps:
+  Line  7219 [COPYRIGHT]: (1) assert copyright on the software, and (2) offer you this License
+  Line  7222 [LICENSE_KEYWORD]: For the developers&#x27; and authors&#x27; protection, the GPL clearly explains
+  Line  7224 [LICENSE_KEYWORD]: authors&#x27; sake, the GPL requires that modified versions be marked as
+  Line  7234 [LICENSE_KEYWORD]: have designed this version of the GPL to prohibit the practice for those
+  Line  7237 [LICENSE_KEYWORD]: of the GPL, as needed to protect the freedom of users.
+  Line  7243 [LICENSE_KEYWORD]: make it effectively proprietary.  To prevent this, the GPL assures that
+  Line  7263 [COPYRIGHT]: in a fashion requiring copyright permission, other than the making of an
+  Line  7272 [COPYRIGHT]: infringement under applicable copyright law, except executing it on a
+  Line  7283 [COPYRIGHT]: feature that (1) displays an appropriate copyright notice, and (2)
+  Line  7335 [COPYRIGHT]: copyright on the Program, and are irrevocable provided the stated
+  Line  7340 [COPYRIGHT]: rights of fair use or other equivalent, as provided by copyright law.
+  Line  7361 [COPYRIGHT]: 11 of the WIPO copyright treaty adopted on 20 December 1996, or
+  Line  7377 [COPYRIGHT]: appropriately publish on each copy an appropriate copyright notice;
+  Line  7417 [COPYRIGHT]: &quot;aggregate&quot; if the compilation and its resulting copyright are not
+  Line  7537 [COPYRIGHT]: for which you have or can give appropriate copyright permission.
+  Line  7540 [COPYRIGHT]: add to a covered work, you may (if authorized by the copyright holders of
+  Line  7594 [COPYRIGHT]: license from a particular copyright holder is reinstated (a)
+  Line  7595 [COPYRIGHT]: provisionally, unless and until the copyright holder explicitly and
+  Line  7600 [COPYRIGHT]: Moreover, your license from a particular copyright holder is
+  Line  7601 [COPYRIGHT]: reinstated permanently if the copyright holder notifies you of the
+  Line  7604 [COPYRIGHT]: copyright holder, and you cure the violation prior to 30 days after
+  Line  7620 [COPYRIGHT]: modify any covered work.  These actions infringe copyright if you do
+  Line  7651 [COPYRIGHT]: A &quot;contributor&quot; is a copyright holder who authorizes use under this
+  Line  7764 [COPYRIGHT]: author or copyright holder as a result of your choosing to follow a
+  Line  7781 [COPYRIGHT]: WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
+  Line  7799 [LICENSE_KEYWORD]: END OF TERMS AND CONDITIONS</pre></details><details><summary>JSZip 同梱: pako（MIT License）</summary><pre class="lic">(The MIT License)
+  Line  7801 [COPYRIGHT]: Copyright (C) 2014-2017 by Vitaly Puzrin and Andrei Tuputcyn
+  Line  7810 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in
+  Line  7816 [COPYRIGHT]: AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  Line  7819 [COPYRIGHT]: THE SOFTWARE.</pre></details><details><summary>JSZip 同梱: pako 内の zlib 由来部分（zlib License）</summary><pre class="lic">(C) 1995-2013 Jean-loup Gailly and Mark Adler
+  Line  7820 [COPYRIGHT]: (C) 2014-2017 Vitaly Puzrin and Andrey Tupitsin
+  Line  7837 [COPYRIGHT]: Copyright (c) 2012-2015 Timo
+  Line  7838 [COPYRIGHT]: Copyright (c) 2010-2014 Angus Johnson
+  Line  7839 [LICENSE_KEYWORD,EXTERNAL_URL]: License: Boost Software License - Version 1.0 (http://www.boost.org/LICENSE_1_0.txt)
+  Line  7842 [COPYRIGHT]: Copyright (c) 2005  Tom Wu
+  Line  7843 [LICENSE_KEYWORD]: License: BSD License
+  Line  7846 [LICENSE_KEYWORD]: Boost Software License 1.0 の全文と、Tom Wu のライセンス全文は、下に掲載しています。)</pre></details><details><summary>Boost Software License 1.0 — 全文（Clipper に適用）</summary><pre class="lic">Boost Software License - Version 1.
+  Line  7855 [COPYRIGHT]: The copyright notices in the Software and this entire statement, including
+  Line  7865 [COPYRIGHT]: SHALL THE COPYRIGHT HOLDERS OR ANYONE DISTRIBUTING THE SOFTWARE BE LIABLE
+  Line  7868 [COPYRIGHT]: DEALINGS IN THE SOFTWARE.</pre></details><details><summary>Clipper 同梱: Basic JavaScript BN library（Tom Wu）</summary><pre class="lic">Copyright (c) 2003-2005  Tom Wu
+  Line  7879 [COPYRIGHT]: The above copyright notice and this permission notice shall be
+  Line  7894 [COPYRIGHT]: All redistributions must retain an intact copy of this copyright notice
+  Line  8135 [SCRIPT_SRC]: <script src="placement_v15.js"></script>
+
+【対象】 [ローカル] placement_v15.js (検出: 2 箇所)
+  Line   304 [FETCH_XHR]: const resp = await fetch('./CalayMachineryData.dat', {cache:'no-cache'});
+  Line   516 [EXTERNAL_URL]: onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe82_50OHAm-0qFG0e2rEeaOMYjyev3mmmlN0O7m-1sMQAJRA/viewform?usp=dialog','_blank')"
+
+【対象】 [CDN実体] https://cdn.jsdelivr.net/gh/gitbrent/xlsx-js-style@1.2.0/dist/xlsx.bundle.js (検出: 1 箇所)
+  Line     2 [EXTERNAL_URL]: var XLSX={};function make_xlsx_lib(a){a.version="0.18.5",a.style_version="1.2.0";var re,f=1200,_=1252;"undefined"!=typeof cptable?re=cptable:"undefined"!=typeof module&&"undefined"!=typeof require&&(r
+
+【対象】 [CDN実体] https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js (検出: 97 箇所)
+  Line     7 [COPYRIGHT,EXTERNAL_URL]: * Copyright (c) 2010-2021 James Hall <james@parall.ax>, https://github.com/MrRio/jsPDF
+  Line     8 [EXTERNAL_URL]: *               2015-2021 yWorks GmbH, http://www.yworks.com
+  Line     9 [EXTERNAL_URL]: *               2015-2021 Lukas Holländer <lukas.hollaender@yworks.com>, https://github.com/HackbrettXXX
+  Line    11 [EXTERNAL_URL]: *               2010 Aaron Spike, https://github.com/acspike
+  Line    12 [EXTERNAL_URL]: *               2012 Willow Systems Corporation, https://github.com/willowsystems
+  Line    13 [EXTERNAL_URL]: *               2012 Pablo Hess, https://github.com/pablohess
+  Line    14 [EXTERNAL_URL]: *               2012 Florian Jenett, https://github.com/fjenett
+  Line    15 [EXTERNAL_URL]: *               2013 Warren Weckesser, https://github.com/warrenweckesser
+  Line    16 [EXTERNAL_URL]: *               2013 Youssef Beddad, https://github.com/lifof
+  Line    17 [EXTERNAL_URL]: *               2013 Lee Driscoll, https://github.com/lsdriscoll
+  Line    18 [EXTERNAL_URL]: *               2013 Stefan Slonevskiy, https://github.com/stefslon
+  Line    19 [EXTERNAL_URL]: *               2013 Jeremy Morel, https://github.com/jmorel
+  Line    20 [EXTERNAL_URL]: *               2013 Christoph Hartmann, https://github.com/chris-rock
+  Line    21 [EXTERNAL_URL]: *               2014 Juan Pablo Gaviria, https://github.com/juanpgaviria
+  Line    22 [EXTERNAL_URL]: *               2014 James Makes, https://github.com/dollaruw
+  Line    23 [EXTERNAL_URL]: *               2014 Diego Casorran, https://github.com/diegocr
+  Line    24 [EXTERNAL_URL]: *               2014 Steven Spungin, https://github.com/Flamenco
+  Line    25 [EXTERNAL_URL]: *               2014 Kenneth Glassey, https://github.com/Gavvers
+  Line    35 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line    41 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line    51 [FETCH_XHR]: !function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t=t||self).jspdf={})}(this,(function(t){"use strict";funct
+  Line    55 [EXTERNAL_URL]: * {@link   http://www.phpied.com/rgb-color-parser-in-javascript/}
+  Line    63 [EXTERNAL_URL]: * Accessed from: http://www.myersdaily.org/joseph/javascript/md5.js
+  Line    74 [EXTERNAL_URL]: * Reference: http://www.fpdf.org/en/script/script37.php
+  Line    78 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line    79 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line    83 [EXTERNAL_URL]: * https://www.cs.cmu.edu/~dst/Adobe/Gallery/anon21jul01-pdf-encryption.txt
+  Line    84 [EXTERNAL_URL]: * https://github.com/foliojs/pdfkit/blob/master/lib/security.js
+  Line    85 [EXTERNAL_URL]: * http://www.fpdf.org/en/script/script37.php
+  Line    86 [EXTERNAL_URL]: */var P={print:4,modify:8,copy:16,"annot-forms":32};function k(t,e,r,n){this.v=1,this.r=2;var i=192;t.forEach((function(t){if(void 0!==P.perm)throw new Error("Invalid permission: "+t);i+=P[t]})),this.
+  Line    89 [COPYRIGHT]: * Copyright (c) 2014 Steven Spungin (TwelveTone LLC)  steven@twelvetone.tv
+  Line    91 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line    92 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line    97 [COPYRIGHT]: * Copyright (c) 2017 Aras Abbasi
+  Line    99 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   100 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   106 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   107 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   112 [COPYRIGHT]: * Copyright (c) 2014 Steven Spungin (TwelveTone LLC)  steven@twelvetone.tv
+  Line   114 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   115 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   121 [COPYRIGHT]: * Copyright (c) 2014 Aras Abbasi
+  Line   123 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   124 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   129 [COPYRIGHT]: * Copyright (c) 2018 Aras Abbasi (aras.abbasi@gmail.com)
+  Line   131 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   132 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   134 [FETCH_XHR]: function(t){t.loadFile=function(t,e,r){return function(t,e,r){e=!1!==e,r="function"==typeof r?r:function(){};var n=void 0;try{n=function(t,e,r){var n=new XMLHttpRequest,i=0,a=function(t){var e=t.lengt
+  Line   138 [COPYRIGHT]: * Copyright (c) 2013 Youssef Beddad, youssef.beddad@gmail.com
+  Line   148 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line   154 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line   163 [COPYRIGHT]: * Copyright (c) 2014 Steven Spungin (TwelveTone LLC)  steven@twelvetone.tv
+  Line   165 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   166 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   172 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   173 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   179 [COPYRIGHT,EXTERNAL_URL]: * Copyright (c) 2014 James Robb, https://github.com/jamesbrobb
+  Line   189 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line   195 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line   203 [COPYRIGHT]: * (c) Dean McNamee <dean@gmail.com>, 2013.
+  Line   205 [EXTERNAL_URL]: * https://github.com/deanm/omggif
+  Line   214 [COPYRIGHT]: * The above copyright notice and this permission notice shall be included in
+  Line   220 [COPYRIGHT]: * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  Line   232 [COPYRIGHT]: Copyright (c) 2008, Adobe Systems Incorporated
+  Line   239 [COPYRIGHT]: * Redistributions of source code must retain the above copyright notice,
+  Line   250 [COPYRIGHT]: THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS
+  Line   253 [COPYRIGHT]: PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  Line   264 [COPYRIGHT]: * Copyright (c) 2017 Aras Abbasi
+  Line   266 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   267 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   270 [COPYRIGHT]: * Copyright (c) 2017 Dominik Homberger
+  Line   272 [COPYRIGHT]: The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  Line   273 [COPYRIGHT]: THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT
+  Line   274 [EXTERNAL_URL]: https://webpjs.appspot.com
+  Line   280 [COPYRIGHT]: * Copyright (c) 2018 Aras Abbasi
+  Line   282 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   283 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   288 [COPYRIGHT]: * Copyright (c) 2019 Aras Abbasi
+  Line   290 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   291 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   297 [COPYRIGHT,EXTERNAL_URL]: * Copyright (c) 2021 Antti Palola, https://github.com/Pantura
+  Line   307 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line   313 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line   322 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   323 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   328 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   329 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   335 [COPYRIGHT]: * Copyright (c) 2013 Eduardo Menezes de Morais, eduardo.morais@usp.br
+  Line   345 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line   351 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line   361 [COPYRIGHT]: * Copyright (c) 2016 Jussi Utunen, u-jussi@suomi24.fi
+  Line   371 [COPYRIGHT]: * The above copyright notice and this permission notice shall be
+  Line   377 [COPYRIGHT]: * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+  Line   383 [EXTERNAL_URL]: function(t){var e=function(){var t='<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"><rdf:Description rdf:about="" xmlns:jspdf="'+this.internal.__metadata__.namespaceuri+'"><jspdf:meta
+  Line   388 [LICENSE_KEYWORD]: * Licensed under the MIT License.
+  Line   389 [EXTERNAL_URL]: * http://opensource.org/licenses/mit-license
+  Line   395 [LICENSE_KEYWORD]: * MIT License
+
+【対象】 [CDN実体] https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js (検出: 6 箇所)
+  Line     4 [EXTERNAL_URL]: <http://stuartk.com/jszip>
+  Line     6 [COPYRIGHT]: (c) 2009-2016 Stuart Knightley <stuart [at] stuartk.com>
+  Line     7 [LICENSE_KEYWORD,EXTERNAL_URL]: Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/jszip/main/LICENSE.markdown.
+  Line     9 [LICENSE_KEYWORD]: JSZip uses the library pako released under the MIT license :
+  Line    10 [EXTERNAL_URL]: https://github.com/nodeca/pako/blob/main/LICENSE
+  Line    13 [EXTERNAL_URL]: !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=
+
+【対象】 [CDN実体] https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.12.313/pdf.min.js (検出: 4 箇所)
+  Line     5 [COPYRIGHT]: * Copyright 2021 Mozilla Foundation
+  Line     7 [LICENSE_KEYWORD]: * Licensed under the Apache License, Version 2.0 (the "License");
+  Line    11 [EXTERNAL_URL]: *     http://www.apache.org/licenses/LICENSE-2.0
+  Line    22 [EXTERNAL_URL,FETCH_XHR]: !function webpackUniversalModuleDefinition(e,t){"object"==typeof exports&&"object"==typeof module?module.exports=t():"function"==typeof define&&define.amd?define("pdfjs-dist/build/pdf",[],t):"object"=
