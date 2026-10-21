@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0091'; // A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0092'; // A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -406,8 +406,7 @@
         <h4 style="margin:0 0 8px;font-size:.82em;color:#4caf50;
                    display:flex;justify-content:space-between;align-items:center;">
           <span>🏗 配置モード</span>
-          <span style="font-size:.72em;color:#CACACA;font-family:monospace;">
-            Arecalay v${ARECALAY_VER}</span>
+          
         </h4>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;">
           <button id="pm-arrow-btn">↗ 矢印</button>
@@ -914,6 +913,12 @@
 
     document.addEventListener('contextmenu', function(e) {
       if (!placementMode) return;
+      // A057: Androidはタッチの長押しでもcontextmenuが発火する(iOSは発火しない)。マウスの右クリックだけを
+      // 「キャンセル」として扱い、タッチ/ペンの長押しは既定のメニューを抑止するだけにする。
+      if (!document.body.classList.contains('ptr-mouse')) {
+        if (e.target===pmCv || e.target===document.getElementById('draw-cv')) e.preventDefault();
+        return;
+      }
       // v0.0414: 2) 入出力メニュー展開中は右クリックでキャンセルできるようにする(キャンバス外でも可)
       if (pmIoMenuOpen) {
         e.preventDefault();
@@ -3328,7 +3333,7 @@
       if (e.key === 'Escape') { cleanup(); _toast('キャンセルしました'); }
     }
     document.addEventListener('keydown', onKey, true);
-    ov.oncontextmenu = e => { e.preventDefault(); cleanup(); _toast('キャンセルしました'); };
+    ov.oncontextmenu = e => { e.preventDefault(); if (!document.body.classList.contains('ptr-mouse')) return; /* A057: タッチの長押しはキャンセルにしない */ cleanup(); _toast('キャンセルしました'); };
 
     function onDown(e) {
       if (magPanel.contains(e.target)) return; // 倍率パネル操作は範囲選択に影響させない
