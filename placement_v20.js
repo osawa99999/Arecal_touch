@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0095'; // A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0096'; // A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -116,9 +116,9 @@
       window.setStatus = function(msg) {
         if (!msg || msg === '') {
           if (placementMode) {
-            window._origSetStatus('🏗 Arecalay モード（配置レイアウト）');
+            window._origSetStatus('🏗 配置モード');
           } else {
-            window._origSetStatus('📐 AreCal モード（面積計算） ｜ ツールを選択してください');
+            window._origSetStatus('📐 面積モード ｜ ツールを選択してください');
           }
         } else {
           window._origSetStatus(msg);
@@ -465,7 +465,7 @@
 
         <div style="margin-top:8px;border-top:1px solid #2a2a2a;padding-top:6px;">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <span style="font-size:.74em;color:#CACACA;">AreCal 図形の濃度</span>
+            <span style="font-size:.74em;color:#CACACA;">面積モード図形の濃度</span>
             <span id="pm-opacity-val" style="font-size:.74em;color:#4caf50;">50%</span>
           </div>
           <input type="range" id="pm-opacity-slider"
@@ -491,13 +491,13 @@
         ドラッグ：グリップを掴んで移動・変形<br>
         矢印キー：選択中を微調整移動<br>（Shiftで大きく）<br>
         Del/Backspace：選択中の図形を削除<br>
-        <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">AreCal で描いた図形は<br>このモードでは操作不可</span>
+        <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">面積モードで描いた図形は<br>このモードでは操作不可</span>
       </div>
       <div id="pm-layout-info-touch" class="card" style="font-size:.7em;line-height:1.9;color:#CACACA;display:none;">
         <b style="color:#CACACA;">操作ガイド（レイアウトモード・タッチ）</b><br>
         タップ：図形を選択<br>
         ドラッグ：グリップを掴んで移動・変形<br>
-        <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">AreCal で描いた図形は<br>このモードでは操作不可</span>
+        <span style="color:#CACACA;font-size:1.15em;line-height:1.5;">面積モードで描いた図形は<br>このモードでは操作不可</span>
       </div>
 
       <!-- A009: 更追6対応。AreCal本体側にはあるのにArecalay側に無かった全体表示ボタンを追加。 -->
@@ -511,7 +511,7 @@
 
       <div class="card" style="padding:8px;margin-top:6px;">
         <button id="pm-feedback-btn"
-          title="Arecalay に関する評価・要望・バグ報告をお願いします。&#10;回答数によって今後の開発継続が決まります"
+          title="配置モードに関する評価・要望・バグ報告をお願いします。&#10;回答数によって今後の開発継続が決まります"
           onclick="window.open('https://docs.google.com/forms/d/e/1FAIpQLSe82_50OHAm-0qFG0e2rEeaOMYjyev3mmmlN0O7m-1sMQAJRA/viewform?usp=dialog','_blank')"
           style="width:100%;background:rgba(255,180,0,.15);border-color:#c8a000;color:#ffd060;font-size:.78em;padding:6px;">
           📝 評価・要望・バグ報告
@@ -1008,7 +1008,7 @@
       window.setDistMode(false);
     }
     previewPos=null; selectedUuids.clear(); dragState=null; hoverUuid=null;
-    _toast('📐 面積計算モードに戻りました', 2000);
+    _toast('📐 面積モードに戻りました', 2000);
 
     applyTheme(false);
     _setStatus('');
@@ -4056,7 +4056,7 @@
       _toast('⚠ 無効なファイル形式です（steps[5] が見つかりません）'); return false;
     }
     if (data.appId && data.appId !== 'arecalay-placement') {
-      _toast('⚠ このファイルは Arecalay 用ではありません'); return false;
+      _toast('⚠ このファイルは配置モード用ではありません'); return false;
     }
     // v0.0058: 保存時のAreCal本体スケール(data.scaleDenom)と、現在アクティブなAreCal本体スケール
     // (scaleDenom、AreCal側のapplyArecDataがこの直前に実行され復元済みの値)を比較。
@@ -4066,7 +4066,7 @@
         typeof scaleDenom !== 'undefined' && scaleDenom > 0) {
       const ratio = data.scaleDenom / scaleDenom;
       if (Math.abs(ratio - 1) > 0.001) {
-        _toast(`⚠ 配置データの保存時スケール(1/${Math.round(data.scaleDenom)})が現在のAreCal本体スケール` +
+        _toast(`⚠ 配置データの保存時スケール(1/${Math.round(data.scaleDenom)})が現在の面積モードのスケール` +
                `(1/${Math.round(scaleDenom)})と一致していません。配置位置がずれている可能性があります`, 6000);
       }
     }
@@ -4121,11 +4121,11 @@
       if (/\.arela$/i.test(file.name)) {
         if (typeof window.customConfirm === 'function' && typeof window.loadArela === 'function') {
           window.customConfirm(
-            'Arelaファイルを読み込むと、現在作図中の内容(AreCal・Arecalay 両方)は\n破棄され、読み込んだ内容に置き換わります。よろしいですか？',
+            'Arelaファイルを読み込むと、現在作図中の内容(面積モード・配置モード 両方)は\n破棄され、読み込んだ内容に置き換わります。よろしいですか？',
             () => window.loadArela(file), null
           );
         } else {
-          _toast('⚠ Arelaの読込はAreCal本体の準備ができてから行ってください');
+          _toast('⚠ Arelaの読込はArecal本体の準備ができてから行ってください');
         }
         return;
       }
