@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0097'; // A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0098'; // A076: 制限付きPDF(パスワード保護)対応(PDF出力前の専用注意表示、出力範囲に図形・配置オブジェクトが無い場合の出力中止)。それ以外無変更 / (旧)A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -3038,8 +3038,13 @@
     document.getElementById('_pc_no').onclick  = () => { d.style.display = 'none'; if (onNo) onNo(); };
   }
 
-  function doPdfExport() {
+  function doPdfExport(_noticed) {
     if (!window.jspdf) { _toast('⚠ jsPDFが読み込まれていません'); return; }
+    // A076: 制限付きPDF(パスワード保護)の場合は、出力前に専用の注意表示(Arecal本体と同じ文面)
+    if (_noticed !== true && typeof window._arecalPdfRestricted === 'function' && window._arecalPdfRestricted() && window._RS_MSG) {
+      _pmConfirm(window._RS_MSG.pdf, () => doPdfExport(true), null);
+      return;
+    }
     document.getElementById('pm-pdf-dialog')?.remove();
 
     const dlg = document.createElement('div');
@@ -3404,6 +3409,19 @@
     document.addEventListener('pointerup', onUp);
   }
 
+  // A076: キャンバスの指定範囲に、描画済みの画素(alpha>0)が1つでもあるか(行を分割して走査し、見つかり次第終了)
+  function _pmRegionHasInk(cv, x, y, w, h) {
+    const ctx = cv.getContext('2d');
+    const sx = Math.max(0, x), sy = Math.max(0, y), ex = Math.min(cv.width, x + w), ey = Math.min(cv.height, y + h);
+    if (ex <= sx || ey <= sy) return false;
+    const STRIP = 128;
+    for (let yy = sy; yy < ey; yy += STRIP) {
+      const d = ctx.getImageData(sx, yy, ex - sx, Math.min(STRIP, ey - yy)).data;
+      for (let i = 3; i < d.length; i += 4) { if (d[i] > 0) return true; }
+    }
+    return false;
+  }
+
   async function pmDoExportPDF(selectedSteps, mnX, mnY, mxX, mxY) {
     _toast('🖨 PDF生成中...', 4000);
     const {jsPDF} = window.jspdf;
@@ -3428,6 +3446,18 @@
     _pmExporting = true;
 
     try {
+      // A076: 制限付きPDF(パスワード保護)は、出力範囲に面積図形・測点・配置オブジェクトが1つも無い場合(=元PDFの切り抜きコピー)は出力を中止する
+      if (typeof window._arecalPdfRestricted === 'function' && window._arecalPdfRestricted()) {
+        let has = !!(typeof window._rsHasShapesInRange === 'function' && window._rsHasShapesInRange(mnX, mnY, mxX, mxY));
+        for (let i = 0; i < selectedSteps.length && !has; i++) {
+          currentStep = selectedSteps[i];
+          selectedUuids.clear();
+          syncPmCv();
+          renderPmLayer();
+          has = _pmRegionHasInk(pmCv, mnX, mnY, cW, cH);
+        }
+        if (!has) { _toast((window._RS_MSG && window._RS_MSG.empty) || '⚠ 出力範囲内にオブジェクトがありません', 4500); return; }
+      }
       for (let i=0; i<selectedSteps.length; i++) {
         if (i>0) doc.addPage('a3', isLand?'landscape':'portrait');
         const stepIdx = selectedSteps[i];
