@@ -2423,7 +2423,8 @@
   // A017: デッドコード整理。未使用だった_mToPx(呼び出し元無し。逆変換の_pxToMは現役のため維持)を削除
   function _pxToM(px) {
     const sDenom = typeof scaleDenom !== 'undefined' ? scaleDenom : 100;
-    const rs     = typeof RS !== 'undefined' ? RS : 4;
+    // A080: RSではなく実際の描画解像度(_curRS)を参照
+    const rs = typeof _curRS !== 'undefined' ? _curRS : (typeof RS !== 'undefined' ? RS : 4);
     return px * (25.4/72) * sDenom / 1000 / rs;
   }
 
