@@ -2410,10 +2410,14 @@
     ctx.restore();
   }
 
-  /* scaleDenomから論理px係数を算出 */
+/* scaleDenomから論理px係数を算出 */
   function _getMachScale(asset, ann) {
     const sDenom = typeof scaleDenom !== 'undefined' ? scaleDenom : 100;
-    return (11340 / sDenom) * (ann.sizeMultiplier || 1);
+    // A080: iOS(iPad)のCanvas上限回避による_curRS縮小に対応
+    // 以前の RS=4 固定前提の定数(11340) をやめ、現在の _curRS から動的に1mあたりのピクセル数を算出する
+    const curRS = typeof _curRS !== 'undefined' ? _curRS : (typeof RS !== 'undefined' ? RS : 4);
+    const baseScale = (curRS * 72000) / 25.4;
+    return (baseScale / sDenom) * (ann.sizeMultiplier || 1);
   }
 
   // A017: デッドコード整理。未使用だった_mToPx(呼び出し元無し。逆変換の_pxToMは現役のため維持)を削除
