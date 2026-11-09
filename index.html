@@ -8432,7 +8432,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 (function(){
   const touch=(typeof _isIOSDevice==='function'&&_isIOSDevice())||(typeof _isAndroidDevice==='function'&&_isAndroidDevice());
   // A082: タブレットは操作が違うため別フォルダの画像を読む(Explan_TB/Explan_1.png ...)。PC用はExplan/
-  const DIR=touch?'Explan_TB/':'Explan/',PREFIX='Explan_',EXT='.png',MAX_PAGES=30;
+  const DIR=touch?'Explan_TB/':'Explan/',PREFIX='Explan_',EXT='.webp',MAX_PAGES=30;
   const PRELOAD_AT_START=true; // A081: アプリの起動後(ページ読込完了+アイドル時)にガイド画像をバックグラウンドで先読みする。falseなら、ガイドを最初に開いた時から先読み
   const PRELOAD_PARALLEL=3;    // A081: 先読みの同時リクエスト数(サーバー配信ではHTTP/2で並列にした方が速い。重ければ1〜2へ)
   const PAGES_PC=11;  // A082: PC用ガイド画像の枚数
