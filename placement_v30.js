@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0105'; // A093: グリップのホバーツールチップ・カーソル統一(ホバー=パー/ドラッグ中=グー)・左UI下部の並び替え。(旧)A092: 図形選択ダイアログをEscキーで閉じられるように(右クリックと同じ)。(旧)A090: 選択中オブジェクトの点滅をやめ、常時表示の太い縁取り(ハロー)に変更。種別表示の「半透明」と選択が衝突して表示が崩れる問題を解消(線・矢印・円・テキスト・機械の全5種)。(旧)A089: 右UIの操作ガイドの「レイアウトモード」を「配置モード」に統一(画面上の名称は「面積モード」「配置モード」の2つ)。(旧)A086: dat(重機データ)の遅延読込に対応(HTML側のwindow.ARECAL_DAT_LAZYがtrueなら起動時に読まず、_pmEnsureMachinery()で読む。読込の二重実行防止。配置モードに入る時にdat未読込なら待つ)。(旧)A080: ①重機等の寸法をiPad等のRS縮小(_curRS)に追従(_getMachScale/_pxToM) ②iPad/Androidの文字入力ダイアログ対策(画面外に出る・文字が反映されない)。それ以外無変更 / (旧)A077: PDF出力のSTEP見出しをjsPDFの実テキストからcanvas描画(画像)へ変更(PDFに実テキストを残さない)。それ以外無変更 / (旧)A076: 制限付きPDF(パスワード保護)対応(PDF出力前の専用注意表示、出力範囲に図形・配置オブジェクトが無い場合の出力中止)。それ以外無変更 / (旧)A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0106'; // A094: 左UI下部の横幅・ボタンの見た目を面積モードに統一。(旧)A093: グリップのホバーツールチップ・カーソル統一(ホバー=パー/ドラッグ中=グー)・左UI下部の並び替え。(旧)A092: 図形選択ダイアログをEscキーで閉じられるように(右クリックと同じ)。(旧)A090: 選択中オブジェクトの点滅をやめ、常時表示の太い縁取り(ハロー)に変更。種別表示の「半透明」と選択が衝突して表示が崩れる問題を解消(線・矢印・円・テキスト・機械の全5種)。(旧)A089: 右UIの操作ガイドの「レイアウトモード」を「配置モード」に統一(画面上の名称は「面積モード」「配置モード」の2つ)。(旧)A086: dat(重機データ)の遅延読込に対応(HTML側のwindow.ARECAL_DAT_LAZYがtrueなら起動時に読まず、_pmEnsureMachinery()で読む。読込の二重実行防止。配置モードに入る時にdat未読込なら待つ)。(旧)A080: ①重機等の寸法をiPad等のRS縮小(_curRS)に追従(_getMachScale/_pxToM) ②iPad/Androidの文字入力ダイアログ対策(画面外に出る・文字が反映されない)。それ以外無変更 / (旧)A077: PDF出力のSTEP見出しをjsPDFの実テキストからcanvas描画(画像)へ変更(PDFに実テキストを残さない)。それ以外無変更 / (旧)A076: 制限付きPDF(パスワード保護)対応(PDF出力前の専用注意表示、出力範囲に図形・配置オブジェクトが無い場合の出力中止)。それ以外無変更 / (旧)A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -718,19 +718,19 @@
         font-size:.78em;font-weight:bold;flex-shrink:0;">✕ 入れ替えをキャンセル</button>
       <ul id="pm-placed-list" style="list-style:none;padding:6px;margin:0;
         flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:.76em;"></ul>
-      <div style="padding:6px 6px 5px;flex-shrink:0;border-top:1px solid #2a2a2a;">
+      <div style="padding:6px 10px 5px;flex-shrink:0;border-top:1px solid #2a2a2a;">
         <button id="pm-vistype-btn" style="width:100%;padding:6px;font-size:.78em;border-radius:4px;
           background:rgba(255,255,255,.05);border:1px solid #444;color:#ccc;cursor:pointer;">🏷 種別表示</button>
       </div>
-      <div style="padding:0 6px 5px;flex-shrink:0;">
+      <div style="padding:0 10px 5px;flex-shrink:0;">
         <button id="pm-gray-toggle" style="width:100%;padding:5px;font-size:.74em;border-radius:4px;
           background:rgba(150,150,150,.18);border:1px solid #888;color:#ccc;cursor:pointer;
           transition:background .2s;">🌫 PDFをグレースケール表示</button>
       </div>
-      <div style="display:flex;gap:4px;padding:0 6px 8px;flex-shrink:0;">
-        <button id="pm-undo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
+      <div style="display:flex;gap:4px;padding:0 10px 8px;flex-shrink:0;">
+        <button id="pm-undo-btn" class="hist-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
           background:rgba(255,180,0,.12);border-color:#c8960060;color:#c8a000;">↩ 元に戻す</button>
-        <button id="pm-redo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
+        <button id="pm-redo-btn" class="hist-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
           background:rgba(100,200,100,.1);border-color:#40804060;color:#70c070;">↪ やり直す</button>
       </div>
     `;
