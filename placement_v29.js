@@ -24,7 +24,7 @@
 (function () {
   'use strict';
 
-  const ARECALAY_VER = '0.0104'; // A092: 図形選択ダイアログをEscキーで閉じられるように(右クリックと同じ)。(旧)A090: 選択中オブジェクトの点滅をやめ、常時表示の太い縁取り(ハロー)に変更。種別表示の「半透明」と選択が衝突して表示が崩れる問題を解消(線・矢印・円・テキスト・機械の全5種)。(旧)A089: 右UIの操作ガイドの「レイアウトモード」を「配置モード」に統一(画面上の名称は「面積モード」「配置モード」の2つ)。(旧)A086: dat(重機データ)の遅延読込に対応(HTML側のwindow.ARECAL_DAT_LAZYがtrueなら起動時に読まず、_pmEnsureMachinery()で読む。読込の二重実行防止。配置モードに入る時にdat未読込なら待つ)。(旧)A080: ①重機等の寸法をiPad等のRS縮小(_curRS)に追従(_getMachScale/_pxToM) ②iPad/Androidの文字入力ダイアログ対策(画面外に出る・文字が反映されない)。それ以外無変更 / (旧)A077: PDF出力のSTEP見出しをjsPDFの実テキストからcanvas描画(画像)へ変更(PDFに実テキストを残さない)。それ以外無変更 / (旧)A076: 制限付きPDF(パスワード保護)対応(PDF出力前の専用注意表示、出力範囲に図形・配置オブジェクトが無い場合の出力中止)。それ以外無変更 / (旧)A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
+  const ARECALAY_VER = '0.0105'; // A093: グリップのホバーツールチップ・カーソル統一(ホバー=パー/ドラッグ中=グー)・左UI下部の並び替え。(旧)A092: 図形選択ダイアログをEscキーで閉じられるように(右クリックと同じ)。(旧)A090: 選択中オブジェクトの点滅をやめ、常時表示の太い縁取り(ハロー)に変更。種別表示の「半透明」と選択が衝突して表示が崩れる問題を解消(線・矢印・円・テキスト・機械の全5種)。(旧)A089: 右UIの操作ガイドの「レイアウトモード」を「配置モード」に統一(画面上の名称は「面積モード」「配置モード」の2つ)。(旧)A086: dat(重機データ)の遅延読込に対応(HTML側のwindow.ARECAL_DAT_LAZYがtrueなら起動時に読まず、_pmEnsureMachinery()で読む。読込の二重実行防止。配置モードに入る時にdat未読込なら待つ)。(旧)A080: ①重機等の寸法をiPad等のRS縮小(_curRS)に追従(_getMachScale/_pxToM) ②iPad/Androidの文字入力ダイアログ対策(画面外に出る・文字が反映されない)。それ以外無変更 / (旧)A077: PDF出力のSTEP見出しをjsPDFの実テキストからcanvas描画(画像)へ変更(PDFに実テキストを残さない)。それ以外無変更 / (旧)A076: 制限付きPDF(パスワード保護)対応(PDF出力前の専用注意表示、出力範囲に図形・配置オブジェクトが無い場合の出力中止)。それ以外無変更 / (旧)A073: 先頭の免責コメントの名称をAreCalに統一したのみ(コメントのみ。ロジック無変更) / (旧)A072: 画面表示の名称統一のみ(Arecalay→「配置モード」、AreCal→「面積モード」/Arecal)。ロジック無変更 / (旧)A069: 表示順序ヒントの文字サイズ(.68em)・色(#888)・中央揃えをArecal側に統一のみ / (旧)A068: 文言の改行位置を固定(表示順序ヒント/操作ガイド矢印キー行/評価・要望ツールチップ)のみ。ロジック無変更 / (旧)A065: 表示文言の送り仮名統一(読込)のみ。ロジック無変更 / (旧)A057: ①Androidの長押しで発火するcontextmenuを右クリック扱いしない(touch/penでは無視) ②配置モードのパネル見出しのバージョン表記を削除(左上ロゴ横に表示済みのため) / (旧)A052: ①図形/矢印/線/円/テキストは1個配置するごとにツール終了(連続配置を廃止)+Enterで直前のツールをリピート ②種別表示の色付き丸を白丸に統一 / (旧)A051: dat読込に進捗イベント(arecalay:machinery-progress)と段階別の所要時間(timing)を追加。読込自体のロジック(fetch→GZIP展開→JSON.parse)は不変 / (旧)A050: ①キャンセル後に「図形」ボタンのONが残る不具合を修正(syncToolBtnsに図形ボタンを追加) ②Space押しっぱなし状態の固着対策(タッチ/ペンのpointerdownで解除、keydown/keyupにe.key判定を併用) / (旧)A049: ヘッダの変更履歴を外部mdへ移動(動作変更なし) / (旧)A048: 円・線の既定色を矢印と同じCOLORS[0]に戻した(DEF_RED廃止。色循環で元の色に戻らない問題の回避) / (旧)A046: タッチ操作時は仮想線/仮想重機(プレビュー)を出さない+線・矢印の1点目でトースト案内 / (旧)A045: 表示順序のヒント文をマウス/タッチで出し分け(移動ボタンはHTML側CSSでマウス時に非表示) / (旧)A043: 線の仮想線(1点目の後のプレビュー)と始点ドットを赤に / dat読込の所要時間ログ追加 / (旧)A042: 円・線の既定色を赤(DEF_RED)に / Arecalay→Arecal復帰時に操作ガイド・全体表示ボタンの表示を再適用 / (旧)A041: dat自動読込の失敗理由ログ+1回再試行 / (旧)A039: 新規配置クリック・矢印/線/円/テキスト移動にも作図エリア外拒否を拡張 / (旧)A038: 作図エリア外ドロップ拒否(endDrag) / (旧)A037: window._pmResetAll追加(新PDF開始時の全消去)
   // (旧コメント) // A019(AreCal_Touch): デッドコード整理。_drawFills/_drawStrokesの
   // polygon解析重複を_forEachSvgPolygonへ共通化(挙動変更無し)
   window._pmVersion = ARECALAY_VER;
@@ -106,6 +106,7 @@
 
   let hoverUuid     = null;
   let dragState     = null;
+  let _pmGripTipEl  = null; // A093: グリップホバー用ツールチップ要素(#pm-grip-tip)
 
   let lastClickMs   = 0;
   let lastClickUuid = null;
@@ -429,7 +430,7 @@
     if (!sb) return;
     pmRightPanel = document.createElement('div');
     pmRightPanel.id = 'pm-right-panel';
-    pmRightPanel.style.cssText = 'display:none;padding:0;padding-bottom:120px;';
+    pmRightPanel.style.cssText = 'display:none;padding:0;padding-bottom:144px;';
     pmRightPanel.innerHTML = `
       <div class="card" style="border-left:3px solid #4caf50;">
         <h4 style="margin:0 0 8px;font-size:.82em;color:#4caf50;
@@ -717,20 +718,20 @@
         font-size:.78em;font-weight:bold;flex-shrink:0;">✕ 入れ替えをキャンセル</button>
       <ul id="pm-placed-list" style="list-style:none;padding:6px;margin:0;
         flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:4px;font-size:.76em;"></ul>
-      <div style="display:flex;gap:4px;padding:5px 6px;flex-shrink:0;border-top:1px solid #2a2a2a;">
-        <button id="pm-undo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
-          background:rgba(255,180,0,.12);border-color:#c8960060;color:#c8a000;">↩ 元に戻す</button>
-        <button id="pm-redo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
-          background:rgba(100,200,100,.1);border-color:#40804060;color:#70c070;">↪ やり直す</button>
+      <div style="padding:6px 6px 5px;flex-shrink:0;border-top:1px solid #2a2a2a;">
+        <button id="pm-vistype-btn" style="width:100%;padding:6px;font-size:.78em;border-radius:4px;
+          background:rgba(255,255,255,.05);border:1px solid #444;color:#ccc;cursor:pointer;">🏷 種別表示</button>
       </div>
-      <div style="padding:0 6px 6px;flex-shrink:0;">
+      <div style="padding:0 6px 5px;flex-shrink:0;">
         <button id="pm-gray-toggle" style="width:100%;padding:5px;font-size:.74em;border-radius:4px;
           background:rgba(150,150,150,.18);border:1px solid #888;color:#ccc;cursor:pointer;
           transition:background .2s;">🌫 PDFをグレースケール表示</button>
       </div>
-      <div style="padding:0 6px 6px;flex-shrink:0;">
-        <button id="pm-vistype-btn" style="width:100%;padding:6px;font-size:.78em;border-radius:4px;
-          background:rgba(255,255,255,.05);border:1px solid #444;color:#ccc;cursor:pointer;">🏷 種別表示</button>
+      <div style="display:flex;gap:4px;padding:0 6px 8px;flex-shrink:0;">
+        <button id="pm-undo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
+          background:rgba(255,180,0,.12);border-color:#c8960060;color:#c8a000;">↩ 元に戻す</button>
+        <button id="pm-redo-btn" disabled style="flex:1;padding:5px;font-size:.74em;border-radius:4px;
+          background:rgba(100,200,100,.1);border-color:#40804060;color:#70c070;">↪ やり直す</button>
       </div>
     `;
     listArea.parentElement.appendChild(pmLeftPanel);
@@ -935,11 +936,20 @@
         // 一切行わず、常に十字カーソルを維持する
         if (typeof window._isDistModeOn === 'function' && window._isDistModeOn()) {
           pmCv.style.cursor = 'crosshair';
+          _hideGripTip();
         } else {
           updateHoverCursor(e);
         }
       }
     }, {capture:true});
+
+    // A093: ツールチップ/ホバー状態の後始末(キャンバス離脱・ウィンドウのフォーカス喪失)
+    if (pmCv) pmCv.addEventListener('mouseleave', () => { hoverUuid = null; _hideGripTip(); });
+    window.addEventListener('blur', () => {
+      spaceHeld = false;
+      document.body.classList.remove('pm-dragging-cursor');
+      _hideGripTip();
+    });
 
     document.addEventListener('pointerup', function(e) { // v0.0050: タブレット対応Step1でpointerupに置換(中身は無変更)
       if (!placementMode || !dragState) return;
@@ -1051,6 +1061,8 @@
       window.setDistMode(false);
     }
     previewPos=null; selectedUuids.clear(); dragState=null; hoverUuid=null;
+    document.body.classList.remove('pm-dragging-cursor'); // A093
+    _hideGripTip();
     _toast('📐 面積モードに戻りました', 2000);
 
     applyTheme(false);
@@ -1712,12 +1724,14 @@
       origFlipped: ann.flipped || false,
       origCx: ann.cx, origCy: ann.cy, origR: ann.r, // v0.0409: 円用
     };
+    document.body.classList.add('pm-dragging-cursor'); // A093: ドラッグ中は全操作でグー
+    _hideGripTip();
   }
 
   function handleDragMove(e) {
     if (!dragState) return;
     const ann = steps[currentStep].find(a=>a.uuid===dragState.uuid);
-    if (!ann) { dragState=null; return; }
+    if (!ann) { dragState=null; document.body.classList.remove('pm-dragging-cursor'); return; }
 
     const {lx: curLx, ly: curLy} = getLogical(e);
     const ddx = curLx - dragState.startLx;
@@ -1835,6 +1849,7 @@
   function endDrag() {
     const ds = dragState;
     dragState = null;
+    document.body.classList.remove('pm-dragging-cursor'); // A093
     if (!ds) return;
     const ann = steps[currentStep].find(a => a.uuid === ds.uuid);
     if (!ann) return;
@@ -1908,23 +1923,26 @@
         const isElev = asset.division === 'elevation';
         const GR     = 14;
         const rotation = isElev ? 0 : (ann.rotation || 0);
+        const isSel = selectedUuids.has(ann.uuid); // A093: オレンジ/青グリップは選択中(画面に描画中)のみヒット対象。未選択の見えないグリップの誤爆防止
         const rx = ann.lx * z, ry = ann.ly * z;
         if (Math.hypot(cssx - rx, cssy - ry) < GR) return {uuid:ann.uuid, part:'red'};
-        if (isElev) {
-          // 描画側(dir反転)と一致させる。反転時は逆側でヒットするように。
-          const dir = ann.flipped ? -1 : 1;
-          const fGx = (ann.lx + dir * (asset.real_width_m || 2) * S * 0.5) * z;
-          if (Math.hypot(cssx - fGx, cssy - ry) < GR) return {uuid:ann.uuid, part:'orange_elev'};
-        } else {
-          const oD  = _getOrangeDist(asset) * S;
-          const oGx = (ann.lx + oD * Math.cos(rotation)) * z;
-          const oGy = (ann.ly + oD * Math.sin(rotation)) * z;
-          if (Math.hypot(cssx - oGx, cssy - oGy) < GR) return {uuid:ann.uuid, part:'orange_plan'};
-        }
-        if (asset.behavior !== 'static') {
-          const bPos = _getBlueGripPos(asset, ann, S);
-          if (bPos && Math.hypot(cssx - bPos.x * z, cssy - bPos.y * z) < GR)
-            return {uuid:ann.uuid, part:'blue'};
+        if (isSel) {
+          if (isElev) {
+            // 描画側(dir反転)と一致させる。反転時は逆側でヒットするように。
+            const dir = ann.flipped ? -1 : 1;
+            const fGx = (ann.lx + dir * (asset.real_width_m || 2) * S * 0.5) * z;
+            if (Math.hypot(cssx - fGx, cssy - ry) < GR) return {uuid:ann.uuid, part:'orange_elev'};
+          } else {
+            const oD  = _getOrangeDist(asset) * S;
+            const oGx = (ann.lx + oD * Math.cos(rotation)) * z;
+            const oGy = (ann.ly + oD * Math.sin(rotation)) * z;
+            if (Math.hypot(cssx - oGx, cssy - oGy) < GR) return {uuid:ann.uuid, part:'orange_plan'};
+          }
+          if (asset.behavior !== 'static') {
+            const bPos = _getBlueGripPos(asset, ann, S);
+            if (bPos && Math.hypot(cssx - bPos.x * z, cssy - bPos.y * z) < GR)
+              return {uuid:ann.uuid, part:'blue'};
+          }
         }
         // 本体判定は「赤グリップからの距離」ではなく実際の形状範囲で行う
         const localPt = _worldToAssetLocal(asset, ann, S, isElev, rotation, cssx/z, cssy/z);
@@ -1947,7 +1965,7 @@
         const lx = ddx*cosR - ddy*sinR;
         const ly = ddx*sinR + ddy*cosR;
         const rotHit = Math.max(16, fs * zoom * 0.35);
-        if (Math.hypot(lx-(tw_css/2+18), ly) < rotHit) return {uuid:ann.uuid, part:'rotate'};
+        if (selectedUuids.has(ann.uuid) && Math.hypot(lx-(tw_css/2+18), ly) < rotHit) return {uuid:ann.uuid, part:'rotate'};
         if (lx >= -tw_css/2-6 && lx <= tw_css/2+6 && Math.abs(ly) <= th_css+6) return {uuid:ann.uuid, part:'body'};
       }
     }
@@ -1961,16 +1979,67 @@
     return Math.hypot(px-(ax+t*dx), py-(ay+t*dy));
   }
 
+  // A093: グリップのホバー用ツールチップ(マウスのみ。タッチでは出さない)
+  function _hideGripTip() {
+    if (_pmGripTipEl) _pmGripTipEl.style.display = 'none';
+  }
+  function _showGripTip(text, clientX, clientY) {
+    if (!text) { _hideGripTip(); return; }
+    if (!_pmGripTipEl) {
+      _pmGripTipEl = document.createElement('div');
+      _pmGripTipEl.id = 'pm-grip-tip';
+      document.body.appendChild(_pmGripTipEl);
+    }
+    _pmGripTipEl.textContent = text;
+    _pmGripTipEl.style.display = 'block';
+    const w = _pmGripTipEl.offsetWidth || 48, h = _pmGripTipEl.offsetHeight || 24;
+    let lx = clientX + 14, ly = clientY - h - 10;
+    if (lx + w > window.innerWidth - 6) lx = clientX - w - 12;
+    if (ly < 6) ly = clientY + 18;
+    _pmGripTipEl.style.left = Math.max(4, lx) + 'px';
+    _pmGripTipEl.style.top  = Math.max(4, ly) + 'px';
+  }
+  function _getGripTipLabel(hit) {
+    if (!hit) return '';
+    const ann = steps[currentStep].find(a => a.uuid === hit.uuid);
+    if (!ann) return '';
+    if (ann.type === 'machinery') {
+      const asset = machineryData[ann.assetId];
+      if (hit.part === 'red') return '移動';
+      if (hit.part === 'orange_plan') return '回転';
+      if (hit.part === 'orange_elev') return '反転';
+      if (hit.part === 'blue' && asset) {
+        if (asset.behavior === 'rotate') return '旋回';
+        if (asset.behavior === 'array' || asset.behavior === 'array_y' || asset.behavior === 'array_xy') return '複写';
+      }
+      return '';
+    }
+    if (ann.type === 'text' && hit.part === 'rotate') return '回転';
+    return '';
+  }
+
   function updateHoverCursor(e) {
+    if (spaceHeld || document.body.classList.contains('pm-panning-cursor')) {
+      _hideGripTip();
+      return;
+    }
     const hit = hitTestCSS(e.clientX-pdfCvLeft, e.clientY-pdfCvTop);
     hoverUuid = hit ? hit.uuid : null;
-    if (!hit) { pmCv.style.cursor = 'default'; return; }
-    if (hit.part === 'rotate') { pmCv.style.cursor = 'crosshair'; return; }
-    if (hit.part !== 'body')   { pmCv.style.cursor = 'grab'; return; }
-    // オブジェクト(重機等)のボディは選択はできるが赤グリップ以外では移動できないため、
-    // 移動可能に見える'move'カーソルは出さない（矢印/線/テキストはボディでも移動できるので'move'のまま）
+    if (!hit) { pmCv.style.cursor = 'default'; _hideGripTip(); return; }
     const ann = steps[currentStep].find(a => a.uuid === hit.uuid);
-    pmCv.style.cursor = (ann && ann.type === 'machinery') ? 'pointer' : 'move';
+    // 図形(machinery)本体は赤グリップ以外で移動不可のため人差し指カーソルを廃止
+    if (hit.part === 'body' && ann && ann.type === 'machinery') {
+      pmCv.style.cursor = 'default';
+      _hideGripTip();
+      return;
+    }
+    // 掴んで操作可能なグリップおよび矢印/線/円/テキスト本体はホバー時grab(パー)に統一
+    pmCv.style.cursor = 'grab';
+    if (!e.pointerType || e.pointerType === 'mouse') {
+      _showGripTip(_getGripTipLabel(hit), e.clientX, e.clientY);
+    } else {
+      _hideGripTip();
+    }
   }
 
   function showTextInput(clientX, clientY, lx, ly, editUuid=null) {
@@ -3437,6 +3506,7 @@
 
     function cleanup() {
       ov.remove(); rb.remove(); magPanel.remove();
+      if (!spaceHeld) document.body.classList.remove('pm-panning-cursor'); // A093
       ov.removeEventListener('wheel', onWheel);
       document.removeEventListener('pointerdown', onDown);
       document.removeEventListener('pointermove', onMove);
@@ -3459,6 +3529,7 @@
         const r = cvWrapEl.getBoundingClientRect();
         psx = (e.clientX - r.left) - ox; psy = (e.clientY - r.top) - oy;
         cvWrapEl.style.cursor = 'grabbing';
+        document.body.classList.add('pm-panning-cursor'); // A093
         return;
       }
       if (e.button === 2) { cleanup(); _toast('キャンセルしました'); return; }
@@ -3492,6 +3563,7 @@
       if (magPanel.contains(e.target)) return; // 倍率パネル上のクリックでは確定しない
       if (e.button === 1) { // v0.0064: ホイール押しパン終了
         panning = false; cvWrapEl.style.cursor = '';
+        if (!spaceHeld) document.body.classList.remove('pm-panning-cursor'); // A093
         return;
       }
       if (e.button !== 0 || !dragging) return;
